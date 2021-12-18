@@ -109,6 +109,18 @@ class Interval(Base):
     def end(self, t):
         self._end = t
 
+    @validates('_started', '_end')
+    def validate_dates(self, key, field):
+        if key == '_end' and isinstance(self._start, datetime.datetime):
+            if self._start >= field:
+                raise AssertionError("The end field must be "
+                                     "greater than the start field")
+        elif key == '_started' and isinstance(self._end, datetime.datetime):
+            if self._end <= field:
+                raise AssertionError("The end field must be "
+                                     "greater than the start field")
+        return field
+
     entries = relationship('Entry', back_populates="interval", cascade='all')
 
 
