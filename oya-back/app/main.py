@@ -24,6 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # Dependency
 def get_db():
     db = SessionLocal()
@@ -41,22 +42,22 @@ def read_activities(db: Session = Depends(get_db)):
 
 @app.post("/activities/", tags=["Activities"], response_model=schemas.Activity)
 def create_activity(activity: schemas.ActivityCreate, db: Session = Depends(get_db)):
-    return crud.create_activity(db=db,activity=activity)
+    return crud.create_activity(db=db, activity=activity)
 
 
 @app.delete("/activities/{activity_id}", tags=["Activities"], response_model=schemas.Activity)
 def delete_activity(activity_id: int, db: Session = Depends(get_db)):
-    deleted_activity = crud.delete_activity(db=db,activity_id=activity_id)
-    if not deleted_activity :
+    deleted_activity = crud.delete_activity(db=db, activity_id=activity_id)
+    if not deleted_activity:
         raise HTTPException(status_code=400, detail="activity not found")
     return deleted_activity
 
 
 @app.put("/activities/{activity_id}", tags=["Activities"], response_model=schemas.Activity)
-def update_activity(activity_id: int,activity: schemas.ActivityUpdate, db: Session = Depends(get_db)):
+def update_activity(activity_id: int, activity: schemas.ActivityUpdate, db: Session = Depends(get_db)):
     try:
         updated_activity = crud.update_activity(db=db, activity=activity, activity_id=activity_id)
-        if not updated_activity :
+        if not updated_activity:
             raise HTTPException(status_code=400, detail="activity not found")
         return updated_activity
     except ValueError:
@@ -69,13 +70,13 @@ def get_intervals(db: Session = Depends(get_db)):
 
 
 @app.post("/intervals/", tags=["Intervals"], response_model=schemas.Interval)
-def create_interval(interval: schemas.IntervalCreate,db: Session = Depends(get_db)):
-    return crud.create_interval(db=db,interval=interval)
+def create_interval(interval: schemas.IntervalCreate, db: Session = Depends(get_db)):
+    return crud.create_interval(db=db, interval=interval)
 
 
 @app.put("/intervals/{interval_id}", tags=["Intervals"], response_model=schemas.Interval)
 def update_interval(interval: schemas.IntervalUpdate, interval_id, db: Session = Depends(get_db)):
-    return crud.update_interval(db=db,interval_id=interval_id,interval=interval)
+    return crud.update_interval(db=db, interval_id=interval_id, interval=interval)
 
 
 @app.delete("/intervals/{interval_id}", tags=["Intervals"], status_code=204)
@@ -85,23 +86,24 @@ def delete_interval(interval_id: int, db: Session = Depends(get_db)):
     except ReferenceError:
         raise HTTPException(status_code=400, detail="interval not found")
 
+
 @app.get("/entries/", tags=["Entries"], response_model=List[schemas.Entry])
 def get_entries(db: Session = Depends(get_db)):
-    return  crud.get_entries(db=db)
+    return crud.get_entries(db=db)
 
 
 @app.post("/intervals/{interval_id}/entries", tags=["Entries"], response_model=schemas.Entry)
-def create_entry(interval_id:int,entry:schemas.EntryCreate,db: Session = Depends(get_db)):
+def create_entry(interval_id: int, entry: schemas.EntryCreate, db: Session = Depends(get_db)):
     try:
-        return crud.create_entry(db=db,entry=entry,interval_id=interval_id)
+        return crud.create_entry(db=db, entry=entry, interval_id=interval_id)
     except ReferenceError as e:
         raise HTTPException(status_code=400, detail='could not create!')
 
 
 @app.put("/entries/{entry_id}/", tags=["Entries"], response_model=schemas.Entry)
-def update_entry(entry_id: int, entry:schemas.EntryUpdate, db: Session = Depends(get_db)):
+def update_entry(entry_id: int, entry: schemas.EntryUpdate, db: Session = Depends(get_db)):
     try:
-        return crud.update_entry(db=db,entry=entry,entry_id=entry_id)
+        return crud.update_entry(db=db, entry=entry, entry_id=entry_id)
     except ReferenceError:
         raise HTTPException(status_code=400, detail='entry not found')
 
