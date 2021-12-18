@@ -6,7 +6,8 @@ from copy import deepcopy
 
 
 def get_activities(db: Session, skip: int = 0, limit: int = 10000):
-    activities = db.query(models.Activity).order_by(models.Activity.id.desc()).offset(skip).limit(limit).all()
+    activities = db.query(models.Activity).order_by(models.Activity.id.desc()).\
+        offset(skip).limit(limit).all()
     return activities
 
 
@@ -18,9 +19,11 @@ def get_activity(db: Session, activity_id: int):
 def create_activity(db: Session, activity: schemas.ActivityCreate):
     db_activity = models.Activity(name=activity.name)
     if activity.parentIds:
-        db_activity.parents = db.query(models.Activity).filter(models.Activity.id.in_(activity.parentIds)).all()
+        db_activity.parents = db.query(models.Activity).\
+            filter(models.Activity.id.in_(activity.parentIds)).all()
     if activity.childIds:
-        db_activity.children = db.query(models.Activity).filter(models.Activity.id.in_(activity.childIds)).all()
+        db_activity.children = db.query(models.Activity).\
+            filter(models.Activity.id.in_(activity.childIds)).all()
     db.add(db_activity)
     db.commit()
     db.refresh(db_activity)
@@ -31,9 +34,11 @@ def update_activity(db: Session, activity: schemas.ActivityUpdate, activity_id: 
     db_activity = get_activity(db=db, activity_id=activity_id)
     if db_activity:
         if activity.parentIds is not None:
-            db_activity.parents = db.query(models.Activity).filter(models.Activity.id.in_(activity.parentIds)).all()
+            db_activity.parents = db.query(models.Activity).\
+                filter(models.Activity.id.in_(activity.parentIds)).all()
         if activity.childIds is not None:
-            db_activity.children = db.query(models.Activity).filter(models.Activity.id.in_(activity.childIds)).all()
+            db_activity.children = db.query(models.Activity).\
+                filter(models.Activity.id.in_(activity.childIds)).all()
         if activity.name:
             db_activity.name = activity.name
         db.add(db_activity)
@@ -51,7 +56,8 @@ def delete_activity(db: Session, activity_id: int):
 
 
 def get_intervals(db: Session, skip: int = 0, limit: int = 10000):
-    intervals = db.query(models.Interval).order_by(models.Interval._end.desc()).offset(skip).limit(limit).all()
+    intervals = db.query(models.Interval).\
+        order_by(models.Interval._end.desc()).offset(skip).limit(limit).all()
     return intervals
 
 
