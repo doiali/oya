@@ -1,0 +1,7 @@
+venv
+alembic
+db_backup
+*.db
+*.rar
+.idea
+.env
