@@ -7,11 +7,8 @@ Activity = ForwardRef('Activity')
 Interval = ForwardRef('Interval')
 
 
-class ActivityBase(BaseModel):
+class ActivityCreate(BaseModel):
     name: str
-
-
-class ActivityCreate(ActivityBase):
     parentIds: Optional[List[int]]
     childIds: Optional[List[int]]
 
@@ -22,15 +19,20 @@ class ActivityUpdate(BaseModel):
     childIds: Optional[List[int]]
 
 
-class Activity(ActivityBase):
+class Activity(BaseModel):
     id: int
+    name: str
     parents: List[Activity] = []
 
     # children: List[Activity] = []
     # associations: List[Association] = []
     # childIds: List[int] = []
     # allChildIds: List[int] = []
+    # allChildren: List[Activity] = []
     # parentIds: List[int] = []
+    # allParentIds: List[int] = []
+    # allParents: List[Activity] = []
+
     class Config:
         orm_mode = True
 

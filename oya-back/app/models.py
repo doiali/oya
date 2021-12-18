@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship, validates
 from dateutil import parser
 import datetime
 from .database import Base
+from typing import Set, ForwardRef, List
 
 
 class Association(Base):
@@ -12,6 +13,9 @@ class Association(Base):
     child_id = Column(Integer, ForeignKey('activities.id'))
     parent_id = Column(Integer, ForeignKey('activities.id'), nullable=True)
     order = Column(Integer)
+
+
+Activity = ForwardRef('Activity')
 
 
 class Activity(Base):
@@ -43,31 +47,45 @@ class Activity(Base):
         return list(map(lambda x: x.id, self.parents))
 
     @property
-    def allChildIds(self):
-        x = {self.id}
+    def allParents(self):
+        x = set()
+
+        def recur(act: Activity):
+            for parent in act.parents:
+                if parent in x:
+                    continue
+                x.add(parent)
+                recur(parent)
+
+        recur(self)
+        return x
+
+    @property
+    def allChildren(self):
+        x = set()
 
         def recur(act: Activity):
             for child in act.children:
-                if child.id in x:
+                if child in x:
                     continue
-                x.add(child.id)
+                x.add(child)
                 recur(child)
 
         recur(self)
         return x
 
     @property
+    def allChildIds(self):
+        x = {self.id}
+        for c in self.allChildren:
+            x.add(c.id)
+        return x
+
+    @property
     def allParentIds(self):
         x = {self.id}
-
-        def recur(act: Activity):
-            for parent in act.parents:
-                if parent.id in (x):
-                    continue
-                x.add(parent.id)
-                recur(parent)
-
-        recur(self)
+        for p in self.allParents:
+            x.add(p.id)
         return x
 
     @validates('parents')
