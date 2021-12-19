@@ -25,7 +25,7 @@ export default function IntervalAdder({ activities, intervals }: IntervalAdderPr
 
 function useIntervalCreate({ intervals }: { intervals: Interval[]; }) {
   const [state, setState] = useState({
-    start: new Date(intervals[0].end),
+    start: intervals[0]?.end ? new Date(intervals[0]?.end) : new Date(),
     end: new Date(),
     note: '' as string,
     selectedEntries: [] as EntryCreate[],
