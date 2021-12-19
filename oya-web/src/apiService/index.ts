@@ -1,15 +1,12 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { Activity, ActivityUpdate, ActivityCreate, Interval, IntervalCreate, IntervalUpdate } from './types';
 export * from './types';
 
 const session = axios.create();
-type ResponseInterCeptor = (response: AxiosResponse) => any;
-const responseInterCeptor: ResponseInterCeptor = (response) => ({ ...response, ...response.data });
 
 session.defaults.baseURL = 'http://localhost:8000/';
 session.defaults.headers.post['Content-Type'] = 'application/json';
 session.defaults.timeout = 10000;
-session.interceptors.response.use(responseInterCeptor);
 
 export { session };
 
