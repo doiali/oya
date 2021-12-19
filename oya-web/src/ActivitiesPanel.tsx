@@ -7,14 +7,14 @@ import ActivityAdder from './ActivityAdder';
 import ActivityEditor from './ActivityEditor';
 
 export function getActivityParentsNames(a: Activity): string {
-  return a.name + ' ' + a.parents.map((p) => getActivityParentsNames(p)).join(' ');
+  return a.name.toLowerCase() + ' ' + a.parents.map((p) => getActivityParentsNames(p)).join(' ');
 }
 
 export default function ActivitiesPanel({ activities }: { activities: Activity[]; }) {
   const [searchVal, setSearchVal] = useState('');
   const searchIndex = activities.map((a) => getActivityParentsNames(a));
   const filteredActivities: Activity[] = activities.filter((a, i) => {
-    return searchIndex[i].includes(searchVal);
+    return searchIndex[i].includes(searchVal.toLowerCase());
   });
   return (
     <Box p={2} pr={0}>

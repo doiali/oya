@@ -20,11 +20,11 @@ export default function IntervalsList({ intervals, activities }: IntervalsListPr
   const [searchVal, setSearchVal] = useState('');
   const [delayedSearchVal, setDelayedSearchVal] = useState('');
   const intervalsIndex = useMemo(() => intervals.map((interval) => (
-    interval.entries.map((e) => getActivityParentsNames(e.activity)).join(' ') + (interval.note ?? '')
+    interval.entries.map((e) => getActivityParentsNames(e.activity)).join(' ') + (interval.note ?? '').toLowerCase()
   )), [intervals]);
   useEffect(() => {
     const id = setTimeout(() => {
-      setDelayedSearchVal(searchVal);
+      setDelayedSearchVal(searchVal.toLowerCase());
     }, 500);
     return () => {
       clearTimeout(id);
