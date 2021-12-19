@@ -36,7 +36,7 @@ function useIntervalEdit({ interval, onSuccess }: { interval: Interval, onSucces
   const [state, setState] = useState({
     start: new Date(interval.start),
     end: new Date(interval.end),
-    note: '' as string,
+    note: (interval.note ?? '') as string,
     selectedEntries: interval.entries as EntryUpdate[],
     loading: false,
   });
