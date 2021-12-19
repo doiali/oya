@@ -57,7 +57,7 @@ def delete_activity(db: Session, activity_id: int):
 
 def get_intervals(db: Session, skip: int = 0, limit: int = 10000):
     intervals = db.query(models.Interval).\
-        order_by(models.Interval._end.desc()).offset(skip).limit(limit).all()
+        order_by(models.Interval.end_datetime.desc()).offset(skip).limit(limit).all()
     return intervals
 
 
