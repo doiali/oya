@@ -122,14 +122,6 @@ class Interval(Base):
     def end(self):
         return datetime.datetime.isoformat(self.end_datetime)
 
-    @property
-    def start_date(self) -> datetime.date:
-        return self.start_datetime.date()
-
-    @property
-    def end_date(self) -> datetime.date:
-        return self.end_datetime.date()
-
     @start.setter
     def start(self, t):
         self.start_datetime = t
@@ -138,13 +130,13 @@ class Interval(Base):
     def end(self, t):
         self.end_datetime = t
 
-    @validates('_started', '_end')
+    @validates('start_datetime', 'end_datetime')
     def validate_dates(self, key, field):
-        if key == '_end' and isinstance(self.start_datetime, datetime.datetime):
+        if key == 'end_datetime' and isinstance(self.start_datetime, datetime.datetime):
             if self.start_datetime >= field:
                 raise AssertionError("The end field must be "
                                      "greater than the start field")
-        elif key == '_started' and isinstance(self.end_datetime, datetime.datetime):
+        elif key == 'start_datetime' and isinstance(self.end_datetime, datetime.datetime):
             if self.end_datetime <= field:
                 raise AssertionError("The end field must be "
                                      "greater than the start field")

@@ -12,6 +12,8 @@ type IntervalAdderProps = {
   activities: Activity[],
 };
 
+const now = () => { const x = new Date(); x.setSeconds(0); return x; };
+
 export default function IntervalAdder({ activities, intervals }: IntervalAdderProps) {
   const intervalFormProps = useIntervalCreate({ intervals });
   return (
@@ -25,8 +27,8 @@ export default function IntervalAdder({ activities, intervals }: IntervalAdderPr
 
 function useIntervalCreate({ intervals }: { intervals: Interval[]; }) {
   const [state, setState] = useState({
-    start: intervals[0]?.end ? new Date(intervals[0]?.end) : new Date(),
-    end: new Date(),
+    start: intervals[0]?.end ? new Date(intervals[0]?.end) : now(),
+    end: now(),
     note: '' as string,
     selectedEntries: [] as EntryCreate[],
     loading: false,
