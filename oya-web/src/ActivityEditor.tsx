@@ -28,6 +28,7 @@ export default function ActivityEditor({ activities, activity, onClose: handleCl
     }).then(() => {
       AlertService.success('activity edited');
       mutate('/activities/');
+      mutate('/intervals/');
       handleClose?.();
     }, () => {
       AlertService.error('error editing activity');
@@ -42,6 +43,7 @@ export default function ActivityEditor({ activities, activity, onClose: handleCl
     deleteActivity(activity.id).then(() => {
       AlertService.success('activity ' + activity.id + ' deleted');
       mutate('/activities/');
+      mutate('/intervals/');
     }, () => {
       AlertService.error('error deleting activity');
     });
