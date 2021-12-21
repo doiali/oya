@@ -6,10 +6,11 @@ import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp, Search } from '@mui/i
 import { deleteInterval } from './apiService';
 import AlertService from './AlertService';
 import { mutate } from 'swr';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { marked } from 'marked';
 import IntervalEditor from './IntervalEditor';
 import { getActivityParentsNames } from './ActivitiesPanel';
+import useDelayedState from './useDelayedState';
 
 type IntervalsListProps = {
   intervals: Interval[],
@@ -17,19 +18,11 @@ type IntervalsListProps = {
 };
 
 export default function IntervalsList({ intervals, activities }: IntervalsListProps) {
-  const [searchVal, setSearchVal] = useState('');
-  const [delayedSearchVal, setDelayedSearchVal] = useState('');
+  const [searchVal, setSearchVal, delayedSearchVal] = useDelayedState('');
+
   const intervalsIndex = useMemo(() => intervals.map((interval) => (
     interval.entries.map((e) => getActivityParentsNames(e.activity)).join(' ') + (interval.note ?? '').toLowerCase()
   )), [intervals]);
-  useEffect(() => {
-    const id = setTimeout(() => {
-      setDelayedSearchVal(searchVal.toLowerCase());
-    }, 500);
-    return () => {
-      clearTimeout(id);
-    };
-  }, [searchVal]);
   const filteredIntervals = useMemo(() => (
     intervals.filter((_, i) => intervalsIndex[i].includes(delayedSearchVal))
   ), [intervals, delayedSearchVal, intervalsIndex]);
