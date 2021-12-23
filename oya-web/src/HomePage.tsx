@@ -10,7 +10,7 @@ export default function HomePage() {
   const { data: activities } = useActivities();
 
   return (
-    <Grid container justifyContent="center">
+    <Grid spacing={2} container justifyContent="center">
       {(intervals && activities) ? (
         <>
           <Grid item xs={12} md={8}>

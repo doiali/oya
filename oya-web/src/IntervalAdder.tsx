@@ -18,7 +18,7 @@ export default function IntervalAdder({ activities, intervals }: IntervalAdderPr
   const intervalFormProps = useIntervalCreate({ intervals });
   const theme = useTheme();
   return (
-    <Paper sx={{ mb: 2, py: 3, backgroundColor: alpha(theme.palette.secondary.main, 0.1) }}>
+    <Paper component="section" sx={{ mb: 2, py: 3, backgroundColor: alpha(theme.palette.secondary.main, 0.1) }}>
       <IntervalForm {...intervalFormProps} activities={activities}>
         <Button disabled={intervalFormProps.state.loading} size="large" type="submit" variant="contained">
           add interval

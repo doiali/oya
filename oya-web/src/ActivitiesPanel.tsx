@@ -1,5 +1,5 @@
 import { Edit, Search } from '@mui/icons-material';
-import { IconButton, Stack, Divider, TextField, InputAdornment, Collapse } from '@mui/material';
+import { IconButton, Stack, Divider, TextField, InputAdornment, Collapse, useTheme, emphasize } from '@mui/material';
 import { Box } from '@mui/system';
 import { Activity } from './apiService';
 import { useState } from 'react';
@@ -12,12 +12,13 @@ export function getActivityParentsNames(a: Activity): string {
 
 export default function ActivitiesPanel({ activities }: { activities: Activity[]; }) {
   const [searchVal, setSearchVal] = useState('');
+  const theme = useTheme();
   const searchIndex = activities.map((a) => getActivityParentsNames(a));
   const filteredActivities: Activity[] = activities.filter((a, i) => {
     return searchIndex[i].includes(searchVal.toLowerCase());
   });
   return (
-    <Box p={2} pr={0}>
+    <Box sx={{ p: 2, backgroundColor: emphasize(theme.palette.background.paper, 0.05) }} component="section">
       {activities && <ActivityAdder activities={activities} />}
       <TextField
         sx={{ my: 2 }}

@@ -33,7 +33,7 @@ export default function IntervalsList({ intervals, activities }: IntervalsListPr
     </Stack>
   ), [filteredIntervals, activities, intervals.length]);
   return (
-    <Box>
+    <Box component="section">
       <TextField
         sx={{ mb: 2 }}
         variant='outlined'
