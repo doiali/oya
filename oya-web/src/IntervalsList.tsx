@@ -28,10 +28,10 @@ export default function IntervalsList({ intervals, activities }: IntervalsListPr
   const list = useMemo(() => (
     <Stack spacing={1} divider={<Divider orientation="horizontal" flexItem />}>
       {filteredIntervals.map((interval, i) => (
-        <IntervalSingle activities={activities} index={intervals.length - i} key={interval.id} interval={interval} />
+        <IntervalSingle activities={activities} index={filteredIntervals.length - i} key={interval.id} interval={interval} />
       ))}
     </Stack>
-  ), [filteredIntervals, activities, intervals.length]);
+  ), [filteredIntervals, activities]);
   return (
     <Box component="section">
       <TextField
