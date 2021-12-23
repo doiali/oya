@@ -15,6 +15,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Outlet } from 'react-router-dom';
 import ListItemLink from './ListItemLink';
 import { Home } from '@mui/icons-material';
+import ThemeModeSwitch from './ThemeModeSwitch';
 
 const drawerWidth = 240;
 
@@ -96,6 +97,8 @@ export default function Layout() {
           <Typography variant="h6" noWrap component="div">
             Oya
           </Typography>
+          <Box sx={{ flexGrow: 1 }} />
+          <ThemeModeSwitch />
         </Toolbar>
       </AppBar>
       <Drawer
