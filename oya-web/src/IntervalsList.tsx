@@ -1,7 +1,6 @@
 import { Interval, Activity } from './apiService/types';
 import { format } from 'date-fns-jalali';
-import { Stack, Divider, IconButton, Chip, Paper, Collapse, TextField, InputAdornment } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Stack, Divider, IconButton, Chip, Box, Collapse, TextField, InputAdornment, Typography } from '@mui/material';
 import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp, Search } from '@mui/icons-material';
 import { deleteInterval } from './apiService';
 import AlertService from './AlertService';
@@ -34,7 +33,7 @@ export default function IntervalsList({ intervals, activities }: IntervalsListPr
     </Stack>
   ), [filteredIntervals, activities, intervals.length]);
   return (
-    <Paper sx={{ p: 2, mt: 2, backgroundColor: 'rgb(255,255,235)' }} elevation={2}>
+    <Box>
       <TextField
         sx={{ mb: 2 }}
         variant='outlined'
@@ -51,13 +50,9 @@ export default function IntervalsList({ intervals, activities }: IntervalsListPr
         }}
       />
       {list}
-    </Paper>
+    </Box>
   );
 }
-
-const Index = styled('span')(() => ({
-  color: 'orange',
-}));
 
 function IntervalSingle({ interval, activities, index }: { interval: Interval; activities: Activity[]; index: number; }) {
   const [loading, setLoading] = useState(false);
@@ -76,24 +71,21 @@ function IntervalSingle({ interval, activities, index }: { interval: Interval; a
   };
   const start = new Date(interval.start);
   const end = new Date(interval.end);
-  const dm = Math.round((end.getTime() - start.getTime()) / 60000);
-  const s = Math.floor(dm / 60).toString().padStart(2, '0') + ':' + (dm % 60).toString().padStart(2, '0');
   return (
     <Stack spacing={1}>
       <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <Stack direction="row" sx={{ alignItems: 'center', flexWrap: 'wrap' }} spacing={1}>
-          <Index>{index}. {' '}</Index>
+          <Typography color="secondary">{index}. {' '}</Typography>
           <Chip dir="rtl" variant="outlined" label={format(start, 'MM/dd-HH:mm eeee')} />
           <span>{' '}-{' '}</span>
           <Chip dir="rtl" variant="outlined" label={format(end, 'MM/dd-HH:mm eeee')} />
-          <span>{' '} {s} :{' '}</span>
+          <span>{' '}:{' '}</span>
           {interval.entries.map(({ id, activity }) => (
             <Chip label={activity.name} key={id} />
           ))}
         </Stack>
         <Stack direction="row" spacing={1}>
           {interval.note &&
-            // (notesRef.current?.scrollHeight ?? 0 > 30) &&
             (
               <IconButton onClick={() => setOpen((prev) => !prev)}>
                 {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}

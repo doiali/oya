@@ -27,23 +27,25 @@ export default function IntervalForm({ state, activities, onChange, children, on
       <Box p={2}>
         <LocalizationProvider dateAdapter={AdapterJalali}>
           <Stack direction="column" spacing={2}>
-            <DateTimePicker
-              value={state.start}
-              label="start"
-              ampm={false}
-              ampmInClock={false}
-              onChange={(newValue) => onChange('start', newValue)}
-              renderInput={(params) => <TextField fullWidth {...params} />}
-            />
-            <DateTimePicker
-              value={state.end}
-              ampm={false}
-              ampmInClock={false}
-              onChange={(newValue) => onChange('end', newValue)}
-              label="end"
-              renderInput={(params) => <TextField fullWidth {...params} />}
-              minDateTime={state.start}
-            />
+            <Stack direction='row' spacing={2}>
+              <DateTimePicker
+                value={state.start}
+                label="start"
+                ampm={false}
+                ampmInClock={false}
+                onChange={(newValue) => onChange('start', newValue)}
+                renderInput={(params) => <TextField fullWidth {...params} />}
+              />
+              <DateTimePicker
+                value={state.end}
+                ampm={false}
+                ampmInClock={false}
+                onChange={(newValue) => onChange('end', newValue)}
+                label="end"
+                renderInput={(params) => <TextField fullWidth {...params} />}
+                minDateTime={state.start}
+              />
+            </Stack>
             {activities && (
               <Autocomplete
                 multiple

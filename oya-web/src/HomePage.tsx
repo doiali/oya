@@ -13,13 +13,11 @@ export default function HomePage() {
     <Grid container justifyContent="center">
       {(intervals && activities) ? (
         <>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={8}>
             <IntervalAdder intervals={intervals} activities={activities} />
-          </Grid>
-          <Grid item xs={12} md={6}>
             <IntervalsList intervals={intervals} activities={activities} />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={4}>
             <ActivitiesPanel activities={activities} />
           </Grid>
         </>
