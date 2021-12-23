@@ -35,7 +35,7 @@ export default function IntervalForm({ state, activities, onChange, children, on
                 ampm={false}
                 ampmInClock={false}
                 onChange={(newValue) => onChange('start', newValue)}
-                renderInput={(params) => <TextField fullWidth {...params} />}
+                renderInput={(params) => <TextField required fullWidth {...params} />}
               />
               <DateTimePicker
                 value={state.end}
@@ -43,7 +43,7 @@ export default function IntervalForm({ state, activities, onChange, children, on
                 ampmInClock={false}
                 onChange={(newValue) => onChange('end', newValue)}
                 label="end"
-                renderInput={(params) => <TextField fullWidth {...params} />}
+                renderInput={(params) => <TextField required fullWidth {...params} />}
                 minDateTime={state.start}
               />
             </Stack>
@@ -57,6 +57,7 @@ export default function IntervalForm({ state, activities, onChange, children, on
                 onChange={(_, newVal) => onChange('selectedEntries', newVal)}
                 renderInput={(params) => (
                   <TextField
+                    required
                     {...params}
                     variant="outlined"
                     label="Activities"
