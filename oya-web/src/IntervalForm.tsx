@@ -5,6 +5,7 @@ import { DateTimePicker } from '@mui/lab';
 import { Autocomplete, Stack, TextField } from '@mui/material';
 import React from 'react';
 import { EntryUpdate, Activity } from './apiService/types';
+import MarkdownBox from './MarkdownBox';
 
 export type IntervalFormProps = {
   state: {
@@ -63,14 +64,11 @@ export default function IntervalForm({ state, activities, onChange, children, on
                 )}
               />
             )}
-            <TextField
-              multiline
-              variant="outlined"
-              name="note"
+            <MarkdownBox
+              name="notes"
+              label="notes"
               value={state.note}
               onChange={(e) => onChange('note', e.target.value)}
-              label="note"
-
             />
             {children}
           </Stack>
