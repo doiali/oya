@@ -19,11 +19,10 @@ function TabPanel(props: TabPanelProps) {
     <div
       role="tabpanel"
       hidden={value !== index}
-      style={{ minHeight: 120 }}
       {...other}
     >
       {value === index && (
-        <Box pt={2}>
+        <Box minHeight={120} pt={2}>
           {children}
         </Box>
       )}
