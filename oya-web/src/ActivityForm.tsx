@@ -1,4 +1,4 @@
-import { TextField, Autocomplete } from '@mui/material';
+import { TextField, Autocomplete, Box } from '@mui/material';
 import { Activity } from './apiService';
 import React from 'react';
 
@@ -16,7 +16,7 @@ export type ActivityFormProps = {
 
 export default function ActivityForm({ activities, onSubmit: handleSubmit, onChange, state, children }: ActivityFormProps) {
   return (
-    <form onSubmit={handleSubmit}>
+    <Box mb={2} component="form" onSubmit={handleSubmit}>
       <TextField
         fullWidth
         margin="dense"
@@ -46,6 +46,6 @@ export default function ActivityForm({ activities, onSubmit: handleSubmit, onCha
         />
       )}
       {children}
-    </form>
+    </Box>
   );
 }

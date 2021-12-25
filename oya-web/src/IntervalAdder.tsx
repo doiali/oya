@@ -1,5 +1,5 @@
 
-import { alpha, Button, Paper, useTheme } from '@mui/material';
+import { alpha, Button, Paper, Typography, useTheme } from '@mui/material';
 import React, { useState } from 'react';
 import { Activity, IntervalCreate, EntryCreate, Interval } from './apiService/types';
 import { addInterval } from './apiService';
@@ -19,6 +19,9 @@ export default function IntervalAdder({ activities, intervals }: IntervalAdderPr
   const theme = useTheme();
   return (
     <Paper component="section" sx={{ mb: 2, py: 3, backgroundColor: alpha(theme.palette.secondary.main, 0.1) }}>
+      <Typography pl={2} variant='h5'>
+        Create Interval
+      </Typography>
       <IntervalForm {...intervalFormProps} activities={activities}>
         <Button disabled={intervalFormProps.state.loading} size="large" type="submit" variant="contained">
           add interval

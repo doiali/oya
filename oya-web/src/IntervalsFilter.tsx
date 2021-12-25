@@ -34,7 +34,7 @@ export default function IntervalsFilter({
     <Paper sx={{ p: 2, mb: 2, backgroundColor: emphasize(theme.palette.background.paper, 0.1) }}>
       <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h5">
-          Filters
+          Filter Intervals
         </Typography>
         <Box>
           <b>sum:</b> {sum >= 1440 && Math.floor(sum / 1440).toString() + ' days and '} {
@@ -78,7 +78,7 @@ export default function IntervalsFilter({
                   {...params}
                   margin="dense"
                   variant="outlined"
-                  label="selected activities activities"
+                  label="activities"
                 />
               )}
             />

@@ -1,5 +1,5 @@
 import { Edit, Search } from '@mui/icons-material';
-import { IconButton, Stack, Divider, TextField, InputAdornment, Collapse, useTheme, emphasize } from '@mui/material';
+import { IconButton, Stack, Divider, TextField, InputAdornment, Collapse, useTheme, emphasize, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { Activity } from './apiService';
 import { useState } from 'react';
@@ -19,9 +19,15 @@ export default function ActivitiesPanel({ activities }: { activities: Activity[]
   });
   return (
     <Box sx={{ p: 2, backgroundColor: emphasize(theme.palette.background.paper, 0.05) }} component="section">
+      <Typography variant='h5'>
+        Create Activity
+      </Typography>
       {activities && <ActivityAdder activities={activities} />}
+      <Typography mb={1} variant='h5'>
+        Activities List
+      </Typography>
       <TextField
-        sx={{ my: 2 }}
+        sx={{ mb: 2 }}
         variant='outlined'
         label='search'
         fullWidth

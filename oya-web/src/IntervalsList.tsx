@@ -28,6 +28,9 @@ export default function IntervalsList({ intervals, activities }: IntervalsListPr
   return (
     <Box component="section">
       <IntervalsFilter {...intervalsFilterProps} activities={activities} />
+      <Typography mb={2} variant="h5">
+        Intervals List
+      </Typography>
       {list}
     </Box>
   );
