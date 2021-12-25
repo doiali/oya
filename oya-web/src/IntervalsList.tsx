@@ -1,15 +1,14 @@
 import { Interval, Activity } from './apiService/types';
 import { format } from 'date-fns-jalali';
-import { Stack, Divider, IconButton, Chip, Box, Collapse, TextField, InputAdornment, Typography } from '@mui/material';
-import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp, Search } from '@mui/icons-material';
+import { Stack, Divider, IconButton, Chip, Box, Collapse, Typography } from '@mui/material';
+import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { deleteInterval } from './apiService';
 import AlertService from './AlertService';
 import { mutate } from 'swr';
 import { useMemo, useRef, useState } from 'react';
 import { marked } from 'marked';
 import IntervalEditor from './IntervalEditor';
-import { getActivityParentsNames } from './ActivitiesPanel';
-import useDelayedState from './useDelayedState';
+import IntervalsFilter, { useIntervalsFilter } from './IntervalsFilter';
 
 type IntervalsListProps = {
   intervals: Interval[],
@@ -17,14 +16,8 @@ type IntervalsListProps = {
 };
 
 export default function IntervalsList({ intervals, activities }: IntervalsListProps) {
-  const [searchVal, setSearchVal, delayedSearchVal] = useDelayedState('');
+  const { filteredIntervals, ...intervalsFilterProps } = useIntervalsFilter({ intervals });
 
-  const intervalsIndex = useMemo(() => intervals.map((interval) => (
-    interval.entries.map((e) => getActivityParentsNames(e.activity)).join(' ') + (interval.note ?? '').toLowerCase()
-  )), [intervals]);
-  const filteredIntervals = useMemo(() => (
-    intervals.filter((_, i) => intervalsIndex[i].includes(delayedSearchVal))
-  ), [intervals, delayedSearchVal, intervalsIndex]);
   const list = useMemo(() => (
     <Stack spacing={1} divider={<Divider orientation="horizontal" flexItem />}>
       {filteredIntervals.map((interval, i) => (
@@ -34,21 +27,7 @@ export default function IntervalsList({ intervals, activities }: IntervalsListPr
   ), [filteredIntervals, activities]);
   return (
     <Box component="section">
-      <TextField
-        sx={{ mb: 2 }}
-        variant='outlined'
-        label='search'
-        fullWidth
-        value={searchVal}
-        onChange={(e) => setSearchVal(e.target.value)}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position='end'>
-              <Search />
-            </InputAdornment>
-          ),
-        }}
-      />
+      <IntervalsFilter {...intervalsFilterProps} activities={activities} />
       {list}
     </Box>
   );

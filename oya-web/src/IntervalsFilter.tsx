@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Collapse, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, emphasize, Paper, Stack, TextField, Typography, useTheme } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { Activity, Interval } from './apiService';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -25,66 +25,65 @@ type IntervalsFilterProps = {
 };
 
 export default function IntervalsFilter({
-  activities, state, results, onChange,
+  activities, state, results: { sum }, onChange,
 }: IntervalsFilterProps) {
-  const [open, setOpen] = useState(false);
+  const theme = useTheme();
   return (
-    <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography>
-          {Object.entries(results).map(([k, v]) => (
-            <span key={k}>{k}: {v} {' '} - {' '}</span>
-          ))}
+    <Paper sx={{ p: 2, mb: 2, backgroundColor: emphasize(theme.palette.background.paper, 0.1) }}>
+      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Typography variant="h5">
+          Filters
         </Typography>
-        <Button onClick={() => setOpen(prev => !prev)}>
-          filters
-        </Button>
+        <Box>
+          <b>sum:</b> {sum >= 1440 && Math.floor(sum / 1440).toString() + ' days and '} {
+            Math.floor((sum % 1440) / 60).toString().padStart(2, '0') +
+            ':' + (sum % 60).toString().padStart(2, '0')
+          }
+        </Box>
       </Box>
-      <Collapse in={open}>
-        <LocalizationProvider dateAdapter={AdapterJalali}>
-          <Stack direction="column" spacing={2}>
-            <Stack direction='row' spacing={2}>
-              <DateTimePicker
-                value={state.start}
-                label="start"
-                ampm={false}
-                ampmInClock={false}
-                onChange={(newValue) => onChange('start', newValue)}
-                renderInput={(params) => <TextField fullWidth {...params} />}
-              />
-              <DateTimePicker
-                value={state.end}
-                ampm={false}
-                ampmInClock={false}
-                onChange={(newValue) => onChange('end', newValue)}
-                label="end"
-                renderInput={(params) => <TextField fullWidth {...params} />}
-                minDateTime={state.start}
-              />
-              {activities && (
-                <Autocomplete
-                  fullWidth
-                  multiple
-                  isOptionEqualToValue={(o, v) => o.id === v.id}
-                  options={activities}
-                  getOptionLabel={(option) => option.name}
-                  value={state.selectedActivities}
-                  onChange={(_, newVal) => onChange('selectedActivities', newVal)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      margin="dense"
-                      variant="outlined"
-                      label="selected activities activities"
-                    />
-                  )}
+      <LocalizationProvider dateAdapter={AdapterJalali}>
+        <Stack direction="column" spacing={1}>
+          <Stack direction='row' spacing={2}>
+            <DateTimePicker
+              value={state.start}
+              label="start"
+              ampm={false}
+              ampmInClock={false}
+              onChange={(newValue) => onChange('start', newValue)}
+              renderInput={(params) => <TextField fullWidth {...params} />}
+            />
+            <DateTimePicker
+              value={state.end}
+              ampm={false}
+              ampmInClock={false}
+              onChange={(newValue) => onChange('end', newValue)}
+              label="end"
+              renderInput={(params) => <TextField fullWidth {...params} />}
+              minDateTime={state.start}
+            />
+          </Stack>
+          {activities && (
+            <Autocomplete
+              fullWidth
+              multiple
+              isOptionEqualToValue={(o, v) => o.id === v.id}
+              options={activities}
+              getOptionLabel={(option) => option.name}
+              value={state.selectedActivities}
+              onChange={(_, newVal) => onChange('selectedActivities', newVal)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  margin="dense"
+                  variant="outlined"
+                  label="selected activities activities"
                 />
               )}
-            </Stack>
-          </Stack>
-        </LocalizationProvider>
-      </Collapse>
-    </Box>
+            />
+          )}
+        </Stack>
+      </LocalizationProvider>
+    </Paper>
   );
 }
 
@@ -121,7 +120,10 @@ export function useIntervalsFilter({ intervals }: useIntervalsFilterProps) {
   };
 
   const filteredIntervals = useMemo(() => {
-    const timeFiltered = intervals.filter(i => ((i.start >= state.start.toISOString() || i.end <= state.end.toISOString())));
+    const timeFiltered = intervals.filter(i => (
+      (new Date(i.start) <= state.end && new Date(i.start) >= state.start) ||
+      (new Date(i.end) <= state.end && new Date(i.end) >= state.start)
+    ));
     if (state.selectedActivities.length === 0) return timeFiltered;
     return timeFiltered.filter(i => (
       i.entries.map(e => e.activity).some(a => state.selectedActivities.some(b => isChildOf(a, b)))
@@ -129,7 +131,7 @@ export function useIntervalsFilter({ intervals }: useIntervalsFilterProps) {
   }, [state, intervals]);
 
   const results = useMemo(() => ({
-    sum: filteredIntervals.reduce((a, v) => (new Date(v.start).getTime() - new Date(v.end).getTime()) / 60000 + a, 0),
+    sum: filteredIntervals.reduce((a, v) => (new Date(v.end).getTime() - new Date(v.start).getTime()) / 60000 + a, 0),
   }), [filteredIntervals]);
 
   return { state, onChange, filteredIntervals, results };
