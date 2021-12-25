@@ -97,7 +97,7 @@
     "prefer-spread": "warn",
     "prefer-arrow-callback": "off",
     "arrow-spacing": "warn",
-    "arrow-parens": "warn",
+    // "arrow-parens": "warn",
     "no-confusing-arrow": [
       "warn",
       {
