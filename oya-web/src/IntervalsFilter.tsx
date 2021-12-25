@@ -121,8 +121,9 @@ export function useIntervalsFilter({ intervals }: useIntervalsFilterProps) {
   };
 
   const filteredIntervals = useMemo(() => {
-    return intervals.filter(i => (
-      (i.start >= state.start.toISOString() || i.end <= state.end.toISOString()) &&
+    const timeFiltered = intervals.filter(i => ((i.start >= state.start.toISOString() || i.end <= state.end.toISOString())));
+    if (state.selectedActivities.length === 0) return timeFiltered;
+    return timeFiltered.filter(i => (
       i.entries.map(e => e.activity).some(a => state.selectedActivities.some(b => isChildOf(a, b)))
     ));
   }, [state, intervals]);
