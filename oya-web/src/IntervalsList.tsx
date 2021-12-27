@@ -5,7 +5,7 @@ import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-mat
 import { deleteInterval } from './apiService';
 import AlertService from './AlertService';
 import { mutate } from 'swr';
-import { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { marked } from 'marked';
 import IntervalEditor from './IntervalEditor';
 import IntervalsFilter, { useIntervalsFilter } from './IntervalsFilter';
@@ -18,13 +18,28 @@ type IntervalsListProps = {
 export default function IntervalsList({ intervals, activities }: IntervalsListProps) {
   const { filteredIntervals, ...intervalsFilterProps } = useIntervalsFilter({ intervals });
 
-  const list = useMemo(() => (
-    <Stack spacing={1} divider={<Divider orientation="horizontal" flexItem />}>
-      {filteredIntervals.map((interval, i) => (
-        <IntervalSingle activities={activities} index={filteredIntervals.length - i} key={interval.id} interval={interval} />
-      ))}
-    </Stack>
-  ), [filteredIntervals, activities]);
+  const list = useMemo(() => {
+    let prevEnd = '9';
+    return (
+      <Stack spacing={1}>
+        {filteredIntervals.map((interval, i) => {
+          const end = interval.end.substring(0, 10);
+          const isNewDay = end < prevEnd;
+          if (isNewDay) prevEnd = end;
+          return (
+            <React.Fragment key={interval.id}>
+              {isNewDay && (
+                <Divider orientation="horizontal" flexItem>
+                  <Chip color="secondary" dir="rtl" label={format(new Date(interval.end), 'eeee d MMMM y')} />
+                </Divider>
+              )}
+              <IntervalSingle activities={activities} index={filteredIntervals.length - i} interval={interval} />
+            </React.Fragment>
+          );
+        })}
+      </Stack>
+    );
+  }, [filteredIntervals, activities]);
   return (
     <Box component="section">
       <IntervalsFilter {...intervalsFilterProps} activities={activities} />
@@ -53,6 +68,9 @@ function IntervalSingle({ interval, activities, index }: { interval: Interval; a
   };
   const start = new Date(interval.start);
   const end = new Date(interval.end);
+  const dm = Math.round((end.getTime() - start.getTime()) / 60000);
+  const s = Math.floor(dm / 60).toString().padStart(2, '0') + ':' + (dm % 60).toString().padStart(2, '0');
+
   return (
     <Stack spacing={1}>
       <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
@@ -66,13 +84,13 @@ function IntervalSingle({ interval, activities, index }: { interval: Interval; a
             <Chip label={activity.name} key={id} />
           ))}
         </Stack>
-        <Stack direction="row" spacing={1}>
-          {interval.note &&
-            (
-              <IconButton onClick={() => setOpen((prev) => !prev)}>
-                {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-              </IconButton>
-            )}
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+          {interval.note && (
+            <IconButton onClick={() => setOpen((prev) => !prev)}>
+              {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+            </IconButton>
+          )}
+          <Chip color="secondary" variant="outlined" label={s} />
           <IconButton onClick={() => setIsEditing(true)}>
             <Edit />
           </IconButton>
