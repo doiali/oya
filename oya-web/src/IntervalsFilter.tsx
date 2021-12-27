@@ -115,7 +115,7 @@ export function useIntervalsFilter({ intervals }: useIntervalsFilterProps) {
     intervals.forEach(i => { if (i.start < min) min = i.start; });
     const start = new Date(min);
     start.setDate(start.getDate() - 2);
-    const end = intervals[0]?.end ? new Date(intervals[0].end) : new Date();
+    const end = new Date();
     end.setDate(end.getDate() + 2);
     return { start, end, selectedActivities: [] as Activity[] };
   }, [intervals]);
