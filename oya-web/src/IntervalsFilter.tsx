@@ -113,11 +113,11 @@ export function useIntervalsFilter({ intervals }: useIntervalsFilterProps) {
   const initState = useMemo(() => {
     let min = new Date().toISOString();
     intervals.forEach(i => { if (i.start < min) min = i.start; });
-    return {
-      start: new Date(min),
-      end: intervals[0]?.end ? new Date(intervals[0].end) : new Date(),
-      selectedActivities: [] as Activity[],
-    };
+    const start = new Date(min);
+    start.setDate(start.getDate() - 2);
+    const end = intervals[0]?.end ? new Date(intervals[0].end) : new Date();
+    end.setDate(end.getDate() + 2);
+    return { start, end, selectedActivities: [] as Activity[] };
   }, [intervals]);
   const [state, setState, delayedSate] = useDelayedState(initState);
 
