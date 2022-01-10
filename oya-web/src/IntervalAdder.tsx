@@ -29,7 +29,10 @@ export default memo(function IntervalAdder({ activities, intervals }: IntervalAd
       </IntervalForm>
     </Paper>
   );
-});
+}, (prevProps, nextProps) => (
+  prevProps.activities === nextProps.activities &&
+  prevProps.intervals[0]?.end === nextProps.intervals[0].end
+));
 
 function useIntervalCreate({ intervals }: { intervals: Interval[]; }) {
   const [state, setState] = useState({

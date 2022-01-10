@@ -8,9 +8,16 @@ import { mutate } from 'swr';
 import React, { memo, useRef, useState } from 'react';
 import { marked } from 'marked';
 import IntervalEditor from './IntervalEditor';
+import { dequal } from 'dequal';
+
+export type IntervalItemProps = {
+  interval: Interval;
+  activities: Activity[];
+  index: number;
+};
 
 export default memo(function IntervalItem(
-  { interval, activities, index }: { interval: Interval; activities: Activity[]; index: number; },
+  { interval, activities, index }: IntervalItemProps,
 ) {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -72,5 +79,11 @@ export default memo(function IntervalItem(
         />
       )}
     </Stack>
+  );
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.activities === nextProps.activities &&
+    prevProps.index === nextProps.index &&
+    dequal(prevProps.interval, nextProps.interval)
   );
 });
