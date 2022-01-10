@@ -1,6 +1,6 @@
 import { TextField, Autocomplete, Box } from '@mui/material';
 import { Activity } from './apiService';
-import React from 'react';
+import React, { memo } from 'react';
 
 export type ActivityFormProps = {
   state: {
@@ -14,7 +14,9 @@ export type ActivityFormProps = {
   onChange(name: 'parents', value: Activity[]): void,
 };
 
-export default function ActivityForm({ activities, onSubmit: handleSubmit, onChange, state, children }: ActivityFormProps) {
+export default memo(function ActivityForm(
+  { activities, onSubmit: handleSubmit, onChange, state, children }: ActivityFormProps,
+) {
   return (
     <Box mb={2} component="form" onSubmit={handleSubmit}>
       <TextField
@@ -48,4 +50,4 @@ export default function ActivityForm({ activities, onSubmit: handleSubmit, onCha
       {children}
     </Box>
   );
-}
+});

@@ -1,6 +1,6 @@
 
 import { Button, Stack } from '@mui/material';
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { EntryUpdate, IntervalUpdate, Interval, Activity } from './apiService/types';
 import { updateInterval } from './apiService';
 import { mutate } from 'swr';
@@ -13,7 +13,7 @@ type IntervalEditorProps = {
   onClose?: () => void;
 };
 
-export default function IntervalEditor({ interval, onClose, activities }: IntervalEditorProps) {
+export default memo(function IntervalEditor({ interval, onClose, activities }: IntervalEditorProps) {
   const formProps = useIntervalEdit({ interval, onSuccess: onClose });
   return (
     <IntervalForm
@@ -30,7 +30,7 @@ export default function IntervalEditor({ interval, onClose, activities }: Interv
       </Stack>
     </IntervalForm>
   );
-}
+});
 
 function useIntervalEdit({ interval, onSuccess }: { interval: Interval, onSuccess?: () => void; }) {
   const [state, setState] = useState({

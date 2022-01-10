@@ -2,7 +2,7 @@ import { Edit, Search } from '@mui/icons-material';
 import { IconButton, Stack, Divider, TextField, InputAdornment, Collapse, useTheme, emphasize, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { Activity } from './apiService';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import ActivityAdder from './ActivityAdder';
 import ActivityEditor from './ActivityEditor';
 
@@ -10,7 +10,7 @@ export function getActivityParentsNames(a: Activity): string {
   return a.name.toLowerCase() + ' ' + a.parents.map((p) => getActivityParentsNames(p)).join(' ');
 }
 
-export default function ActivitiesPanel({ activities }: { activities: Activity[]; }) {
+export default memo(function ActivitiesPanel({ activities }: { activities: Activity[]; }) {
   const [searchVal, setSearchVal] = useState('');
   const theme = useTheme();
   const searchIndex = activities.map((a) => getActivityParentsNames(a));
@@ -52,9 +52,11 @@ export default function ActivitiesPanel({ activities }: { activities: Activity[]
       </Stack>
     </Box>
   );
-}
+});
 
-function ActivitySingle({ activity, activities }: { activity: Activity, activities: Activity[]; }) {
+const ActivitySingle = memo(function ActivitySingle(
+  { activity, activities }: { activity: Activity, activities: Activity[]; },
+) {
   const [editMode, setEditMode] = useState(false);
 
   return (
@@ -75,4 +77,4 @@ function ActivitySingle({ activity, activities }: { activity: Activity, activiti
       </Collapse>
     </Box>
   );
-}
+});

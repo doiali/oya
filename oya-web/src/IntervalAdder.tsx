@@ -1,6 +1,6 @@
 
 import { alpha, Button, Paper, Typography, useTheme } from '@mui/material';
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { Activity, IntervalCreate, EntryCreate, Interval } from './apiService/types';
 import { addInterval } from './apiService';
 import { mutate } from 'swr';
@@ -14,7 +14,7 @@ type IntervalAdderProps = {
 
 const now = () => { const x = new Date(); x.setSeconds(0); return x; };
 
-export default function IntervalAdder({ activities, intervals }: IntervalAdderProps) {
+export default memo(function IntervalAdder({ activities, intervals }: IntervalAdderProps) {
   const intervalFormProps = useIntervalCreate({ intervals });
   const theme = useTheme();
   return (
@@ -29,7 +29,7 @@ export default function IntervalAdder({ activities, intervals }: IntervalAdderPr
       </IntervalForm>
     </Paper>
   );
-}
+});
 
 function useIntervalCreate({ intervals }: { intervals: Interval[]; }) {
   const [state, setState] = useState({

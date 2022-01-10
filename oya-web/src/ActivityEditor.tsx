@@ -1,6 +1,6 @@
 import { Button, IconButton, Stack } from '@mui/material';
 import { Activity, deleteActivity, editActivity } from './apiService';
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import AlertService from './AlertService';
 import { mutate } from 'swr';
 import ActivityForm, { ActivityFormProps } from './ActivityForm';
@@ -13,7 +13,7 @@ type ActivityEditorProps = {
   onClose?: () => void,
 };
 
-export default function ActivityEditor({ activities, activity, onClose: handleClose }: ActivityEditorProps) {
+export default memo(function ActivityEditor({ activities, activity, onClose: handleClose }: ActivityEditorProps) {
   const [state, setState] = useState({
     name: activity.name,
     parents: activity.parents,
@@ -68,4 +68,4 @@ export default function ActivityEditor({ activities, activity, onClose: handleCl
       </Box>
     </ActivityForm>
   );
-}
+});

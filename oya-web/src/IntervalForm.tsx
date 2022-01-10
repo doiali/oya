@@ -3,7 +3,7 @@ import { Box } from '@mui/system';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { DateTimePicker } from '@mui/lab';
 import { Autocomplete, Stack, TextField } from '@mui/material';
-import React from 'react';
+import React, { memo } from 'react';
 import { EntryUpdate, Activity } from './apiService/types';
 import MarkdownBox from './MarkdownBox';
 
@@ -22,7 +22,7 @@ export type IntervalFormProps = {
   onChange(name: 'selectedEntries', value: EntryUpdate[]): void,
 };
 
-export default function IntervalForm({ state, activities, onChange, children, onSubmit: handleSubmit }: IntervalFormProps) {
+export default memo(function IntervalForm({ state, activities, onChange, children, onSubmit: handleSubmit }: IntervalFormProps) {
   return (
     <form onSubmit={handleSubmit}>
       <Box p={2}>
@@ -76,4 +76,4 @@ export default function IntervalForm({ state, activities, onChange, children, on
       </Box>
     </form>
   );
-}
+});

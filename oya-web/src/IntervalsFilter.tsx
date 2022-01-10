@@ -1,5 +1,5 @@
 import { Autocomplete, Box, Button, emphasize, Paper, Stack, TextField, Typography, useTheme } from '@mui/material';
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { Activity, Interval } from './apiService';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { DateTimePicker } from '@mui/lab';
@@ -26,7 +26,7 @@ type IntervalsFilterProps = {
   onReset(): void,
 };
 
-export default function IntervalsFilter({
+export default memo(function IntervalsFilter({
   activities, state, results: { sum }, onChange, onReset: handleReset,
 }: IntervalsFilterProps) {
   const theme = useTheme();
@@ -92,7 +92,7 @@ export default function IntervalsFilter({
       </LocalizationProvider>
     </Paper>
   );
-}
+});
 
 /**
  * checks if a is b or a child of b

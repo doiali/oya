@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import { Activity, createActivity } from './apiService';
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import AlertService from './AlertService';
 import { mutate } from 'swr';
 import ActivityForm, { ActivityFormProps } from './ActivityForm';
@@ -32,7 +32,7 @@ function useActivityCreate() {
   return { state, onChange, onSubmit };
 }
 
-export default function ActivityAdder({ activities }: { activities: Activity[], }) {
+export default memo(function ActivityAdder({ activities }: { activities: Activity[], }) {
   const formProps = useActivityCreate();
   return (
     <ActivityForm {...formProps} activities={activities}>
@@ -41,4 +41,4 @@ export default function ActivityAdder({ activities }: { activities: Activity[], 
       </Button>
     </ActivityForm>
   );
-}
+});
