@@ -1,7 +1,7 @@
-fastapi==0.70.0
+fastapi==0.70.1
 pydantic==1.8.2
 python_dateutil==2.8.2
-SQLAlchemy==1.4.27
+SQLAlchemy==1.4.29
 psycopg2==2.9.2
 python-decouple==3.5
 uvicorn==0.15.0
