@@ -1,7 +1,6 @@
 __pycache__
 build
 venv
-alembic
 db_backup
 *.db
 *.rar
