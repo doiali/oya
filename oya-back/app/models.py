@@ -3,6 +3,8 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, \
 from sqlalchemy.orm import relationship, validates
 from dateutil import parser
 import datetime
+
+from sqlalchemy.sql.schema import CheckConstraint
 from .database import Base
 from typing import Set, ForwardRef, List
 
@@ -107,6 +109,9 @@ class Activity(Base):
 
 class Interval(Base):
     __tablename__ = "intervals"
+    __table_args__ = (
+        CheckConstraint('end_datetime > start_datetime', name="CK_intervals_end_datetime_gt_start_datetime"),
+    )
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     start_datetime: datetime.datetime = Column(DateTime, index=True)
@@ -128,18 +133,6 @@ class Interval(Base):
     @end.setter
     def end(self, t):
         self.end_datetime = t
-
-    @validates('start_datetime', 'end_datetime')
-    def validate_dates(self, key, field):
-        if key == 'end_datetime' and isinstance(self.start_datetime, datetime.datetime):
-            if self.start_datetime >= field:
-                raise AssertionError("The end field must be "
-                                     "greater than the start field")
-        elif key == 'start_datetime' and isinstance(self.end_datetime, datetime.datetime):
-            if self.end_datetime <= field:
-                raise AssertionError("The end field must be "
-                                     "greater than the start field")
-        return field
 
     entries = relationship('Entry', back_populates="interval", cascade='all')
 
