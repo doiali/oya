@@ -85,32 +85,3 @@ def delete_interval(interval_id: int, db: Session = Depends(get_db)):
         crud.delete_interval(db=db, interval_id=interval_id)
     except ReferenceError:
         raise HTTPException(status_code=400, detail="interval not found")
-
-
-@app.get("/entries/", tags=["Entries"], response_model=List[schemas.Entry])
-def get_entries(db: Session = Depends(get_db)):
-    return crud.get_entries(db=db)
-
-
-@app.post("/intervals/{interval_id}/entries", tags=["Entries"], response_model=schemas.Entry)
-def create_entry(interval_id: int, entry: schemas.EntryCreate, db: Session = Depends(get_db)):
-    try:
-        return crud.create_entry(db=db, entry=entry, interval_id=interval_id)
-    except ReferenceError as e:
-        raise HTTPException(status_code=400, detail='could not create!')
-
-
-@app.put("/entries/{entry_id}/", tags=["Entries"], response_model=schemas.Entry)
-def update_entry(entry_id: int, entry: schemas.EntryUpdate, db: Session = Depends(get_db)):
-    try:
-        return crud.update_entry(db=db, entry=entry, entry_id=entry_id)
-    except ReferenceError:
-        raise HTTPException(status_code=400, detail='entry not found')
-
-
-@app.delete("/entries/{entry_id}/", tags=["Entries"], status_code=204)
-def delete_entry(entry_id, db: Session = Depends(get_db)):
-    try:
-        crud.delete_entry(db=db, entry_id=entry_id)
-    except ReferenceError as e:
-        raise HTTPException(status_code=400, detail='entry not found')
