@@ -4,6 +4,11 @@ export type Activity = {
   parents: Activity[],
 };
 
+export type ActivitySelect = {
+  id: number,
+  name: string,
+}
+
 export type ActivityCreate = {
   name: string,
   parentIds: number[],
@@ -12,46 +17,33 @@ export type ActivityCreate = {
 export type ActivityUpdate = ActivityCreate & { id: number; };
 
 export type EntryCreate = {
-  dedication?: number,
-  activity_id: number,
-  activity_name: string,
+  activity: ActivitySelect,
 };
 
 export type EntryUpdate = {
-  id?: number,
-  dedication?: number,
-  activity_id: number,
-  activity_name: string,
+  activity: ActivitySelect,
 };
 
 export type Entry = {
-  id: number,
-  interval_id: number,
-  activity_name: string,
   activity: Activity,
-  dedication: number,
-  activity_id: number,
 };
 
-export type IntervalCreate = {
-  note?: string,
+export type IntervalBase = {
   start: string,
   end: string,
+  note?: string,
+}
+
+export type IntervalCreate = IntervalBase & {
   entries: EntryCreate[],
 };
 
-export type IntervalUpdate = {
+export type IntervalUpdate = IntervalBase & {
   id: number,
-  note?: string,
-  start: string,
-  end: string,
   entries?: EntryUpdate[],
 };
 
-export type Interval = {
+export type Interval = IntervalBase & {
   id: number,
-  note?: string,
-  start: string,
-  end: string,
   entries: Entry[],
 };

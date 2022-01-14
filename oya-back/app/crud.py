@@ -65,20 +65,20 @@ def create_interval(db: Session, interval: schemas.IntervalCreate):
     db_interval = models.Interval(
         start=parser.parse(interval.start),
         end=parser.parse(interval.end),
-        note=interval.note
+        note=interval.note,
     )
+    for e in interval.entries:
+        db_interval.entries.append(
+            models.Entry(activity_id=e.activity.id, note=e.note)
+        )
     db.add(db_interval)
     db.commit()
-    db.refresh(db_interval)
-    if interval.entries:
-        for e in interval.entries:
-            create_entry(db=db, entry=e, interval_id=db_interval.id)
-        db.refresh(db_interval)
+    db.refresh()
     return db_interval
 
 
-def update_interval(db: Session, interval: schemas.IntervalUpdate, interval_id):
-    db_interval = db.query(models.Interval).filter(models.Interval.id == interval_id).first()
+def update_interval(db: Session, interval: schemas.IntervalCreate, interval_id):
+    db_interval = db.get(models.Interval,interval_id)
     if not db_interval:
         return
     if interval.note is not None:
@@ -87,17 +87,21 @@ def update_interval(db: Session, interval: schemas.IntervalUpdate, interval_id):
         db_interval.start = parser.parse(interval.start)
     if interval.end is not None:
         db_interval.end = parser.parse(interval.end)
+    new_entries = []
     for e in db_interval.entries:
-        if e.id not in list(map(lambda x: x.id, interval.entries)):
-            delete_entry(db, entry_id=e.id)
+        if e.activity.id not in [ x.activity.id for x in interval.entries]:
+            db.delete(e)
     for e in interval.entries:
-        if e.id:
-            update_entry(db=db, entry=e, entry_id=e.id)
+        db_entry = db.get(models.Entry,{"activity_id":e.activity.id, "interval_id":interval_id})
+        print(db_entry)
+        if db_entry:
+            db_entry.note = e.note
+            new_entries.append(db_entry)
         else:
-            create_entry(db=db, entry=e, interval_id=interval_id)
+            new_entries.append(models.Entry(note=e.note, activity_id=e.activity.id))
+    db_interval.entries = new_entries
     db.commit()
     db.refresh(db_interval)
-
     return db_interval
 
 
@@ -108,41 +112,3 @@ def delete_interval(db: Session, interval_id):
     db.delete(db_interval)
     db.commit()
 
-
-def get_entries(db: Session):
-    return db.query(models.Entry).all()
-
-
-def delete_entry(db: Session, entry_id):
-    db_entry = db.query(models.Entry).filter(models.Entry.id == entry_id).first()
-    if not db_entry:
-        raise ReferenceError('entry not found')
-    db.delete(db_entry)
-    db.commit()
-
-
-def create_entry(db: Session, entry: schemas.EntryCreate, interval_id):
-    db_interval = db.query(models.Interval).filter(models.Interval.id == interval_id).first()
-    if not db_interval:
-        raise ReferenceError('interval not found')
-    activity_db = db.query(models.Activity).filter(models.Activity.id == entry.activity_id).first()
-    if not activity_db:
-        raise ReferenceError('activity not found')
-    db_entry = models.Entry(**entry.dict(), interval_id=interval_id)
-    db.add(db_entry)
-    db.commit()
-    db.refresh(db_entry)
-    return db_entry
-
-
-def update_entry(db: Session, entry: schemas.EntryUpdate, entry_id):
-    db_entry = db.query(models.Entry).filter(models.Entry.id == entry_id).first()
-    if not db_entry:
-        raise ReferenceError('entry not found')
-    e = entry.dict()
-    for key in e:
-        setattr(db_entry, key, e[key])
-    db.add(db_entry)
-    db.commit()
-    db.refresh(db_entry)
-    return db_entry

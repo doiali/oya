@@ -65,8 +65,8 @@ def update_activity(activity_id: int, activity: schemas.ActivityUpdate, db: Sess
 
 
 @app.get("/intervals/", tags=["Intervals"], response_model=List[schemas.Interval])
-def get_intervals(db: Session = Depends(get_db)):
-    return crud.get_intervals(db=db)
+def get_intervals(skip: int = 0, limit: int= 5000, db: Session = Depends(get_db)):
+    return crud.get_intervals(db=db, skip=skip, limit=limit)
 
 
 @app.post("/intervals/", tags=["Intervals"], response_model=schemas.Interval)
@@ -75,7 +75,7 @@ def create_interval(interval: schemas.IntervalCreate, db: Session = Depends(get_
 
 
 @app.put("/intervals/{interval_id}", tags=["Intervals"], response_model=schemas.Interval)
-def update_interval(interval: schemas.IntervalUpdate, interval_id, db: Session = Depends(get_db)):
+def update_interval(interval: schemas.IntervalCreate, interval_id, db: Session = Depends(get_db)):
     return crud.update_interval(db=db, interval_id=interval_id, interval=interval)
 
 

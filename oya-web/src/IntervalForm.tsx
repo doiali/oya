@@ -50,9 +50,9 @@ export default memo(function IntervalForm({ state, activities, onChange, childre
             {activities && (
               <Autocomplete
                 multiple
-                isOptionEqualToValue={(o, v) => o.activity_id === v.activity_id}
-                options={activities.map((a) => ({ activity_id: a.id, activity_name: a.name }))}
-                getOptionLabel={(option) => option.activity_name}
+                isOptionEqualToValue={(o, v) => o.activity.id === v.activity.id}
+                options={activities.map((a) => ({ activity: a }))}
+                getOptionLabel={(option) => option.activity.name}
                 value={state.selectedEntries}
                 onChange={(_, newVal) => onChange('selectedEntries', newVal)}
                 renderInput={(params) => (

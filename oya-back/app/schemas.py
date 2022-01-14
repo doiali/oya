@@ -37,31 +37,21 @@ class Activity(BaseModel):
         orm_mode = True
 
 
-class EntryBase(BaseModel):
-    note: Optional[str]
-    dedication: Optional[float] = 100
-
-
-class EntryCreate(EntryBase):
-    activity_id: int
-
-
-class EntryUpdate(EntryCreate):
-    interval_id: int
-
-
-class IntervalEntryUpdate(EntryCreate):
-    id: Optional[int]
-
-
-class Entry(EntryCreate):
+class ActivitySelect(BaseModel):
     id: int
-    interval_id: int
-    activity_name: str
+
+
+class Entry(BaseModel):
+    note: Optional[str]
     activity: Activity
 
     class Config:
         orm_mode = True
+        
+
+class EntryCreate(BaseModel):
+    note: Optional[str]
+    activity: ActivitySelect
 
 
 class IntervalBase(BaseModel):
@@ -71,11 +61,7 @@ class IntervalBase(BaseModel):
 
 
 class IntervalCreate(IntervalBase):
-    entries: Optional[List[EntryCreate]]
-
-
-class IntervalUpdate(IntervalBase):
-    entries: Optional[List[IntervalEntryUpdate]]
+    entries: List[EntryCreate]
 
 
 class Interval(IntervalBase):

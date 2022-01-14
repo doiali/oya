@@ -47,8 +47,8 @@ export default memo(function IntervalItem(
           <span>{' '}-{' '}</span>
           <Chip dir="rtl" variant="outlined" label={format(end, 'MM/dd-HH:mm eeee')} />
           <span>{' '}:{' '}</span>
-          {interval.entries.map(({ id, activity }) => (
-            <Chip label={activity.name} key={id} />
+          {interval.entries.map(({ activity }) => (
+            <Chip label={activity.name} key={String(interval.id) + '-' + activity.id} />
           ))}
         </Stack>
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
