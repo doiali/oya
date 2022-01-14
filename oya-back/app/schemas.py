@@ -64,7 +64,7 @@ class Entry(BaseModel):
 
 class EntryView(BaseModel):
     note: Optional[str]
-    activity: ActivityBase
+    activity_id: int
 
     class Config:
         orm_mode = True
@@ -90,7 +90,7 @@ class Interval(IntervalBase):
 
 class ReportSinge(BaseModel):
     duration: int
-    activity: ActivityBase
+    occurance: int
 
     class Config:
         orm_mode = True
@@ -99,7 +99,7 @@ class ReportSinge(BaseModel):
 class Period(BaseModel):
     s: str
     e: str
-    d: str
+    d: int
     note: Optional[str]
     entries: List[EntryView]
 

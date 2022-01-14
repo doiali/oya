@@ -130,9 +130,10 @@ def get_daily_report(db: Session, date: datetime.date):
         for e in row.entries:
             for a in [e.activity, *e.activity.allParents]:
                 if str(a.id) not in report:
-                    report[str(a.id)] = {"activity": a, "duration": obj["d"]}
+                    report[str(a.id)] = {"activity": a, "duration": obj["d"], "occurance": 1}
                 else:
                     report[str(a.id)]["duration"] += obj["d"]
+                    report[str(a.id)]["occurance"] += 1
     return {
         "date": str(date),
         "report": report,
