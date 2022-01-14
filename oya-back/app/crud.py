@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import select
 import datetime
 from . import models, schemas
 from dateutil import parser
@@ -6,13 +7,16 @@ from copy import deepcopy
 
 
 def get_activities(db: Session, skip: int = 0, limit: int = 10000):
-    activities = db.query(models.Activity).order_by(models.Activity.id.desc()).\
-        offset(skip).limit(limit).all()
+    stmt = select(models.Activity).\
+        order_by(models.Activity.id.desc()).\
+        options(joinedload(models.Activity.parents)).\
+        offset(skip).limit(limit)
+    activities = db.execute(stmt).scalars().unique().all()
     return activities
 
 
 def get_activity(db: Session, activity_id: int):
-    activity = db.query(models.Activity).filter(models.Activity.id == activity_id).first()
+    activity = db.get(models.Activity,activity_id)
     return activity
 
 
@@ -56,8 +60,15 @@ def delete_activity(db: Session, activity_id: int):
 
 
 def get_intervals(db: Session, skip: int = 0, limit: int = 10000):
-    intervals = db.query(models.Interval).\
-        order_by(models.Interval.end_datetime.desc()).offset(skip).limit(limit).all()
+    stmt = select(models.Interval).\
+        options(
+            joinedload(models.Interval.entries).\
+            joinedload(models.Entry.activity).\
+            joinedload(models.Activity.parents)
+        ).\
+        order_by(models.Interval.end_datetime.desc()).\
+        offset(skip).limit(limit)
+    intervals = db.execute(stmt).scalars().unique().all()
     return intervals
 
 
@@ -73,7 +84,7 @@ def create_interval(db: Session, interval: schemas.IntervalCreate):
         )
     db.add(db_interval)
     db.commit()
-    db.refresh()
+    db.refresh(db_interval)
     return db_interval
 
 
