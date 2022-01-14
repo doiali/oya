@@ -10,11 +10,14 @@ import copy
 
 models.Base.metadata.create_all(bind=engine)
 db: Session = SessionLocal()
-
-x1 = datetime.datetime(year=2021, month=12, day=15)
+x0 = parser.parse('2022-01-13T13:30:00+03:30')
+x1 = datetime.datetime(year=2022, month=1, day=14,hour=14)
 x2 = x1 + datetime.timedelta(days=1)
-
-results: List[models.Interval] = db.query(models.Interval) \
-    .where(x1 < models.Interval.start_datetime).where(models.Interval.start_datetime < x2)
-for a in results:
-    print(a.start_datetime)
+print(type(x0.time()))
+crud.get_daily_report(db=db,date=x0.date())
+# for a in res:
+#     print(a)
+#     # print(a.start_datetime, " " , a.end_datetime, a.entries)
+#     # for x in a:
+#     #     print(x,end=' --- ')
+#     # print("")

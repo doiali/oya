@@ -1,4 +1,5 @@
 from typing import List
+from dateutil import parser
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -75,6 +76,11 @@ def update_activity(
 @app.get("/intervals/", tags=["Intervals"], response_model=List[schemas.Interval])
 def get_intervals(skip: int = 0, limit: int = 5000, db: Session = Depends(get_db)):
     return crud.get_intervals(db=db, skip=skip, limit=limit)
+
+
+@app.get("/daily_report/", tags=["Reports"], response_model=schemas.DailyReport)
+def get_daily_report(date: str, db: Session = Depends(get_db)):
+    return crud.get_daily_report(db=db, date=parser.parse(date).date())
 
 
 @app.post("/intervals/", tags=["Intervals"], response_model=schemas.Interval)

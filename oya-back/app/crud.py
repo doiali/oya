@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import select
 import datetime
 from . import models, schemas
+from .models import Interval, Activity, Entry
 from dateutil import parser
 from copy import deepcopy
 
@@ -88,6 +89,54 @@ def get_intervals(db: Session, skip: int = 0, limit: int = 10000):
     )
     intervals = db.execute(stmt).scalars().unique().all()
     return intervals
+
+
+def get_daily_report(db: Session, date: datetime.date):
+    stmt = (
+        select(Interval)
+        .options(
+            joinedload(Interval.entries)
+            .joinedload(Entry.activity)
+            .joinedload(Activity.parents)
+        )
+        .where(
+            Interval.start_datetime.between(date, date + datetime.timedelta(days=1))
+            | Interval.end_datetime.between(date, date + datetime.timedelta(days=1))
+        )
+        .order_by(Interval.end_datetime.desc())
+    )
+    res = db.execute(stmt).unique().scalars()
+    periods = []
+    report = {}
+    for row in res:
+        obj = {
+            "s": str(row.start_datetime.time())[0:5]
+            if row.start_datetime.date() >= date
+            else '00:00',
+            "e": str(row.end_datetime.time())[0:5]
+            if row.end_datetime.date() < date + datetime.timedelta(days=1)
+            else "24:00",
+            "note": row.note,
+            "entries": row.entries,
+        }
+        obj["d"] = int(obj["e"][0:2]) * 60 + int(obj["e"][3:5]) - int(obj["s"][0:2]) * 60 - int(obj["s"][3:5])
+        delta = datetime.timedelta(minutes=obj["d"])
+        periods.append(obj)
+        for e in row.entries:
+            if str(e.activity.id) not in report:
+                report[str(e.activity.id)] = {
+                    "activity": e.activity,
+                    "duration": obj["d"]
+                }
+            else:
+                report[str(e.activity.id)]["duration"] += obj["d"]
+    return {
+        "date": str(date),
+        "report": report,
+        "periods": periods,
+    }
+    #     print(obj["s"], obj["e"], obj["entries"] , row)
+    # print(report)
 
 
 def create_interval(db: Session, interval: schemas.IntervalCreate):

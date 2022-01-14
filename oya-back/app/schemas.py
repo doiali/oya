@@ -1,7 +1,9 @@
-from typing import List, Optional, ForwardRef
+from typing import List, Optional, ForwardRef, Any, Dict
+import typing
 
 from pydantic import BaseModel
 import datetime
+
 
 Activity = ForwardRef("Activity")
 Interval = ForwardRef("Interval")
@@ -70,6 +72,34 @@ class Interval(IntervalBase):
 
     class Config:
         orm_mode = True
+
+
+class ReportSinge(BaseModel):
+    activity: Activity
+    duration: int
+
+    class Config:
+        orm_node = True
+
+
+class Period(BaseModel):
+    s: str
+    e: str
+    d: str
+    note: Optional[str]
+    entries: List[Entry]
+
+    class Config:
+        orm_node = True
+
+
+class DailyReport(BaseModel):
+    date: str
+    periods: List[Period]
+    report: Dict[str, ReportSinge]
+
+    class config:
+        orm_node = True
 
 
 Activity.update_forward_refs()
