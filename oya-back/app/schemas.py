@@ -29,7 +29,7 @@ class ActivityBase(BaseModel):
         orm_mode = True
 
 
-class Activity(ActivityBase, BaseModel):
+class Activity(ActivityBase):
     parents: List[Activity] = []
 
     # children: List[Activity] = []
@@ -40,9 +40,6 @@ class Activity(ActivityBase, BaseModel):
     # parentIds: List[int] = []
     # allParentIds: List[int] = []
     # allParents: List[Activity] = []
-
-    class Config:
-        orm_mode = True
 
 
 class ActivitySelect(BaseModel):
