@@ -112,24 +112,27 @@ def get_daily_report(db: Session, date: datetime.date):
         obj = {
             "s": str(row.start_datetime.time())[0:5]
             if row.start_datetime.date() >= date
-            else '00:00',
+            else "00:00",
             "e": str(row.end_datetime.time())[0:5]
             if row.end_datetime.date() < date + datetime.timedelta(days=1)
             else "24:00",
             "note": row.note,
             "entries": row.entries,
         }
-        obj["d"] = int(obj["e"][0:2]) * 60 + int(obj["e"][3:5]) - int(obj["s"][0:2]) * 60 - int(obj["s"][3:5])
+        obj["d"] = (
+            int(obj["e"][0:2]) * 60
+            + int(obj["e"][3:5])
+            - int(obj["s"][0:2]) * 60
+            - int(obj["s"][3:5])
+        )
         delta = datetime.timedelta(minutes=obj["d"])
         periods.append(obj)
         for e in row.entries:
-            if str(e.activity.id) not in report:
-                report[str(e.activity.id)] = {
-                    "activity": e.activity,
-                    "duration": obj["d"]
-                }
-            else:
-                report[str(e.activity.id)]["duration"] += obj["d"]
+            for a in [e.activity, *e.activity.allParents]:
+                if str(a.id) not in report:
+                    report[str(a.id)] = {"activity": a, "duration": obj["d"]}
+                else:
+                    report[str(a.id)]["duration"] += obj["d"]
     return {
         "date": str(date),
         "report": report,

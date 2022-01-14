@@ -21,9 +21,15 @@ class ActivityUpdate(BaseModel):
     childIds: Optional[List[int]]
 
 
-class Activity(BaseModel):
+class ActivityBase(BaseModel):
     id: int
     name: str
+
+    class Config:
+        orm_mode = True
+
+
+class Activity(ActivityBase, BaseModel):
     parents: List[Activity] = []
 
     # children: List[Activity] = []
@@ -43,6 +49,11 @@ class ActivitySelect(BaseModel):
     id: int
 
 
+class EntryCreate(BaseModel):
+    note: Optional[str]
+    activity: ActivitySelect
+
+
 class Entry(BaseModel):
     note: Optional[str]
     activity: Activity
@@ -51,9 +62,12 @@ class Entry(BaseModel):
         orm_mode = True
 
 
-class EntryCreate(BaseModel):
+class EntryView(BaseModel):
     note: Optional[str]
-    activity: ActivitySelect
+    activity: ActivityBase
+
+    class Config:
+        orm_mode = True
 
 
 class IntervalBase(BaseModel):
@@ -75,11 +89,11 @@ class Interval(IntervalBase):
 
 
 class ReportSinge(BaseModel):
-    activity: Activity
     duration: int
+    activity: ActivityBase
 
     class Config:
-        orm_node = True
+        orm_mode = True
 
 
 class Period(BaseModel):
@@ -87,10 +101,10 @@ class Period(BaseModel):
     e: str
     d: str
     note: Optional[str]
-    entries: List[Entry]
+    entries: List[EntryView]
 
     class Config:
-        orm_node = True
+        orm_mode = True
 
 
 class DailyReport(BaseModel):
@@ -98,8 +112,8 @@ class DailyReport(BaseModel):
     periods: List[Period]
     report: Dict[str, ReportSinge]
 
-    class config:
-        orm_node = True
+    class Config:
+        orm_mode = True
 
 
 Activity.update_forward_refs()
