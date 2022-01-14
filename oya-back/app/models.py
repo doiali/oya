@@ -9,9 +9,8 @@ from typing import Set, ForwardRef, List
 
 class Association(Base):
     __tablename__ = 'association'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    child_id = Column(Integer, ForeignKey('activities.id'))
-    parent_id = Column(Integer, ForeignKey('activities.id'), nullable=True)
+    child_id = Column(Integer, ForeignKey('activities.id'), primary_key=True)
+    parent_id = Column(Integer, ForeignKey('activities.id'), primary_key=True)
     order = Column(Integer)
 
 
