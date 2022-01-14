@@ -7,27 +7,36 @@ from copy import deepcopy
 
 
 def get_activities(db: Session, skip: int = 0, limit: int = 10000):
-    stmt = select(models.Activity).\
-        order_by(models.Activity.id.desc()).\
-        options(joinedload(models.Activity.parents)).\
-        offset(skip).limit(limit)
+    stmt = (
+        select(models.Activity)
+        .order_by(models.Activity.id.desc())
+        .options(joinedload(models.Activity.parents))
+        .offset(skip)
+        .limit(limit)
+    )
     activities = db.execute(stmt).scalars().unique().all()
     return activities
 
 
 def get_activity(db: Session, activity_id: int):
-    activity = db.get(models.Activity,activity_id)
+    activity = db.get(models.Activity, activity_id)
     return activity
 
 
 def create_activity(db: Session, activity: schemas.ActivityCreate):
     db_activity = models.Activity(name=activity.name)
     if activity.parentIds:
-        db_activity.parents = db.query(models.Activity).\
-            filter(models.Activity.id.in_(activity.parentIds)).all()
+        db_activity.parents = (
+            db.query(models.Activity)
+            .filter(models.Activity.id.in_(activity.parentIds))
+            .all()
+        )
     if activity.childIds:
-        db_activity.children = db.query(models.Activity).\
-            filter(models.Activity.id.in_(activity.childIds)).all()
+        db_activity.children = (
+            db.query(models.Activity)
+            .filter(models.Activity.id.in_(activity.childIds))
+            .all()
+        )
     db.add(db_activity)
     db.commit()
     db.refresh(db_activity)
@@ -38,11 +47,17 @@ def update_activity(db: Session, activity: schemas.ActivityUpdate, activity_id: 
     db_activity = get_activity(db=db, activity_id=activity_id)
     if db_activity:
         if activity.parentIds is not None:
-            db_activity.parents = db.query(models.Activity).\
-                filter(models.Activity.id.in_(activity.parentIds)).all()
+            db_activity.parents = (
+                db.query(models.Activity)
+                .filter(models.Activity.id.in_(activity.parentIds))
+                .all()
+            )
         if activity.childIds is not None:
-            db_activity.children = db.query(models.Activity).\
-                filter(models.Activity.id.in_(activity.childIds)).all()
+            db_activity.children = (
+                db.query(models.Activity)
+                .filter(models.Activity.id.in_(activity.childIds))
+                .all()
+            )
         if activity.name:
             db_activity.name = activity.name
         db.add(db_activity)
@@ -60,14 +75,17 @@ def delete_activity(db: Session, activity_id: int):
 
 
 def get_intervals(db: Session, skip: int = 0, limit: int = 10000):
-    stmt = select(models.Interval).\
-        options(
-            joinedload(models.Interval.entries).\
-            joinedload(models.Entry.activity).\
-            joinedload(models.Activity.parents)
-        ).\
-        order_by(models.Interval.end_datetime.desc()).\
-        offset(skip).limit(limit)
+    stmt = (
+        select(models.Interval)
+        .options(
+            joinedload(models.Interval.entries)
+            .joinedload(models.Entry.activity)
+            .joinedload(models.Activity.parents)
+        )
+        .order_by(models.Interval.end_datetime.desc())
+        .offset(skip)
+        .limit(limit)
+    )
     intervals = db.execute(stmt).scalars().unique().all()
     return intervals
 
@@ -79,9 +97,7 @@ def create_interval(db: Session, interval: schemas.IntervalCreate):
         note=interval.note,
     )
     for e in interval.entries:
-        db_interval.entries.append(
-            models.Entry(activity_id=e.activity.id, note=e.note)
-        )
+        db_interval.entries.append(models.Entry(activity_id=e.activity.id, note=e.note))
     db.add(db_interval)
     db.commit()
     db.refresh(db_interval)
@@ -89,7 +105,7 @@ def create_interval(db: Session, interval: schemas.IntervalCreate):
 
 
 def update_interval(db: Session, interval: schemas.IntervalCreate, interval_id):
-    db_interval = db.get(models.Interval,interval_id)
+    db_interval = db.get(models.Interval, interval_id)
     if not db_interval:
         return
     if interval.note is not None:
@@ -100,10 +116,12 @@ def update_interval(db: Session, interval: schemas.IntervalCreate, interval_id):
         db_interval.end = parser.parse(interval.end)
     new_entries = []
     for e in db_interval.entries:
-        if e.activity.id not in [ x.activity.id for x in interval.entries]:
+        if e.activity.id not in [x.activity.id for x in interval.entries]:
             db.delete(e)
     for e in interval.entries:
-        db_entry = db.get(models.Entry,{"activity_id":e.activity.id, "interval_id":interval_id})
+        db_entry = db.get(
+            models.Entry, {"activity_id": e.activity.id, "interval_id": interval_id}
+        )
         print(db_entry)
         if db_entry:
             db_entry.note = e.note
@@ -117,9 +135,10 @@ def update_interval(db: Session, interval: schemas.IntervalCreate, interval_id):
 
 
 def delete_interval(db: Session, interval_id):
-    db_interval = db.query(models.Interval).filter(models.Interval.id == interval_id).first()
+    db_interval = (
+        db.query(models.Interval).filter(models.Interval.id == interval_id).first()
+    )
     if not db_interval:
-        raise ReferenceError('interval not exist')
+        raise ReferenceError("interval not exist")
     db.delete(db_interval)
     db.commit()
-

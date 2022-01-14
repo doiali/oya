@@ -45,7 +45,9 @@ def create_activity(activity: schemas.ActivityCreate, db: Session = Depends(get_
     return crud.create_activity(db=db, activity=activity)
 
 
-@app.delete("/activities/{activity_id}", tags=["Activities"], response_model=schemas.Activity)
+@app.delete(
+    "/activities/{activity_id}", tags=["Activities"], response_model=schemas.Activity
+)
 def delete_activity(activity_id: int, db: Session = Depends(get_db)):
     deleted_activity = crud.delete_activity(db=db, activity_id=activity_id)
     if not deleted_activity:
@@ -53,10 +55,16 @@ def delete_activity(activity_id: int, db: Session = Depends(get_db)):
     return deleted_activity
 
 
-@app.put("/activities/{activity_id}", tags=["Activities"], response_model=schemas.Activity)
-def update_activity(activity_id: int, activity: schemas.ActivityUpdate, db: Session = Depends(get_db)):
+@app.put(
+    "/activities/{activity_id}", tags=["Activities"], response_model=schemas.Activity
+)
+def update_activity(
+    activity_id: int, activity: schemas.ActivityUpdate, db: Session = Depends(get_db)
+):
     try:
-        updated_activity = crud.update_activity(db=db, activity=activity, activity_id=activity_id)
+        updated_activity = crud.update_activity(
+            db=db, activity=activity, activity_id=activity_id
+        )
         if not updated_activity:
             raise HTTPException(status_code=400, detail="activity not found")
         return updated_activity
@@ -65,7 +73,7 @@ def update_activity(activity_id: int, activity: schemas.ActivityUpdate, db: Sess
 
 
 @app.get("/intervals/", tags=["Intervals"], response_model=List[schemas.Interval])
-def get_intervals(skip: int = 0, limit: int= 5000, db: Session = Depends(get_db)):
+def get_intervals(skip: int = 0, limit: int = 5000, db: Session = Depends(get_db)):
     return crud.get_intervals(db=db, skip=skip, limit=limit)
 
 
@@ -74,8 +82,12 @@ def create_interval(interval: schemas.IntervalCreate, db: Session = Depends(get_
     return crud.create_interval(db=db, interval=interval)
 
 
-@app.put("/intervals/{interval_id}", tags=["Intervals"], response_model=schemas.Interval)
-def update_interval(interval: schemas.IntervalCreate, interval_id, db: Session = Depends(get_db)):
+@app.put(
+    "/intervals/{interval_id}", tags=["Intervals"], response_model=schemas.Interval
+)
+def update_interval(
+    interval: schemas.IntervalCreate, interval_id, db: Session = Depends(get_db)
+):
     return crud.update_interval(db=db, interval_id=interval_id, interval=interval)
 
 

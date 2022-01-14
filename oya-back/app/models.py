@@ -1,5 +1,13 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, \
-    String, DateTime, Float, Text
+from sqlalchemy import (
+    Boolean,
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    DateTime,
+    Float,
+    Text,
+)
 from sqlalchemy.orm import relationship, validates
 from dateutil import parser
 import datetime
@@ -10,13 +18,13 @@ from typing import Set, ForwardRef, List
 
 
 class Association(Base):
-    __tablename__ = 'association'
-    child_id = Column(Integer, ForeignKey('activities.id'), primary_key=True)
-    parent_id = Column(Integer, ForeignKey('activities.id'), primary_key=True)
+    __tablename__ = "association"
+    child_id = Column(Integer, ForeignKey("activities.id"), primary_key=True)
+    parent_id = Column(Integer, ForeignKey("activities.id"), primary_key=True)
     order = Column(Integer)
 
 
-Activity = ForwardRef('Activity')
+Activity = ForwardRef("Activity")
 
 
 class Activity(Base):
@@ -25,18 +33,18 @@ class Activity(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String)
     parents = relationship(
-        'Activity',
-        secondary='association',
+        "Activity",
+        secondary="association",
         primaryjoin=id == Association.child_id,
         secondaryjoin=id == Association.parent_id,
-        back_populates='children'
+        back_populates="children",
     )
     children = relationship(
-        'Activity',
-        secondary='association',
+        "Activity",
+        secondary="association",
         primaryjoin=id == Association.parent_id,
         secondaryjoin=id == Association.child_id,
-        back_populates='parents'
+        back_populates="parents",
     )
 
     @property
@@ -89,19 +97,19 @@ class Activity(Base):
             x.add(p.id)
         return x
 
-    @validates('parents')
+    @validates("parents")
     def validate_parents(self, key, parent):
         if parent.id in self.allChildIds:
             raise ValueError("failed validation")
         return parent
 
-    @validates('children')
+    @validates("children")
     def validate_children(self, key, child):
         if child.id in self.allParentIds:
             raise ValueError("failed validation")
         return child
 
-    entries = relationship('Entry', back_populates='activity', cascade='all')
+    entries = relationship("Entry", back_populates="activity", cascade="all")
 
     def __repr__(self):
         return f"<activity {self.id} {self.name}>"
@@ -110,7 +118,10 @@ class Activity(Base):
 class Interval(Base):
     __tablename__ = "intervals"
     __table_args__ = (
-        CheckConstraint('end_datetime > start_datetime', name="CK_intervals_end_datetime_gt_start_datetime"),
+        CheckConstraint(
+            "end_datetime > start_datetime",
+            name="CK_intervals_end_datetime_gt_start_datetime",
+        ),
     )
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
@@ -134,10 +145,12 @@ class Interval(Base):
     def end(self, t):
         self.end_datetime = t
 
-    entries = relationship('Entry', back_populates="interval", cascade='all')
+    entries = relationship("Entry", back_populates="interval", cascade="all")
 
     def __repr__(self):
-        return f'<interval {self.start_datetime} to {self.end_datetime}: {self.entries}>'
+        return (
+            f"<interval {self.start_datetime} to {self.end_datetime}: {self.entries}>"
+        )
 
 
 class Entry(Base):

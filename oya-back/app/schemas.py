@@ -3,8 +3,8 @@ from typing import List, Optional, ForwardRef
 from pydantic import BaseModel
 import datetime
 
-Activity = ForwardRef('Activity')
-Interval = ForwardRef('Interval')
+Activity = ForwardRef("Activity")
+Interval = ForwardRef("Interval")
 
 
 class ActivityCreate(BaseModel):
@@ -47,7 +47,7 @@ class Entry(BaseModel):
 
     class Config:
         orm_mode = True
-        
+
 
 class EntryCreate(BaseModel):
     note: Optional[str]
