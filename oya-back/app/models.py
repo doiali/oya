@@ -143,18 +143,12 @@ class Interval(Base):
 class Entry(Base):
     __tablename__ = "entries"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    interval_id = Column(Integer, ForeignKey("intervals.id"), nullable=False)
-    activity_id = Column(Integer, ForeignKey("activities.id"), nullable=False)
-    dedication = Column(Float)
+    interval_id = Column(Integer, ForeignKey("intervals.id"), primary_key=True)
+    activity_id = Column(Integer, ForeignKey("activities.id"), primary_key=True)
     note = Column(Text)
 
     interval = relationship(Interval, back_populates="entries")
     activity = relationship(Activity, back_populates="entries")
-
-    @property
-    def activity_name(self):
-        return self.activity.name
 
     def __repr__(self):
         return f"{self.activity.name}"
