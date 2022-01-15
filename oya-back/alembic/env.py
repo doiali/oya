@@ -29,7 +29,7 @@ target_metadata = Base.metadata
 # ... etc.
 config.set_main_option(
     'sqlalchemy.url',
-    "postgresql://" + configEnv('db_username') + ":" + configEnv('db_password') + "@localhost/oya"
+    "postgresql://" + configEnv('db_username') + ":" + configEnv('db_password').replace("%","%%") + "@localhost/oya"
 )
 
 def run_migrations_offline():
