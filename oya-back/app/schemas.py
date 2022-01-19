@@ -30,15 +30,15 @@ class ActivityBase(BaseModel):
 
 
 class Activity(ActivityBase):
-    parents: List[Activity] = []
 
+    parents: List[Activity] = []
     # children: List[Activity] = []
     # associations: List[Association] = []
-    # childIds: List[int] = []
-    # allChildIds: List[int] = []
+    parentIds: List[int] = []
+    childIds: List[int] = []
+    allParentIds: List[int] = []
+    allChildIds: List[int] = []
     # allChildren: List[Activity] = []
-    # parentIds: List[int] = []
-    # allParentIds: List[int] = []
     # allParents: List[Activity] = []
 
 

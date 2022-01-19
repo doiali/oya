@@ -6,12 +6,12 @@ import useIntervals from './useIntervals';
 import useActivities from './useActivities';
 
 export default function HomePage() {
-  const { data: intervals } = useIntervals();
-  const { data: activities } = useActivities();
+  const { intervals } = useIntervals();
+  const { activities, loaded } = useActivities();
 
   return (
     <Grid spacing={2} container justifyContent="center">
-      {(intervals && activities) ? (
+      {(intervals && loaded) ? (
         <>
           <Grid item xs={12} md={8}>
             <IntervalAdder intervals={intervals} activities={activities} />

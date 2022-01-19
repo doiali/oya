@@ -2,6 +2,23 @@ export type Activity = {
   id: number,
   name: string,
   parents: Activity[],
+  parentIds: number[],
+  childIds: number[],
+  allParentIds: number[],
+  allChildIds: number[],
+};
+
+export type Activity2 = {
+  id: number,
+  name: string,
+  parents: Activity[],
+  children: Activity[],
+  parentIds: number[],
+  childIds: number[],
+  allParents: Activity[],
+  allChildren: Activity[],
+  allParentIds: number[],
+  allChildIds: number[],
 };
 
 export type ActivitySelect = {
