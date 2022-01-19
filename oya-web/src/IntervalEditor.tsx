@@ -1,7 +1,7 @@
 
 import { Button, Stack } from '@mui/material';
 import React, { memo, useState } from 'react';
-import { EntryUpdate, IntervalUpdate, Interval, Activity } from './apiService/types';
+import { Entry, Interval } from './apiService/types';
 import { updateInterval } from './apiService';
 import { mutate } from 'swr';
 import AlertService from './AlertService';
@@ -9,17 +9,13 @@ import IntervalForm, { IntervalFormProps } from './IntervalForm';
 
 type IntervalEditorProps = {
   interval: Interval,
-  activities: Activity[],
   onClose?: () => void;
 };
 
-export default memo(function IntervalEditor({ interval, onClose, activities }: IntervalEditorProps) {
+export default memo(function IntervalEditor({ interval, onClose }: IntervalEditorProps) {
   const formProps = useIntervalEdit({ interval, onSuccess: onClose });
   return (
-    <IntervalForm
-      {...formProps}
-      activities={activities}
-    >
+    <IntervalForm {...formProps}>
       <Stack direction="row">
         <Button disabled={formProps.state.loading} size="large" type="submit" variant="contained">
           save
@@ -37,7 +33,7 @@ function useIntervalEdit({ interval, onSuccess }: { interval: Interval, onSucces
     start: new Date(interval.start),
     end: new Date(interval.end),
     note: (interval.note ?? '') as string,
-    selectedEntries: interval.entries as EntryUpdate[],
+    selectedEntries: interval.entries as Entry[],
     loading: false,
   });
   const onChange: IntervalFormProps['onChange'] = (name, value) => {
@@ -47,7 +43,7 @@ function useIntervalEdit({ interval, onSuccess }: { interval: Interval, onSucces
     e.preventDefault();
     setState((prev) => ({ ...prev, loading: true }));
     if (state.start && state.end) {
-      const data: IntervalUpdate = {
+      const data: Interval = {
         id: interval.id,
         note: state.note,
         start: state.start?.toISOString(),

@@ -4,25 +4,26 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { DateTimePicker } from '@mui/lab';
 import { Autocomplete, Stack, TextField } from '@mui/material';
 import React, { memo } from 'react';
-import { EntryUpdate, Activity } from './apiService/types';
+import { Entry } from './apiService/types';
 import MarkdownBox from './MarkdownBox';
+import useActivities from './useActivities';
 
 export type IntervalFormProps = {
   state: {
     start: Date,
     end: Date,
     note: string,
-    selectedEntries: EntryUpdate[],
+    selectedEntries: Entry[],
   },
-  activities: Activity[],
   children?: React.ReactNode,
   onSubmit?: (e: React.FormEvent) => void;
   onChange(name: 'start' | 'end', value: Date | null): void,
   onChange(name: 'note', value: string): void,
-  onChange(name: 'selectedEntries', value: EntryUpdate[]): void,
+  onChange(name: 'selectedEntries', value: Entry[]): void,
 };
 
-export default memo(function IntervalForm({ state, activities, onChange, children, onSubmit: handleSubmit }: IntervalFormProps) {
+export default memo(function IntervalForm({ state, onChange, children, onSubmit: handleSubmit }: IntervalFormProps) {
+  const { activities, activityMappings } = useActivities();
   return (
     <form onSubmit={handleSubmit}>
       <Box p={2}>
@@ -50,11 +51,10 @@ export default memo(function IntervalForm({ state, activities, onChange, childre
             {activities && (
               <Autocomplete
                 multiple
-                isOptionEqualToValue={(o, v) => o.activity.id === v.activity.id}
-                options={activities.map((a) => ({ activity: a }))}
-                getOptionLabel={(option) => option.activity.name}
-                value={state.selectedEntries}
-                onChange={(_, newVal) => onChange('selectedEntries', newVal)}
+                options={activities.map(a => a.id)}
+                getOptionLabel={(o) => activityMappings[o]?.name ?? 'unkown activity'}
+                value={state.selectedEntries.map(e => e.activity_id)}
+                onChange={(_, newVal) => onChange('selectedEntries', newVal.map(x => ({ activity_id: x })))}
                 renderInput={(params) => (
                   <TextField
                     {...params}

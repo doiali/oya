@@ -1,4 +1,4 @@
-import { Interval, Activity } from './apiService/types';
+import { Interval } from './apiService/types';
 import { format } from 'date-fns-jalali';
 import { Stack, Divider, Chip, Box, Typography } from '@mui/material';
 import React, { memo, useMemo } from 'react';
@@ -7,10 +7,9 @@ import IntervalItem from './IntervalItem';
 
 type IntervalsListProps = {
   intervals: Interval[],
-  activities: Activity[],
 };
 
-export default memo(function IntervalsList({ intervals, activities }: IntervalsListProps) {
+export default memo(function IntervalsList({ intervals }: IntervalsListProps) {
   const { filteredIntervals, ...intervalsFilterProps } = useIntervalsFilter({ intervals });
 
   const list = useMemo(() => {
@@ -28,17 +27,17 @@ export default memo(function IntervalsList({ intervals, activities }: IntervalsL
                   <Chip color="secondary" dir="rtl" label={format(new Date(interval.end), 'eeee d MMMM y')} />
                 </Divider>
               )}
-              <IntervalItem activities={activities} index={filteredIntervals.length - i} interval={interval} />
+              <IntervalItem index={filteredIntervals.length - i} interval={interval} />
             </React.Fragment>
           );
         })}
       </Stack>
     );
-  }, [filteredIntervals, activities]);
+  }, [filteredIntervals]);
 
   return (
     <Box component="section">
-      <IntervalsFilter {...intervalsFilterProps} activities={activities} />
+      <IntervalsFilter {...intervalsFilterProps}/>
       <Typography mb={2} variant="h5">
         Intervals List
       </Typography>

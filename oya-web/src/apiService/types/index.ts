@@ -1,30 +1,19 @@
-export type Activity = {
+export type ActivityRaw = {
   id: number,
   name: string,
-  parents: Activity[],
   parentIds: number[],
   childIds: number[],
   allParentIds: number[],
   allChildIds: number[],
 };
 
-export type Activity2 = {
-  id: number,
-  name: string,
+export type Activity = ActivityRaw & {
   parents: Activity[],
   children: Activity[],
-  parentIds: number[],
-  childIds: number[],
   allParents: Activity[],
   allChildren: Activity[],
-  allParentIds: number[],
-  allChildIds: number[],
 };
 
-export type ActivitySelect = {
-  id: number,
-  name: string,
-}
 
 export type ActivityCreate = {
   name: string,
@@ -33,16 +22,9 @@ export type ActivityCreate = {
 
 export type ActivityUpdate = ActivityCreate & { id: number; };
 
-export type EntryCreate = {
-  activity: ActivitySelect,
-};
-
-export type EntryUpdate = {
-  activity: ActivitySelect,
-};
 
 export type Entry = {
-  activity: Activity,
+  activity_id: number,
 };
 
 export type IntervalBase = {
@@ -52,13 +34,8 @@ export type IntervalBase = {
 }
 
 export type IntervalCreate = IntervalBase & {
-  entries: EntryCreate[],
-};
-
-export type IntervalUpdate = IntervalBase & {
-  id: number,
-  entries?: EntryUpdate[],
-};
+  entries: Entry[],
+}
 
 export type Interval = IntervalBase & {
   id: number,

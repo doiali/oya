@@ -5,12 +5,14 @@ import { Activity } from './apiService';
 import { memo, useState } from 'react';
 import ActivityAdder from './ActivityAdder';
 import ActivityEditor from './ActivityEditor';
+import useActivities from './useActivities';
 
 export function getActivityParentsNames(a: Activity): string {
   return a.name.toLowerCase() + ' ' + a.parents.map((p) => getActivityParentsNames(p)).join(' ');
 }
 
-export default memo(function ActivitiesPanel({ activities }: { activities: Activity[]; }) {
+export default memo(function ActivitiesPanel() {
+  const { activities } = useActivities()
   const [searchVal, setSearchVal] = useState('');
   const theme = useTheme();
   const searchIndex = activities.map((a) => getActivityParentsNames(a));

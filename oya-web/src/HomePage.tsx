@@ -7,18 +7,18 @@ import useActivities from './useActivities';
 
 export default function HomePage() {
   const { intervals } = useIntervals();
-  const { activities, loaded } = useActivities();
+  const { loaded } = useActivities();
 
   return (
     <Grid spacing={2} container justifyContent="center">
       {(intervals && loaded) ? (
         <>
           <Grid item xs={12} md={8}>
-            <IntervalAdder intervals={intervals} activities={activities} />
-            <IntervalsList intervals={intervals} activities={activities} />
+            <IntervalAdder intervals={intervals} />
+            <IntervalsList intervals={intervals} />
           </Grid>
           <Grid item xs={12} md={4}>
-            <ActivitiesPanel activities={activities} />
+            <ActivitiesPanel />
           </Grid>
         </>
       ) : <CircularProgress />}

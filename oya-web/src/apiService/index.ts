@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Activity, ActivityUpdate, ActivityCreate, Interval, IntervalCreate, IntervalUpdate } from './types';
+import { ActivityRaw, ActivityUpdate, ActivityCreate, Interval, IntervalCreate } from './types';
 export * from './types';
 
 const session = axios.create();
@@ -11,15 +11,15 @@ session.defaults.timeout = 10000;
 export { session };
 
 export const getActivities = () => (
-  session.get<Activity[]>('/activities/')
+  session.get<ActivityRaw[]>('/activities/')
 );
 
 export const editActivity = ({ id, ...rest }: ActivityUpdate) => (
-  session.put<Activity>(`/activities/${id}/`, rest)
+  session.put<ActivityRaw>(`/activities/${id}/`, rest)
 );
 
 export const createActivity = (data: ActivityCreate) => (
-  session.post<Activity>('/activities/', data)
+  session.post<ActivityRaw>('/activities/', data)
 );
 
 export const deleteActivity = (id: number) => (
@@ -34,7 +34,7 @@ export const addInterval = (data: IntervalCreate) => (
   session.post<Interval>('/intervals/', data)
 );
 
-export const updateInterval = (data: IntervalUpdate) => (
+export const updateInterval = (data: Interval) => (
   session.put<Interval>(`/intervals/${data.id}`, data)
 );
 

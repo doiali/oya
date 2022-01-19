@@ -150,7 +150,7 @@ def create_interval(db: Session, interval: schemas.IntervalCreate):
         note=interval.note,
     )
     for e in interval.entries:
-        db_interval.entries.append(models.Entry(activity_id=e.activity.id, note=e.note))
+        db_interval.entries.append(models.Entry(activity_id=e.activity_id, note=e.note))
     db.add(db_interval)
     db.commit()
     db.refresh(db_interval)
@@ -169,18 +169,18 @@ def update_interval(db: Session, interval: schemas.IntervalCreate, interval_id):
         db_interval.end = parser.parse(interval.end)
     new_entries = []
     for e in db_interval.entries:
-        if e.activity.id not in [x.activity.id for x in interval.entries]:
+        if e.activity_id not in [x.activity_id for x in interval.entries]:
             db.delete(e)
     for e in interval.entries:
         db_entry = db.get(
-            models.Entry, {"activity_id": e.activity.id, "interval_id": interval_id}
+            models.Entry, {"activity_id": e.activity_id, "interval_id": interval_id}
         )
         print(db_entry)
         if db_entry:
             db_entry.note = e.note
             new_entries.append(db_entry)
         else:
-            new_entries.append(models.Entry(note=e.note, activity_id=e.activity.id))
+            new_entries.append(models.Entry(note=e.note, activity_id=e.activity_id))
     db_interval.entries = new_entries
     db.commit()
     db.refresh(db_interval)

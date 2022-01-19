@@ -1,8 +1,7 @@
-from typing import List, Optional, ForwardRef, Any, Dict
+from typing import List, Optional, ForwardRef, Dict
 import typing
 
 from pydantic import BaseModel
-import datetime
 
 
 Activity = ForwardRef("Activity")
@@ -31,7 +30,7 @@ class ActivityBase(BaseModel):
 
 class Activity(ActivityBase):
 
-    parents: List[Activity] = []
+    # parents: List[Activity] = []
     # children: List[Activity] = []
     # associations: List[Association] = []
     parentIds: List[int] = []
@@ -42,24 +41,12 @@ class Activity(ActivityBase):
     # allParents: List[Activity] = []
 
 
-class ActivitySelect(BaseModel):
-    id: int
-
-
 class EntryCreate(BaseModel):
     note: Optional[str]
-    activity: ActivitySelect
+    activity_id: int
 
 
 class Entry(BaseModel):
-    note: Optional[str]
-    activity: Activity
-
-    class Config:
-        orm_mode = True
-
-
-class EntryView(BaseModel):
     note: Optional[str]
     activity_id: int
 
@@ -98,7 +85,7 @@ class Period(BaseModel):
     e: str
     d: int
     note: Optional[str]
-    entries: List[EntryView]
+    entries: List[Entry]
 
     class Config:
         orm_mode = True

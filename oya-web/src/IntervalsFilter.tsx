@@ -5,10 +5,10 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { DateTimePicker } from '@mui/lab';
 import AdapterJalali from '@date-io/date-fns-jalali';
 import useDelayedState from './useDelayedState';
+import useActivities from './useActivities';
 
 type IntervalsFilterProps = {
   // intervals: Interval[],
-  activities: Activity[],
   // filteredIntervals: Interval[],
   state: {
     selectedActivities: Activity[],
@@ -27,8 +27,9 @@ type IntervalsFilterProps = {
 };
 
 export default memo(function IntervalsFilter({
-  activities, state, results: { sum }, onChange, onReset: handleReset,
+  state, results: { sum }, onChange, onReset: handleReset,
 }: IntervalsFilterProps) {
+  const { activities } = useActivities();
   const theme = useTheme();
   return (
     <Paper sx={{ p: 2, mb: 2, backgroundColor: emphasize(theme.palette.background.paper, 0.1) }}>
@@ -99,14 +100,13 @@ export default memo(function IntervalsFilter({
  * @param a child activity
  * @param b parent activity
  */
-export const isChildOf = (a: Activity, b: Activity): boolean => {
-  if (a.id === b.id) return true;
-  return a.parents.some(p => isChildOf(p, b));
+export const isChildOf = (a: Activity | undefined, b: Activity | undefined): boolean => {
+  if (!a || !b) return false;
+  return b.allParentIds.includes(a.id);
 };
 
 type useIntervalsFilterProps = {
   intervals: Interval[],
-  // activities: Activity[],
 };
 
 export function useIntervalsFilter({ intervals }: useIntervalsFilterProps) {
@@ -120,6 +120,7 @@ export function useIntervalsFilter({ intervals }: useIntervalsFilterProps) {
     return { start, end, selectedActivities: [] as Activity[] };
   }, [intervals]);
   const [state, setState, delayedSate] = useDelayedState(initState);
+  const { activityMappings } = useActivities();
 
   const onReset = () => {
     setState(initState);
@@ -136,7 +137,8 @@ export function useIntervalsFilter({ intervals }: useIntervalsFilterProps) {
     ));
     if (delayedSate.selectedActivities.length === 0) return timeFiltered;
     return timeFiltered.filter(i => (
-      i.entries.map(e => e.activity).some(a => delayedSate.selectedActivities.some(b => isChildOf(a, b)))
+      i.entries.map(e => activityMappings[e.activity_id])
+        .some(a => delayedSate.selectedActivities.some(b => isChildOf(a, b)))
     ));
   }, [delayedSate, intervals]);
 

@@ -1,7 +1,7 @@
 
 import { alpha, Button, Paper, Typography, useTheme } from '@mui/material';
 import React, { memo, useState } from 'react';
-import { Activity, IntervalCreate, EntryCreate, Interval } from './apiService/types';
+import { Activity, Interval, IntervalCreate, Entry } from './apiService/types';
 import { addInterval } from './apiService';
 import { mutate } from 'swr';
 import AlertService from './AlertService';
@@ -9,12 +9,11 @@ import IntervalForm, { IntervalFormProps } from './IntervalForm';
 
 type IntervalAdderProps = {
   intervals: Interval[],
-  activities: Activity[],
 };
 
 const now = () => { const x = new Date(); x.setSeconds(0); return x; };
 
-export default memo(function IntervalAdder({ activities, intervals }: IntervalAdderProps) {
+export default memo(function IntervalAdder({ intervals }: IntervalAdderProps) {
   const intervalFormProps = useIntervalCreate({ intervals });
   const theme = useTheme();
   return (
@@ -22,7 +21,7 @@ export default memo(function IntervalAdder({ activities, intervals }: IntervalAd
       <Typography pl={2} variant='h5'>
         Create Interval
       </Typography>
-      <IntervalForm {...intervalFormProps} activities={activities}>
+      <IntervalForm {...intervalFormProps}>
         <Button disabled={intervalFormProps.state.loading} size="large" type="submit" variant="contained">
           add interval
         </Button>
@@ -30,8 +29,7 @@ export default memo(function IntervalAdder({ activities, intervals }: IntervalAd
     </Paper>
   );
 }, (prevProps, nextProps) => (
-  prevProps.activities === nextProps.activities &&
-  prevProps.intervals[0]?.end === nextProps.intervals[0].end
+  prevProps.intervals[0]?.end === nextProps.intervals[0]?.end
 ));
 
 function useIntervalCreate({ intervals }: { intervals: Interval[]; }) {
@@ -39,7 +37,7 @@ function useIntervalCreate({ intervals }: { intervals: Interval[]; }) {
     start: intervals[0]?.end ? new Date(intervals[0]?.end) : now(),
     end: now(),
     note: '' as string,
-    selectedEntries: [] as EntryCreate[],
+    selectedEntries: [] as Entry[],
     loading: false,
   });
   const onChange: IntervalFormProps['onChange'] = (name, value) => {
