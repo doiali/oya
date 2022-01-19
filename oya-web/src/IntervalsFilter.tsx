@@ -48,6 +48,7 @@ export default memo(function IntervalsFilter({
         <Stack direction="column" spacing={1}>
           <Stack direction='row' spacing={2}>
             <DateTimePicker
+              disableMaskedInput
               value={state.start}
               label="start"
               ampm={false}
@@ -56,6 +57,7 @@ export default memo(function IntervalsFilter({
               renderInput={(params) => <TextField fullWidth {...params} />}
             />
             <DateTimePicker
+              disableMaskedInput
               value={state.end}
               ampm={false}
               ampmInClock={false}

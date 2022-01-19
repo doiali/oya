@@ -31,6 +31,7 @@ export default memo(function IntervalForm({ state, onChange, children, onSubmit:
           <Stack direction="column" spacing={2}>
             <Stack direction='row' spacing={2}>
               <DateTimePicker
+                disableMaskedInput
                 value={state.start}
                 label="start"
                 ampm={false}
@@ -39,6 +40,7 @@ export default memo(function IntervalForm({ state, onChange, children, onSubmit:
                 renderInput={(params) => <TextField fullWidth {...params} />}
               />
               <DateTimePicker
+                disableMaskedInput
                 value={state.end}
                 ampm={false}
                 ampmInClock={false}
