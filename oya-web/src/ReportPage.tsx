@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import useReport from './useReport';
+import { createDailyReportsMap } from './reportUtils';
+import useIntervals from './useIntervals';
 
 export default function ReportPage() {
-  const { reportsMap } = useReport();
+  const { intervals } = useIntervals();
   useEffect(() => {
-    console.log(reportsMap);
-  }, [reportsMap]);
+    console.log(createDailyReportsMap(intervals));
+  }, [intervals]);
   return (
     <div>
       Hello

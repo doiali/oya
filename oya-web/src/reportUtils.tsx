@@ -1,6 +1,4 @@
 import { Interval, Entry } from './apiService';
-// import useActivities from './useActivities';
-import useIntervals from './useIntervals';
 
 export type SingleActivityChildrenReport = {
   [id: number]: {
@@ -110,7 +108,7 @@ export const createDailyReportsMap = (intervals: Interval[]): DailyReportsMap =>
     const date = new Date(startDate);
     date.setDate(date.getDate() + i);
     reportsMap[getDateString(date)] = {
-      date, logs: [],
+      logs: [], date,
     };
   });
 
@@ -131,10 +129,3 @@ export const createDailyReportsMap = (intervals: Interval[]): DailyReportsMap =>
 
   return reportsMap;
 };
-
-export default function useReport() {
-  // const { activityMappings, loaded: loadedActivities } = useActivities();
-  const { intervals, loaded: loadedIntervals } = useIntervals();
-  const reportsMap = createDailyReportsMap(intervals);
-  return { reportsMap, loadedIntervals };
-}
