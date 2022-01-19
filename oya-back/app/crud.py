@@ -11,7 +11,9 @@ def get_activities(db: Session, skip: int = 0, limit: int = 10000):
     stmt = (
         select(models.Activity)
         .order_by(models.Activity.id.desc())
-        .options(joinedload(models.Activity.parents))
+        .options(
+            joinedload(models.Activity.parents), joinedload(models.Activity.children)
+        )
         .offset(skip)
         .limit(limit)
     )
@@ -78,11 +80,7 @@ def delete_activity(db: Session, activity_id: int):
 def get_intervals(db: Session, skip: int = 0, limit: int = 10000):
     stmt = (
         select(models.Interval)
-        .options(
-            joinedload(models.Interval.entries)
-            .joinedload(models.Entry.activity)
-            .joinedload(models.Activity.parents)
-        )
+        .options(joinedload(models.Interval.entries))
         .order_by(models.Interval.end_datetime.desc())
         .offset(skip)
         .limit(limit)
@@ -130,7 +128,11 @@ def get_daily_report(db: Session, date: datetime.date):
         for e in row.entries:
             for a in [e.activity, *e.activity.allParents]:
                 if str(a.id) not in report:
-                    report[str(a.id)] = {"activity": a, "duration": obj["d"], "occurance": 1}
+                    report[str(a.id)] = {
+                        "activity": a,
+                        "duration": obj["d"],
+                        "occurance": 1,
+                    }
                 else:
                     report[str(a.id)]["duration"] += obj["d"]
                     report[str(a.id)]["occurance"] += 1
