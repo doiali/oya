@@ -37,7 +37,7 @@ export default memo(function IntervalsList({ intervals }: IntervalsListProps) {
 
   return (
     <Box component="section">
-      <IntervalsFilter {...intervalsFilterProps}/>
+      <IntervalsFilter {...intervalsFilterProps} />
       <Typography mb={2} variant="h5">
         Intervals List
       </Typography>

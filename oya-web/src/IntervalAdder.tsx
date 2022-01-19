@@ -1,7 +1,7 @@
 
 import { alpha, Button, Paper, Typography, useTheme } from '@mui/material';
 import React, { memo, useState } from 'react';
-import { Activity, Interval, IntervalCreate, Entry } from './apiService/types';
+import { Interval, IntervalCreate, Entry } from './apiService/types';
 import { addInterval } from './apiService';
 import { mutate } from 'swr';
 import AlertService from './AlertService';

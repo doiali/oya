@@ -14,14 +14,12 @@ export type Activity = ActivityRaw & {
   allChildren: Activity[],
 };
 
-
 export type ActivityCreate = {
   name: string,
   parentIds: number[],
 };
 
 export type ActivityUpdate = ActivityCreate & { id: number; };
-
 
 export type Entry = {
   activity_id: number,
@@ -31,11 +29,11 @@ export type IntervalBase = {
   start: string,
   end: string,
   note?: string,
-}
+};
 
 export type IntervalCreate = IntervalBase & {
   entries: Entry[],
-}
+};
 
 export type Interval = IntervalBase & {
   id: number,

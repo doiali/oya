@@ -19,7 +19,7 @@ export type IntervalItemProps = {
 export default memo(function IntervalItem(
   { interval, index }: IntervalItemProps,
 ) {
-  const { activityMappings } = useActivities()
+  const { activityMappings } = useActivities();
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [open, setOpen] = useState(false);

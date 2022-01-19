@@ -140,7 +140,7 @@ export function useIntervalsFilter({ intervals }: useIntervalsFilterProps) {
       i.entries.map(e => activityMappings[e.activity_id])
         .some(a => delayedSate.selectedActivities.some(b => isChildOf(a, b)))
     ));
-  }, [delayedSate, intervals]);
+  }, [delayedSate, intervals, activityMappings]);
 
   const results = useMemo(() => ({
     sum: filteredIntervals.reduce((a, v) => (new Date(v.end).getTime() - new Date(v.start).getTime()) / 60000 + a, 0),

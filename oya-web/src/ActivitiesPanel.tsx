@@ -12,7 +12,7 @@ export function getActivityParentsNames(a: Activity): string {
 }
 
 export default memo(function ActivitiesPanel() {
-  const { activities } = useActivities()
+  const { activities } = useActivities();
   const [searchVal, setSearchVal] = useState('');
   const theme = useTheme();
   const searchIndex = activities.map((a) => getActivityParentsNames(a));
