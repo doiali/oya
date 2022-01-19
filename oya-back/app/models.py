@@ -49,11 +49,11 @@ class Activity(Base):
 
     @property
     def childIds(self):
-        return list(map(lambda x: x.id, self.children))
+        return sorted(list(map(lambda x: x.id, self.children)))
 
     @property
     def parentIds(self):
-        return list(map(lambda x: x.id, self.parents))
+        return sorted(list(map(lambda x: x.id, self.parents)))
 
     @property
     def allParents(self):
@@ -67,7 +67,7 @@ class Activity(Base):
                 recur(parent)
 
         recur(self)
-        return x
+        return sorted(x,key=lambda x:x.id)
 
     @property
     def allChildren(self):
@@ -81,21 +81,21 @@ class Activity(Base):
                 recur(child)
 
         recur(self)
-        return x
+        return sorted(x,key=lambda x:x.id)
 
     @property
     def allChildIds(self):
         x = {self.id}
         for c in self.allChildren:
             x.add(c.id)
-        return x
+        return sorted(x)
 
     @property
     def allParentIds(self):
         x = {self.id}
         for p in self.allParents:
             x.add(p.id)
-        return x
+        return sorted(x)
 
     @validates("parents")
     def validate_parents(self, key, parent):
