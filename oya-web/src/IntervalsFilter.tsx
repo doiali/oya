@@ -140,7 +140,7 @@ export function useIntervalsFilter({ intervals }: useIntervalsFilterProps) {
     if (delayedSate.selectedActivities.length === 0) return timeFiltered;
     return timeFiltered.filter(i => (
       i.entries.map(e => activityMappings[e.activity_id])
-        .some(a => delayedSate.selectedActivities.some(b => isChildOf(a, b)))
+        .some(a => delayedSate.selectedActivities.some(b => isChildOf(b, a)))
     ));
   }, [delayedSate, intervals, activityMappings]);
 

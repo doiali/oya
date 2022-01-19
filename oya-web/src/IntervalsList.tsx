@@ -13,11 +13,12 @@ export default memo(function IntervalsList({ intervals }: IntervalsListProps) {
   const { filteredIntervals, ...intervalsFilterProps } = useIntervalsFilter({ intervals });
 
   const list = useMemo(() => {
-    let prevEnd = '9';
+    let prevEnd = new Date('2050-1-1');
     return (
       <Stack spacing={1}>
         {filteredIntervals.map((interval, i) => {
-          const end = interval.end.substring(0, 10);
+          const end = new Date(interval.end);
+          end.setHours(0, 0, 0, 0);
           const isNewDay = end < prevEnd;
           if (isNewDay) prevEnd = end;
           return (
