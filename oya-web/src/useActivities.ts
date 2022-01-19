@@ -2,8 +2,10 @@ import { useMemo } from 'react';
 import useSWR from 'swr';
 import { Activity, getActivities } from './apiService';
 
+const activitiesFetcher = () => getActivities().then((res) => res.data);
+
 export default function useActivities() {
-  const { data } = useSWR('/activities/', () => getActivities().then((res) => res.data));
+  const { data } = useSWR('/activities/', activitiesFetcher);
   const [activityMappings, activities] = useMemo(() => {
     const o: Record<string, Activity> = {};
     const newActivities: Activity[] = [];
