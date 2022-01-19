@@ -3,14 +3,14 @@ import { ActivityMappings } from './useActivities';
 
 export type ActivityChildrenReport = {
   [id: number]: {
-    id: number,
+    activity: Activity,
     percent: number,
     children: ActivityChildrenReport,
   };
 };
 
 export type ActivityTotalReportSingle = {
-  id: number,
+  activity: Activity,
   totalTime: number,
   days: number,
   allDays: number,
@@ -155,4 +155,39 @@ export const createDailyDataMap = (
   intervals.forEach(processInterval);
 
   return dailyDataMap;
+};
+
+export const createActivityTotalReport = (ddm: DailyDataMap): ActivityTotalReport => {
+  const atr: ActivityTotalReport = {};
+  const ddmValues = Object.values(ddm);
+  const allDays = ddmValues.length;
+  ddmValues.forEach(({ report }) => {
+    Object.values(report).forEach((r) => {
+      const id = r.activity.id;
+      if (!atr[id]) {
+        atr[id] = {
+          activity: r.activity,
+          totalTime: r.time,
+          days: 1,
+          occurance: r.occurance,
+          allDays,
+          avgPerDays: 0,
+          avgPerAllDays: 0,
+          avgTimePerOccurance: 0,
+          children: {},
+        };
+      } else {
+        atr[id].totalTime += r.time;
+        atr[id].days += 1;
+        atr[id].occurance += r.occurance;
+      }
+    });
+  });
+  Object.values(atr).forEach(a => {
+    const atrs = a;
+    atrs.avgPerDays = atrs.totalTime / atrs.days;
+    atrs.avgPerAllDays = atrs.totalTime / atrs.allDays;
+    atrs.avgTimePerOccurance = atrs.totalTime / atrs.occurance;
+  });
+  return atr;
 };
