@@ -4,6 +4,7 @@ import Layout from './Layout';
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './HomePage';
 import { dequal } from 'dequal';
+import ReportPage from './ReportPage';
 
 declare global {
   interface Window {
@@ -20,6 +21,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Layout />}>
           <Route index element={<HomePage />} />
+          <Route path='reports' element={<ReportPage />} />
         </Route>
       </Routes>
     </>

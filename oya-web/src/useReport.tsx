@@ -1,5 +1,5 @@
 import { Interval, Entry } from './apiService';
-import useActivities from './useActivities';
+// import useActivities from './useActivities';
 import useIntervals from './useIntervals';
 
 export type SingleActivityChildrenReport = {
@@ -32,14 +32,23 @@ export type SanitizedInterval = {
   date: Date,
   s: number,
   e: number,
+  d: number,
+  p: number,
   entries: Entry[];
   note?: string,
 };
 
-export const dateString = (x: Date) => (
+export type DailyReport = {
+  date: Date;
+  logs: SanitizedInterval[],
+};
+
+export type DailyReportsMap = Record<string, DailyReport>;
+
+export const getDateString = (x: Date) => (
   (x.getFullYear()).toString() + '-' +
   (x.getMonth() + 1).toString().padStart(2, '0') + '-' +
-  (x.getDate() + 1).toString().padStart(2, '0')
+  (x.getDate()).toString().padStart(2, '0')
 );
 
 export const getDayTime = (x: Date) => {
@@ -63,14 +72,15 @@ export const getRange = (start: Date, end: Date) => {
     endDate.setDate(endDate.getDate() - 1);
   }
   endDate.setHours(0, 0, 0, 0);
-  const days = (endDate.getTime() - startDate.getTime()) / 60000 * 60 * 24 + 1;
+  const days = (endDate.getTime() - startDate.getTime()) / (60000 * 60 * 24) + 1;
   return { startTime, startDate, endTime, endDate, days };
 };
 
 export const sanitizeInterval = (interval: Interval): SanitizedInterval[] => {
+  const [start, end] = [new Date(interval.start), new Date(interval.end)];
   const {
     startTime, startDate, endTime, days,
-  } = getRange(new Date(interval.start), new Date(interval.end));
+  } = getRange(start, end);
 
   return [...Array(days)].map((_, i) => {
     let s = startTime;
@@ -82,13 +92,49 @@ export const sanitizeInterval = (interval: Interval): SanitizedInterval[] => {
     const date = new Date(startDate);
     date.setDate(date.getDate() + i);
     return {
-      s, e, d: (e - s) / 60000, date,
+      s, e, d: (e - s) / 60000, p: (e - s) / (getTimeDelta(end, start)), date,
       id: interval.id, l: i + 1, entries: interval.entries, note: interval.note,
     };
   });
 };
 
+export const createDailyReportsMap = (intervals: Interval[]): DailyReportsMap => {
+  const reportsMap: DailyReportsMap = {};
+  let minString = new Date().toISOString();
+  intervals.forEach(i => { if (i.start < minString) minString = i.start; });
+  const start = new Date(minString);
+  const end = intervals[0]?.end ? new Date(intervals[0]?.end) : new Date();
+  const { startDate, days } = getRange(start, end);
+
+  [...Array(days)].forEach((_, i) => {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + i);
+    reportsMap[getDateString(date)] = {
+      date, logs: [],
+    };
+  });
+
+  const processInterval = (interval: Interval) => {
+    const sanitizedIntervals = sanitizeInterval(interval);
+    sanitizedIntervals.forEach(si => {
+      const dateString = getDateString(si.date);
+      if (!reportsMap[dateString]) {
+        reportsMap[dateString] = {
+          date: si.date, logs: [],
+        };
+      }
+      reportsMap[dateString].logs.push(si);
+    });
+  };
+
+  intervals.forEach(processInterval);
+
+  return reportsMap;
+};
+
 export default function useReport() {
-  const { activityMappings, loaded: loadedActivities } = useActivities();
+  // const { activityMappings, loaded: loadedActivities } = useActivities();
   const { intervals, loaded: loadedIntervals } = useIntervals();
+  const reportsMap = createDailyReportsMap(intervals);
+  return { reportsMap, loadedIntervals };
 }

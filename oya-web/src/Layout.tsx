@@ -122,6 +122,7 @@ export default function Layout() {
         <Divider />
         <List>
           <ListItemLink to="/" primary='Home' icon={<Home />} />
+          <ListItemLink to="/reports" primary='Reports' icon={<Home />} />
         </List>
         <Divider />
       </Drawer>
