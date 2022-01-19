@@ -1,4 +1,5 @@
-import { Interval, Entry } from './apiService';
+import { Interval, Entry, Activity } from './apiService';
+import { ActivityMappings } from './useActivities';
 
 export type ActivityChildrenReport = {
   [id: number]: {
@@ -36,13 +37,17 @@ export type SanitizedInterval = {
   note?: string,
 };
 
-export type dailyReport = {
-
-}
+export type ActivityDailyReport = {
+  name: string,
+  activity: Activity,
+  occurance: number,
+  time: number,
+};
 
 export type DailyData = {
   date: Date;
   logs: SanitizedInterval[],
+  report: Record<number, ActivityDailyReport>;
 };
 
 export type DailyDataMap = Record<string, DailyData>;
@@ -100,7 +105,9 @@ export const sanitizeInterval = (interval: Interval): SanitizedInterval[] => {
   });
 };
 
-export const createDailyDataMap = (intervals: Interval[]): DailyDataMap => {
+export const createDailyDataMap = (
+  intervals: Interval[], am: ActivityMappings,
+): DailyDataMap => {
   const dailyDataMap: DailyDataMap = {};
   let minString = new Date().toISOString();
   intervals.forEach(i => { if (i.start < minString) minString = i.start; });
@@ -112,7 +119,7 @@ export const createDailyDataMap = (intervals: Interval[]): DailyDataMap => {
     const date = new Date(startDate);
     date.setDate(date.getDate() + i);
     dailyDataMap[getDateString(date)] = {
-      logs: [], date,
+      logs: [], date, report: {},
     };
   });
 
@@ -122,10 +129,26 @@ export const createDailyDataMap = (intervals: Interval[]): DailyDataMap => {
       const dateString = getDateString(si.date);
       if (!dailyDataMap[dateString]) {
         dailyDataMap[dateString] = {
-          date: si.date, logs: [],
+          date: si.date, logs: [], report: {},
         };
       }
-      dailyDataMap[dateString].logs.push(si);
+      const { entries } = si;
+      const dailyData = dailyDataMap[dateString];
+      const { report } = dailyData;
+      entries.forEach(e => {
+        am[e.activity_id]?.allParents.forEach(p => {
+          const { id } = p;
+          if (!report[id]) {
+            report[id] = {
+              name: p.name, time: si.d, occurance: 1, activity: p,
+            };
+          } else {
+            report[id].occurance += 1;
+            report[id].time += si.d;
+          }
+        });
+      });
+      dailyData.logs.push(si);
     });
   };
 

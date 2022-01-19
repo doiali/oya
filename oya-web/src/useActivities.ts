@@ -3,6 +3,7 @@ import useSWR from 'swr';
 import { Activity, getActivities } from './apiService';
 
 const activitiesFetcher = () => getActivities().then((res) => res.data);
+export type ActivityMappings = Record<string, Activity | undefined>;
 
 export default function useActivities() {
   const { data } = useSWR('/activities/', activitiesFetcher);
