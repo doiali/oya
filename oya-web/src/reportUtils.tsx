@@ -1,14 +1,14 @@
 import { Interval, Entry } from './apiService';
 
-export type SingleActivityChildrenReport = {
+export type ActivityChildrenReport = {
   [id: number]: {
     id: number,
     percent: number,
-    children: SingleActivityChildrenReport,
+    children: ActivityChildrenReport,
   };
 };
 
-export type SingleActivityReport = {
+export type ActivityTotalReportSingle = {
   id: number,
   totalTime: number,
   days: number,
@@ -17,11 +17,11 @@ export type SingleActivityReport = {
   avgPerAllDays: number,
   occurance: number,
   avgTimePerOccurance: number,
-  children: SingleActivityChildrenReport,
+  children: ActivityChildrenReport,
 };
 
 export type ActivityTotalReport = {
-  [id: number]: SingleActivityReport,
+  [id: number]: ActivityTotalReportSingle,
 };
 
 export type SanitizedInterval = {
@@ -36,12 +36,16 @@ export type SanitizedInterval = {
   note?: string,
 };
 
-export type DailyReport = {
+export type dailyReport = {
+
+}
+
+export type DailyData = {
   date: Date;
   logs: SanitizedInterval[],
 };
 
-export type DailyReportsMap = Record<string, DailyReport>;
+export type DailyDataMap = Record<string, DailyData>;
 
 export const getDateString = (x: Date) => (
   (x.getFullYear()).toString() + '-' +
@@ -96,8 +100,8 @@ export const sanitizeInterval = (interval: Interval): SanitizedInterval[] => {
   });
 };
 
-export const createDailyReportsMap = (intervals: Interval[]): DailyReportsMap => {
-  const reportsMap: DailyReportsMap = {};
+export const createDailyDataMap = (intervals: Interval[]): DailyDataMap => {
+  const dailyDataMap: DailyDataMap = {};
   let minString = new Date().toISOString();
   intervals.forEach(i => { if (i.start < minString) minString = i.start; });
   const start = new Date(minString);
@@ -107,7 +111,7 @@ export const createDailyReportsMap = (intervals: Interval[]): DailyReportsMap =>
   [...Array(days)].forEach((_, i) => {
     const date = new Date(startDate);
     date.setDate(date.getDate() + i);
-    reportsMap[getDateString(date)] = {
+    dailyDataMap[getDateString(date)] = {
       logs: [], date,
     };
   });
@@ -116,16 +120,16 @@ export const createDailyReportsMap = (intervals: Interval[]): DailyReportsMap =>
     const sanitizedIntervals = sanitizeInterval(interval);
     sanitizedIntervals.forEach(si => {
       const dateString = getDateString(si.date);
-      if (!reportsMap[dateString]) {
-        reportsMap[dateString] = {
+      if (!dailyDataMap[dateString]) {
+        dailyDataMap[dateString] = {
           date: si.date, logs: [],
         };
       }
-      reportsMap[dateString].logs.push(si);
+      dailyDataMap[dateString].logs.push(si);
     });
   };
 
   intervals.forEach(processInterval);
 
-  return reportsMap;
+  return dailyDataMap;
 };
