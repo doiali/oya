@@ -9,7 +9,8 @@ SQLALCHEMY_DATABASE_URL = (
     + config("db_username")
     + ":"
     + config("db_password")
-    + "@localhost/oya"
+    + "@localhost/"
+    + config("db_name")
 )
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL, future=True)
