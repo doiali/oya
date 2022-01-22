@@ -153,7 +153,7 @@ def create_interval(db: Session, interval: schemas.IntervalCreate):
         note=interval.note,
     )
     for e in interval.entries:
-        db_interval.entries.append(models.Entry(activity_id=e.activity_id, note=e.note))
+        db_interval.entries.append(models.Entry(**e.dict()))
     db.add(db_interval)
     db.commit()
     db.refresh(db_interval)
@@ -178,12 +178,12 @@ def update_interval(db: Session, interval: schemas.IntervalCreate, interval_id):
         db_entry = db.get(
             models.Entry, {"activity_id": e.activity_id, "interval_id": interval_id}
         )
-        print(db_entry)
         if db_entry:
             db_entry.note = e.note
+            db_entry.time = e.time
             new_entries.append(db_entry)
         else:
-            new_entries.append(models.Entry(note=e.note, activity_id=e.activity_id))
+            new_entries.append(models.Entry(**e.dict()))
     db_interval.entries = new_entries
     db.commit()
     db.refresh(db_interval)
