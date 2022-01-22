@@ -125,31 +125,15 @@ class Interval(Base):
     )
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    start_datetime: datetime.datetime = Column(DateTime(timezone=True), index=True)
-    end_datetime: datetime.datetime = Column(DateTime(timezone=True), index=True)
+    start: datetime.datetime = Column(DateTime(timezone=True), index=True)
+    end: datetime.datetime = Column(DateTime(timezone=True), index=True)
     note = Column(Text)
-
-    @property
-    def start(self):
-        return self.start_datetime
-
-    @property
-    def end(self):
-        return self.end_datetime
-
-    @start.setter
-    def start(self, t):
-        self.start_datetime = t
-
-    @end.setter
-    def end(self, t):
-        self.end_datetime = t
 
     entries = relationship("Entry", back_populates="interval", cascade="all")
 
     def __repr__(self):
         return (
-            f"<interval {self.start_datetime} to {self.end_datetime}: {self.entries}>"
+            f"<interval {self.start} to {self.end}: {self.entries}>"
         )
 
 

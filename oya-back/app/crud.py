@@ -80,7 +80,7 @@ def get_intervals(db: Session, skip: int = 0, limit: int = 10000):
     stmt = (
         select(models.Interval)
         .options(joinedload(models.Interval.entries))
-        .order_by(models.Interval.end_datetime.desc())
+        .order_by(models.Interval.end.desc())
         .offset(skip)
         .limit(limit)
     )
@@ -97,10 +97,10 @@ def get_daily_report(db: Session, date: datetime.date):
             .joinedload(Activity.parents)
         )
         .where(
-            Interval.start_datetime.between(date, date + datetime.timedelta(days=1))
-            | Interval.end_datetime.between(date, date + datetime.timedelta(days=1))
+            Interval.start.between(date, date + datetime.timedelta(days=1))
+            | Interval.end.between(date, date + datetime.timedelta(days=1))
         )
-        .order_by(Interval.end_datetime.desc())
+        .order_by(Interval.end.desc())
     )
     res = db.execute(stmt).unique().scalars()
     periods = []
