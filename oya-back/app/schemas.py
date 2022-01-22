@@ -10,12 +10,14 @@ Interval = ForwardRef("Interval")
 
 class ActivityCreate(BaseModel):
     name: str
+    is_suspended: bool
     parentIds: Optional[List[int]]
     childIds: Optional[List[int]]
 
 
 class ActivityUpdate(BaseModel):
     name: Optional[str]
+    is_suspended: bool
     parentIds: Optional[List[int]]
     childIds: Optional[List[int]]
 
@@ -23,7 +25,7 @@ class ActivityUpdate(BaseModel):
 class ActivityBase(BaseModel):
     id: int
     name: str
-    is_suspended: Optional[bool]
+    is_suspended: bool
 
     class Config:
         orm_mode = True

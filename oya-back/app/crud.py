@@ -26,7 +26,7 @@ def get_activity(db: Session, activity_id: int):
 
 
 def create_activity(db: Session, activity: schemas.ActivityCreate):
-    db_activity = models.Activity(name=activity.name)
+    db_activity = models.Activity(name=activity.name, is_suspended=activity.is_suspended)
     if activity.parentIds:
         db_activity.parents = (
             db.query(models.Activity)
@@ -62,6 +62,8 @@ def update_activity(db: Session, activity: schemas.ActivityUpdate, activity_id: 
             )
         if activity.name:
             db_activity.name = activity.name
+        if activity.is_suspended is not None:
+            db_activity.is_suspended=activity.is_suspended
         db.add(db_activity)
         db.commit()
         db.refresh(db_activity)

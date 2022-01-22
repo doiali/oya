@@ -1,16 +1,18 @@
-import { TextField, Autocomplete, Box } from '@mui/material';
+import { TextField, Autocomplete, Box, Checkbox, FormControlLabel } from '@mui/material';
 import { Activity } from './apiService';
 import React, { memo } from 'react';
 
 export type ActivityFormProps = {
   state: {
     name: string,
+    is_suspended: boolean,
     parents: Activity[],
   },
   activities: Activity[],
   children?: React.ReactNode,
   onSubmit?: (e: React.FormEvent) => void;
   onChange(name: 'name', value: string): void,
+  onChange(name: 'is_suspended', value: boolean): void,
   onChange(name: 'parents', value: Activity[]): void,
 };
 
@@ -47,6 +49,15 @@ export default memo(function ActivityForm(
           )}
         />
       )}
+      <FormControlLabel
+        control={(
+          <Checkbox
+            checked={state.is_suspended}
+            onChange={(e) => onChange('is_suspended', e.target.checked)}
+          />
+        )}
+        label="is suspended"
+      />
       {children}
     </Box>
   );

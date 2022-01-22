@@ -8,6 +8,7 @@ import ActivityForm, { ActivityFormProps } from './ActivityForm';
 function useActivityCreate() {
   const [state, setState] = useState({
     name: '',
+    is_suspended: false,
     parents: [] as Activity[],
   });
 
@@ -15,10 +16,11 @@ function useActivityCreate() {
     e.preventDefault();
     createActivity({
       name: state.name,
+      is_suspended: state.is_suspended,
       parentIds: state.parents.map(({ id }) => id),
     }).then(() => {
       AlertService.success('activity created');
-      setState({ name: '', parents: [] });
+      setState({ name: '', is_suspended: false, parents: [] });
       mutate('/activities/');
     }, () => {
       AlertService.error('error creating activity');

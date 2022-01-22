@@ -1,6 +1,7 @@
 export type ActivityRaw = {
   id: number,
   name: string,
+  is_suspended: boolean,
   parentIds: number[],
   childIds: number[],
   allParentIds: number[],
@@ -16,6 +17,7 @@ export type Activity = ActivityRaw & {
 
 export type ActivityCreate = {
   name: string,
+  is_suspended: boolean,
   parentIds: number[],
 };
 
@@ -23,6 +25,7 @@ export type ActivityUpdate = ActivityCreate & { id: number; };
 
 export type Entry = {
   activity_id: number,
+  time?: number,
 };
 
 export type IntervalBase = {

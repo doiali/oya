@@ -16,6 +16,7 @@ type ActivityEditorProps = {
 export default memo(function ActivityEditor({ activities, activity, onClose: handleClose }: ActivityEditorProps) {
   const [state, setState] = useState({
     name: activity.name,
+    is_suspended: activity.is_suspended,
     parents: activity.parents,
   });
 
@@ -24,11 +25,11 @@ export default memo(function ActivityEditor({ activities, activity, onClose: han
     editActivity({
       id: activity.id,
       name: state.name,
+      is_suspended: state.is_suspended,
       parentIds: state.parents.map(({ id }) => id),
     }).then(() => {
       AlertService.success('activity edited');
       mutate('/activities/');
-      mutate('/intervals/');
       handleClose?.();
     }, () => {
       AlertService.error('error editing activity');
