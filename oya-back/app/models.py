@@ -5,7 +5,7 @@ from sqlalchemy import (
     Integer,
     String,
     DateTime,
-    Float,
+    Interval as IntervalType,
     Text,
 )
 from sqlalchemy.orm import relationship, validates
@@ -125,8 +125,8 @@ class Interval(Base):
     )
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    start_datetime: datetime.datetime = Column(DateTime, index=True)
-    end_datetime: datetime.datetime = Column(DateTime, index=True)
+    start_datetime: datetime.datetime = Column(DateTime(timezone=True), index=True)
+    end_datetime: datetime.datetime = Column(DateTime(timezone=True), index=True)
     note = Column(Text)
 
     @property
@@ -158,6 +158,7 @@ class Entry(Base):
 
     interval_id = Column(Integer, ForeignKey("intervals.id"), primary_key=True)
     activity_id = Column(Integer, ForeignKey("activities.id"), primary_key=True)
+    time = Column(IntervalType)
     note = Column(Text)
 
     interval = relationship(Interval, back_populates="entries")

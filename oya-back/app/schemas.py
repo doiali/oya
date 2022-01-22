@@ -1,3 +1,4 @@
+import datetime
 from typing import List, Optional, ForwardRef, Dict
 import typing
 
@@ -43,11 +44,13 @@ class Activity(ActivityBase):
 
 class EntryCreate(BaseModel):
     note: Optional[str]
+    time: Optional[datetime.timedelta]
     activity_id: int
 
 
 class Entry(BaseModel):
     note: Optional[str]
+    time: Optional[datetime.timedelta]
     activity_id: int
 
     class Config:
