@@ -61,7 +61,7 @@ export default memo(function IntervalItem(
             </IconButton>
           )}
           <Chip color="secondary" variant="outlined" label={getDeltaString(interval.start, interval.end)} />
-          <IconButton onClick={() => setIsEditing(true)}>
+          <IconButton onClick={() => setIsEditing(prev => !prev)}>
             <Edit />
           </IconButton>
           <IconButton disabled={loading} onClick={handleDelete}>
