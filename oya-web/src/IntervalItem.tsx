@@ -10,6 +10,7 @@ import { marked } from 'marked';
 import IntervalEditor from './IntervalEditor';
 import { dequal } from 'dequal';
 import useActivities from './useActivities';
+import { getDeltaString } from './utils';
 
 export type IntervalItemProps = {
   interval: Interval;
@@ -36,8 +37,6 @@ export default memo(function IntervalItem(
   };
   const start = new Date(interval.start);
   const end = new Date(interval.end);
-  const dm = Math.round((end.getTime() - start.getTime()) / 60000);
-  const s = Math.floor(dm / 60).toString().padStart(2, '0') + ':' + (dm % 60).toString().padStart(2, '0');
 
   return (
     <Stack spacing={1}>
@@ -61,7 +60,7 @@ export default memo(function IntervalItem(
               {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </IconButton>
           )}
-          <Chip color="secondary" variant="outlined" label={s} />
+          <Chip color="secondary" variant="outlined" label={getDeltaString(interval.start, interval.end)} />
           <IconButton onClick={() => setIsEditing(true)}>
             <Edit />
           </IconButton>

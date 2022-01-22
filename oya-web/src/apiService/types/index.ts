@@ -26,6 +26,7 @@ export type ActivityUpdate = ActivityCreate & { id: number; };
 export type Entry = {
   activity_id: number,
   time?: number,
+  note?: string,
 };
 
 export type IntervalBase = {
