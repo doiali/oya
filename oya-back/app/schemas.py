@@ -23,6 +23,7 @@ class ActivityUpdate(BaseModel):
 class ActivityBase(BaseModel):
     id: int
     name: str
+    is_suspended: Optional[bool]
 
     class Config:
         orm_mode = True

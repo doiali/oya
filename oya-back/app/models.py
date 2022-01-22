@@ -32,7 +32,7 @@ class Activity(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String)
-    is_suspended = Column(Boolean)
+    is_suspended = Column(Boolean, default=False, nullable=False)
     parents = relationship(
         "Activity",
         secondary="association",
