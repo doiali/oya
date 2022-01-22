@@ -1,6 +1,5 @@
 import datetime
 from typing import List, Optional, ForwardRef, Dict
-import typing
 
 from pydantic import BaseModel
 
@@ -58,8 +57,8 @@ class Entry(BaseModel):
 
 
 class IntervalBase(BaseModel):
-    start: str
-    end: str
+    start: datetime.datetime
+    end: datetime.datetime
     note: Optional[str]
 
 

@@ -3,7 +3,6 @@ from sqlalchemy import select
 import datetime
 from . import models, schemas
 from .models import Interval, Activity, Entry
-from dateutil import parser
 from copy import deepcopy
 
 
@@ -147,8 +146,8 @@ def get_daily_report(db: Session, date: datetime.date):
 
 def create_interval(db: Session, interval: schemas.IntervalCreate):
     db_interval = models.Interval(
-        start=parser.parse(interval.start),
-        end=parser.parse(interval.end),
+        start=interval.start,
+        end=interval.end,
         note=interval.note,
     )
     for e in interval.entries:
@@ -166,9 +165,9 @@ def update_interval(db: Session, interval: schemas.IntervalCreate, interval_id):
     if interval.note is not None:
         db_interval.note = interval.note
     if interval.start is not None:
-        db_interval.start = parser.parse(interval.start)
+        db_interval.start = interval.start
     if interval.end is not None:
-        db_interval.end = parser.parse(interval.end)
+        db_interval.end = interval.end
     new_entries = []
     for e in db_interval.entries:
         if e.activity_id not in [x.activity_id for x in interval.entries]:

@@ -131,11 +131,11 @@ class Interval(Base):
 
     @property
     def start(self):
-        return datetime.datetime.isoformat(self.start_datetime)
+        return self.start_datetime
 
     @property
     def end(self):
-        return datetime.datetime.isoformat(self.end_datetime)
+        return self.end_datetime
 
     @start.setter
     def start(self, t):
