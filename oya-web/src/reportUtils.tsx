@@ -42,6 +42,8 @@ export type ActivityDailyReport = {
   activity: Activity,
   occurance: number,
   time: number,
+  pureOccurance: number,
+  pureTime: number,
 };
 
 export type DailyData = {
@@ -136,15 +138,23 @@ export const createDailyDataMap = (
       const dailyData = dailyDataMap[dateString];
       const { report } = dailyData;
       entries.forEach(e => {
-        am[e.activity_id]?.allParents.forEach(p => {
+        const a = am[e.activity_id];
+        const t = e.time ? e.time / 60 : si.d;
+        a?.allParents.forEach(p => {
           const { id } = p;
           if (!report[id]) {
             report[id] = {
-              name: p.name, time: si.d, occurance: 1, activity: p,
+              name: p.name, time: t, occurance: 1, activity: p,
+              pureOccurance: id === a.id ? 1 : 0,
+              pureTime: id === a.id ? t : 0,
             };
           } else {
             report[id].occurance += 1;
-            report[id].time += si.d;
+            report[id].time += t;
+            if (id === a.id) {
+              report[id].pureTime += t;
+              report[id].pureOccurance += 1;
+            }
           }
         });
       });
