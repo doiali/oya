@@ -123,6 +123,7 @@ export default function Layout() {
         <List>
           <ListItemLink to="/" primary='Home' icon={<Home />} />
           <ListItemLink to="/reports" primary='Reports' icon={<Home />} />
+          <ListItemLink to="/activities" primary='Activity Manager' icon={<Home />} />
         </List>
         <Divider />
       </Drawer>
