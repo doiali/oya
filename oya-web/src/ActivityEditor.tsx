@@ -1,6 +1,6 @@
 import { Button, IconButton, Stack } from '@mui/material';
 import { Activity, deleteActivity, editActivity } from './apiService';
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 import AlertService from './AlertService';
 import { mutate } from 'swr';
 import ActivityForm, { ActivityFormProps } from './ActivityForm';
@@ -13,12 +13,23 @@ type ActivityEditorProps = {
   onClose?: () => void,
 };
 
-export default memo(function ActivityEditor({ activities, activity, onClose: handleClose }: ActivityEditorProps) {
-  const [state, setState] = useState({
+export default memo(function ActivityEditor({ activities, activity, onClose }: ActivityEditorProps) {
+  const defaultState = useMemo(() => ({
     name: activity.name,
     is_suspended: activity.is_suspended,
     parents: activity.parents,
-  });
+  }), [activity]);
+
+  const [state, setState] = useState(defaultState);
+
+  useEffect(() => {
+    setState(defaultState);
+  }, [defaultState]);
+
+  const handleClose = () => {
+    setState(defaultState);
+    onClose?.();
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +41,7 @@ export default memo(function ActivityEditor({ activities, activity, onClose: han
     }).then(() => {
       AlertService.success('activity edited');
       mutate('/activities/');
-      handleClose?.();
+      onClose?.();
     }, () => {
       AlertService.error('error editing activity');
     });
@@ -57,7 +68,7 @@ export default memo(function ActivityEditor({ activities, activity, onClose: han
           <Button variant="contained" type="submit">
             save
           </Button>
-          {handleClose && (
+          {onClose && (
             <Button onClick={handleClose}>
               cancel
             </Button>
