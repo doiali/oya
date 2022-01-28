@@ -43,7 +43,10 @@ def read_activities(db: Session = Depends(get_db)):
 
 @app.post("/activities/", tags=["Activities"], response_model=schemas.Activity)
 def create_activity(activity: schemas.ActivityCreate, db: Session = Depends(get_db)):
-    return crud.create_activity(db=db, activity=activity)
+    try:
+        return crud.create_activity(db=db, activity=activity)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
 
 
 @app.delete(
@@ -69,8 +72,8 @@ def update_activity(
         if not updated_activity:
             raise HTTPException(status_code=400, detail="activity not found")
         return updated_activity
-    except ValueError:
-        raise HTTPException(status_code=400, detail="you are creating a loop!")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
 
 
 @app.get("/intervals/", tags=["Intervals"], response_model=List[schemas.Interval])
