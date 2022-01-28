@@ -1,7 +1,7 @@
 import { CircularProgress, Grid } from '@mui/material';
 import IntervalAdder from './IntervalAdder';
 import IntervalsList from './IntervalsList';
-import ActivitiesPanel from './ActivitiesPanel';
+import ActivitiesHomeWidget from './ActivitiesHomeWidget';
 import useIntervals from './useIntervals';
 import useActivities from './useActivities';
 
@@ -18,7 +18,7 @@ export default function HomePage() {
             <IntervalsList intervals={intervals} />
           </Grid>
           <Grid item xs={12} md={4}>
-            <ActivitiesPanel />
+            <ActivitiesHomeWidget />
           </Grid>
         </>
       ) : <CircularProgress />}

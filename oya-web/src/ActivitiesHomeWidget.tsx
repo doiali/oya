@@ -11,7 +11,7 @@ export function getActivityParentsNames(a: Activity): string {
   return a.name.toLowerCase() + ' ' + a.parents.map((p) => getActivityParentsNames(p)).join(' ');
 }
 
-export default memo(function ActivitiesPanel() {
+const ActivitiesHomeWidget = memo(function ActivitiesWidget() {
   const { activities } = useActivities();
   const [searchVal, setSearchVal] = useState('');
   const theme = useTheme();
@@ -80,3 +80,5 @@ const ActivitySingle = memo(function ActivitySingle(
     </Box>
   );
 });
+
+export default ActivitiesHomeWidget;

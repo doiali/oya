@@ -109,7 +109,7 @@
       "beside"
     ],
     "no-duplicate-imports": "warn",
-    "import/prefer-default-export": "warn",
+    // "import/prefer-default-export": "warn",
     "import/no-mutable-exports": "warn",
     "import/first": "warn",
     "object-curly-newline": [
