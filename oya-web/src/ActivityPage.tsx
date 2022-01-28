@@ -6,6 +6,7 @@ import { Activity } from './apiService';
 import ActivityEditor from './ActivityEditor';
 import useActivities from './useActivities';
 import ActivityAdder from './ActivityAdder';
+import { DrawerHeader } from './Layout';
 
 export default function ActivityPage() {
   return (
@@ -87,13 +88,15 @@ function ActivityView() {
           sx={{
             position: 'fixed',
             right: 0,
-            height: '100%',
+            top: 0,
+            bottom: 0,
             overflowY: 'auto',
             p: 2,
             width: 600,
           }}
         >
-          <Paper elevation={2} sx={{ p: 2, mt: -2 }}>
+          <DrawerHeader />
+          <Paper elevation={2} sx={{ p: 2, mt: 2 }}>
             <Typography variant='h5'>
               Create Activity
             </Typography>

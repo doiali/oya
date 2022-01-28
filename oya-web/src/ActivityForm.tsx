@@ -1,25 +1,19 @@
 import { TextField, Autocomplete, Box, Checkbox, FormControlLabel } from '@mui/material';
-import { Activity } from './apiService';
+import { ActivityCreate } from './apiService';
 import React, { memo } from 'react';
 import useActivities from './useActivities';
 
 export type ActivityFormProps = {
-  state: {
-    name: string,
-    is_suspended: boolean,
-    parents: Activity[],
-  },
+  state: ActivityCreate,
   children?: React.ReactNode,
   onSubmit?: (e: React.FormEvent) => void;
-  onChange(name: 'name', value: string): void,
-  onChange(name: 'is_suspended', value: boolean): void,
-  onChange(name: 'parents', value: Activity[]): void,
+  onChange<T extends keyof ActivityCreate>(name: T, value: ActivityCreate[T]): void;
 };
 
 export default memo(function ActivityForm(
   { onSubmit: handleSubmit, onChange, state, children }: ActivityFormProps,
 ) {
-  const { activities } = useActivities();
+  const { activities, activityMappings } = useActivities();
   return (
     <Box mb={2} component="form" onSubmit={handleSubmit}>
       <TextField
@@ -31,25 +25,25 @@ export default memo(function ActivityForm(
         value={state.name}
         onChange={(e) => onChange('name', e.target.value)}
       />
-      {activities && (
+      {(['parentIds', 'childIds'] as const).map((l) => (
         <Autocomplete
+          key={l}
           fullWidth
           multiple
-          isOptionEqualToValue={(o, v) => o.id === v.id}
-          options={activities}
-          getOptionLabel={(option) => option.name}
-          value={state.parents}
-          onChange={(_, newVal) => onChange('parents', newVal)}
+          options={activities.map(a => a.id)}
+          getOptionLabel={(option) => activityMappings[option]?.name ?? 'unknown activity...'}
+          value={state[l]}
+          onChange={(_, newVal) => onChange(l, newVal)}
           renderInput={(params) => (
             <TextField
               {...params}
               margin="dense"
               variant="outlined"
-              label="parent activities"
+              label={l === 'parentIds' ? 'parent activities' : 'child activities'}
             />
           )}
         />
-      )}
+      ))}
       <FormControlLabel
         control={(
           <Checkbox

@@ -1,5 +1,5 @@
 import { Button, IconButton, Stack } from '@mui/material';
-import { Activity, deleteActivity, editActivity } from './apiService';
+import { Activity, ActivityCreate, deleteActivity, editActivity } from './apiService';
 import React, { memo, useEffect, useMemo, useState } from 'react';
 import AlertService from './AlertService';
 import { mutate } from 'swr';
@@ -13,10 +13,11 @@ type ActivityEditorProps = {
 };
 
 export default memo(function ActivityEditor({ activity, onClose }: ActivityEditorProps) {
-  const defaultState = useMemo(() => ({
+  const defaultState = useMemo<ActivityCreate>(() => ({
     name: activity.name,
     is_suspended: activity.is_suspended,
-    parents: activity.parents,
+    parentIds: activity.parentIds,
+    childIds: activity.childIds,
   }), [activity]);
 
   const [state, setState] = useState(defaultState);
@@ -33,10 +34,7 @@ export default memo(function ActivityEditor({ activity, onClose }: ActivityEdito
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     editActivity({
-      id: activity.id,
-      name: state.name,
-      is_suspended: state.is_suspended,
-      parentIds: state.parents.map(({ id }) => id),
+      id: activity.id, ...state,
     }).then(() => {
       AlertService.success('activity edited');
       mutate('/activities/');

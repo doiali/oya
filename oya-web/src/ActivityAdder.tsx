@@ -1,26 +1,25 @@
 import { Button } from '@mui/material';
-import { Activity, createActivity } from './apiService';
+import { ActivityCreate, createActivity } from './apiService';
 import React, { memo, useState } from 'react';
 import AlertService from './AlertService';
 import { mutate } from 'swr';
 import ActivityForm, { ActivityFormProps } from './ActivityForm';
 
+const initState: ActivityCreate = {
+  name: '',
+  is_suspended: false,
+  parentIds: [],
+  childIds: [],
+};
+
 function useActivityCreate() {
-  const [state, setState] = useState({
-    name: '',
-    is_suspended: false,
-    parents: [] as Activity[],
-  });
+  const [state, setState] = useState(initState);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createActivity({
-      name: state.name,
-      is_suspended: state.is_suspended,
-      parentIds: state.parents.map(({ id }) => id),
-    }).then(() => {
+    createActivity(state).then(() => {
       AlertService.success('activity created');
-      setState({ name: '', is_suspended: false, parents: [] });
+      setState(initState);
       mutate('/activities/');
     }, () => {
       AlertService.error('error creating activity');
