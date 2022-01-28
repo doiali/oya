@@ -24,7 +24,7 @@ const ActivitiesHomeWidget = memo(function ActivitiesWidget() {
       <Typography variant='h5'>
         Create Activity
       </Typography>
-      {activities && <ActivityAdder activities={activities} />}
+      <ActivityAdder />
       <Typography mb={1} variant='h5'>
         Activities List
       </Typography>
@@ -48,7 +48,6 @@ const ActivitiesHomeWidget = memo(function ActivitiesWidget() {
           <ActivitySingle
             key={a.id}
             activity={a}
-            activities={activities}
           />
         ))}
       </Stack>
@@ -57,7 +56,7 @@ const ActivitiesHomeWidget = memo(function ActivitiesWidget() {
 });
 
 const ActivitySingle = memo(function ActivitySingle(
-  { activity, activities }: { activity: Activity, activities: Activity[]; },
+  { activity }: { activity: Activity; },
 ) {
   const [editMode, setEditMode] = useState(false);
 
@@ -72,7 +71,6 @@ const ActivitySingle = memo(function ActivitySingle(
       </Box>
       <Collapse in={editMode} unmountOnExit mountOnEnter>
         <ActivityEditor
-          activities={activities}
           activity={activity}
           onClose={() => setEditMode(false)}
         />

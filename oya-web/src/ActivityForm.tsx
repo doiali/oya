@@ -1,6 +1,7 @@
 import { TextField, Autocomplete, Box, Checkbox, FormControlLabel } from '@mui/material';
 import { Activity } from './apiService';
 import React, { memo } from 'react';
+import useActivities from './useActivities';
 
 export type ActivityFormProps = {
   state: {
@@ -8,7 +9,6 @@ export type ActivityFormProps = {
     is_suspended: boolean,
     parents: Activity[],
   },
-  activities: Activity[],
   children?: React.ReactNode,
   onSubmit?: (e: React.FormEvent) => void;
   onChange(name: 'name', value: string): void,
@@ -17,8 +17,9 @@ export type ActivityFormProps = {
 };
 
 export default memo(function ActivityForm(
-  { activities, onSubmit: handleSubmit, onChange, state, children }: ActivityFormProps,
+  { onSubmit: handleSubmit, onChange, state, children }: ActivityFormProps,
 ) {
+  const { activities } = useActivities();
   return (
     <Box mb={2} component="form" onSubmit={handleSubmit}>
       <TextField

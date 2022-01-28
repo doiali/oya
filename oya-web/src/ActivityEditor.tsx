@@ -8,12 +8,11 @@ import { Box } from '@mui/system';
 import { Delete } from '@mui/icons-material';
 
 type ActivityEditorProps = {
-  activities: Activity[],
   activity: Activity,
   onClose?: () => void,
 };
 
-export default memo(function ActivityEditor({ activities, activity, onClose }: ActivityEditorProps) {
+export default memo(function ActivityEditor({ activity, onClose }: ActivityEditorProps) {
   const defaultState = useMemo(() => ({
     name: activity.name,
     is_suspended: activity.is_suspended,
@@ -62,7 +61,7 @@ export default memo(function ActivityEditor({ activities, activity, onClose }: A
   };
 
   return (
-    <ActivityForm state={state} onSubmit={handleSubmit} onChange={handleChange} activities={activities}>
+    <ActivityForm state={state} onSubmit={handleSubmit} onChange={handleChange}>
       <Box sx={{ my: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Stack direction="row">
           <Button variant="contained" type="submit">

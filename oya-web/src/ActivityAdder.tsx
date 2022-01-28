@@ -34,10 +34,10 @@ function useActivityCreate() {
   return { state, onChange, onSubmit };
 }
 
-export default memo(function ActivityAdder({ activities }: { activities: Activity[], }) {
+export default memo(function ActivityAdder() {
   const formProps = useActivityCreate();
   return (
-    <ActivityForm {...formProps} activities={activities}>
+    <ActivityForm {...formProps}>
       <Button size="large" fullWidth sx={{ mt: 1 }} variant="contained" type="submit">
         create activity
       </Button>

@@ -97,7 +97,7 @@ function ActivityView() {
             <Typography variant='h5'>
               Create Activity
             </Typography>
-            {activities && <ActivityAdder activities={activities} />}
+            <ActivityAdder />
           </Paper>
           {selectedActivity && (
             <Paper elevation={2} sx={{ p: 2, mt: 2 }}>
@@ -105,7 +105,6 @@ function ActivityView() {
                 Update Activity
               </Typography>
               <ActivityEditor
-                activities={activities}
                 activity={selectedActivity}
                 onClose={() => setSelected('')}
               />
@@ -119,12 +118,12 @@ function ActivityView() {
 
 type ActivityTreeSingleProps = {
   activity: Activity;
-  rendererId?: string;
+  parentNodeId?: string;
   type?: 'children' | 'parents' | 'single';
 };
 
-function ActivityTreeSingle({ activity, rendererId = '', type = 'children' }: ActivityTreeSingleProps) {
-  const prefix = rendererId ? (rendererId + '-') : '';
+function ActivityTreeSingle({ activity, parentNodeId = '', type = 'children' }: ActivityTreeSingleProps) {
+  const prefix = parentNodeId ? (parentNodeId + '-') : '';
   return (
     <TreeItem
       nodeId={prefix + activity.id}
@@ -135,7 +134,7 @@ function ActivityTreeSingle({ activity, rendererId = '', type = 'children' }: Ac
           type={type}
           key={c.id}
           activity={c}
-          rendererId={prefix + activity.id}
+          parentNodeId={prefix + activity.id}
         />
       ))}
     </TreeItem>
