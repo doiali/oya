@@ -98,12 +98,12 @@
     "prefer-arrow-callback": "off",
     "arrow-spacing": "warn",
     // "arrow-parens": "warn",
-    "no-confusing-arrow": [
-      "warn",
-      {
-        "allowParens": true
-      }
-    ],
+    // "no-confusing-arrow": [
+    //   "warn",
+    //   {
+    //     "allowParens": true
+    //   }
+    // ],
     "implicit-arrow-linebreak": [
       "warn",
       "beside"
