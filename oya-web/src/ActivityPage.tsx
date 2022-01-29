@@ -1,16 +1,16 @@
 import { ChevronRight, ExpandMore } from '@mui/icons-material';
 import { TreeItem, TreeView } from '@mui/lab';
-import { Box, Button, Grid, Paper, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import React, { memo, useMemo, useState } from 'react';
 import { Activity } from './apiService';
 import ActivityEditor from './ActivityEditor';
 import useActivities from './useActivities';
-import ActivityAdder from './ActivityAdder';
+import { ActivityAdderDialog } from './ActivityAdder';
 import { DrawerHeader } from './Layout';
 
 export default function ActivityPage() {
   return (
-    <ActivityView />
+    <ActivitiesTreeView />
   );
 }
 
@@ -18,13 +18,15 @@ export default function ActivityPage() {
 //   activities?: Activity[];
 // };
 
-function ActivityView() {
+function ActivitiesTreeView() {
   const { activities, activityMappings } = useActivities();
   const [expanded, setExpanded] = useState<string[]>([]);
   const [selected, setSelected] = useState<string>('');
-  const selectedIds = selected.split('-');
-  const selectedActivityId = selectedIds[selectedIds.length - 1];
-  const selectedActivity = activityMappings[selectedActivityId];
+  const selectedActivity = useMemo(() => {
+    const selectedIds = selected.split('-');
+    const selectedActivityId = selectedIds[selectedIds.length - 1];
+    return activityMappings[selectedActivityId];
+  }, [selected, activityMappings]);
 
   const getAllNodeIds = () => {
     const ids: string[] = [];
@@ -47,7 +49,9 @@ function ActivityView() {
 
   const handleExpandClick = () => {
     setExpanded(oldExpanded => {
-      return oldExpanded.length === 0 ? getAllNodeIds() : [];
+      const shouldExpand = oldExpanded.length === 0;
+      if (!shouldExpand) setSelected('');
+      return shouldExpand ? getAllNodeIds() : [];
     });
   };
 
@@ -57,65 +61,70 @@ function ActivityView() {
   );
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={6}>
-        <Box>
-          <Box sx={{ mb: 1 }}>
-            <Button onClick={handleExpandClick}>
-              {expanded.length === 0 ? 'Expand all' : 'Collapse all'}
-            </Button>
-          </Box>
-          <TreeView
-            expanded={expanded}
-            selected={selected}
-            onNodeToggle={handleToggle}
-            onNodeSelect={handleSelect}
-            defaultCollapseIcon={<ExpandMore />}
-            defaultExpandIcon={<ChevronRight />}
-          >
-            {filteredActivities.map((a) => (
-              <ActivityTreeSingle
-                type="children"
-                key={a.id}
-                activity={a}
-              />
-            ))}
-          </TreeView>
-        </Box>
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <Box
-          sx={{
-            position: 'fixed',
-            right: 0,
-            top: 0,
-            bottom: 0,
-            overflowY: 'auto',
-            p: 2,
-            width: 600,
-          }}
+    <>
+      <Box width={400}>
+        <Stack sx={{ mb: 1 }} direction="row" spacing={1}>
+          <Button onClick={handleExpandClick}>
+            {expanded.length === 0 ? 'Expand all' : 'Collapse all'}
+          </Button>
+          <ActivityAdderDialog />
+        </Stack>
+        <TreeView
+          expanded={expanded}
+          selected={selected}
+          onNodeToggle={handleToggle}
+          onNodeSelect={handleSelect}
+          defaultCollapseIcon={<ExpandMore />}
+          defaultExpandIcon={<ChevronRight />}
         >
-          <DrawerHeader />
-          <Paper elevation={2} sx={{ p: 2, mt: 2 }}>
-            <Typography variant='h5'>
-              Create Activity
-            </Typography>
-            <ActivityAdder />
-          </Paper>
-          {selectedActivity && (
-            <Paper elevation={2} sx={{ p: 2, mt: 2 }}>
-              <Typography variant='h5'>
-                Update Activity
-              </Typography>
-              <ActivityEditor
-                activity={selectedActivity}
-                onClose={() => setSelected('')}
-              />
-            </Paper>
-          )}
-        </Box>
-      </Grid>
-    </Grid>
+          {filteredActivities.map((a) => (
+            <ActivityTreeSingle
+              type="children"
+              key={a.id}
+              activity={a}
+            />
+          ))}
+        </TreeView>
+      </Box>
+      <ActivityFixedActionPanel
+        activity={selectedActivity}
+        onClose={() => setSelected('')}
+      />
+    </>
+  );
+}
+
+type ActivityFixedActionPanelProps = {
+  activity: Activity | undefined,
+  onClose: () => void,
+};
+
+function ActivityFixedActionPanel({ activity, onClose }: ActivityFixedActionPanelProps) {
+  return (
+    <Box
+      sx={{
+        position: 'fixed',
+        right: 0,
+        top: 0,
+        bottom: 0,
+        overflowY: 'auto',
+        p: 2,
+        width: 500,
+      }}
+    >
+      <DrawerHeader />
+      {activity && (
+        <Paper elevation={2} sx={{ p: 2, mt: 2 }}>
+          <Typography variant='h5'>
+            Update Activity
+          </Typography>
+          <ActivityEditor
+            activity={activity}
+            onClose={() => onClose()}
+          />
+        </Paper>
+      )}
+    </Box>
   );
 }
 
@@ -125,7 +134,9 @@ type ActivityTreeSingleProps = {
   type?: 'children' | 'parents' | 'single';
 };
 
-function ActivityTreeSingle({ activity, parentNodeId = '', type = 'children' }: ActivityTreeSingleProps) {
+const ActivityTreeSingle = memo(function ActivityTreeSingle({
+  activity, parentNodeId = '', type = 'children',
+}: ActivityTreeSingleProps) {
   const prefix = parentNodeId ? (parentNodeId + '-') : '';
   return (
     <TreeItem
@@ -142,4 +153,4 @@ function ActivityTreeSingle({ activity, parentNodeId = '', type = 'children' }: 
       ))}
     </TreeItem>
   );
-}
+});
