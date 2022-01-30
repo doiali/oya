@@ -4,6 +4,7 @@ from dateutil import parser
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from . import crud, models, schemas
 from .database import SessionLocal, engine
@@ -47,6 +48,8 @@ def create_activity(activity: schemas.ActivityCreate, db: Session = Depends(get_
         return crud.create_activity(db=db, activity=activity)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
+    except IntegrityError as e:
+        raise HTTPException(status_code=400, detail=f"{e.orig}")
 
 
 @app.delete(
@@ -74,6 +77,8 @@ def update_activity(
         return updated_activity
     except ValueError as e:
         raise HTTPException(status_code=400, detail=f"{e}")
+    except IntegrityError as e:
+        raise HTTPException(status_code=400, detail=f"{e.orig}")
 
 
 @app.get("/intervals/", tags=["Intervals"], response_model=List[schemas.Interval])
