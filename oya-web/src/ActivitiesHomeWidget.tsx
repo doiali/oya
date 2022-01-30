@@ -8,10 +8,10 @@ import ActivityEditor from './ActivityEditor';
 import useActivities from './useActivities';
 
 export function getActivityParentsNames(a: Activity): string {
-  return a.name.toLowerCase() + ' ' + a.parents.map((p) => getActivityParentsNames(p)).join(' ');
+  return a.name.toLowerCase() + ' ' + a.allParents.map((p) => p.name).join(' ');
 }
 
-export default memo(function ActivitiesPanel() {
+const ActivitiesHomeWidget = memo(function ActivitiesWidget() {
   const { activities } = useActivities();
   const [searchVal, setSearchVal] = useState('');
   const theme = useTheme();
@@ -24,7 +24,7 @@ export default memo(function ActivitiesPanel() {
       <Typography variant='h5'>
         Create Activity
       </Typography>
-      {activities && <ActivityAdder activities={activities} />}
+      <ActivityAdder />
       <Typography mb={1} variant='h5'>
         Activities List
       </Typography>
@@ -48,7 +48,6 @@ export default memo(function ActivitiesPanel() {
           <ActivitySingle
             key={a.id}
             activity={a}
-            activities={activities}
           />
         ))}
       </Stack>
@@ -57,7 +56,7 @@ export default memo(function ActivitiesPanel() {
 });
 
 const ActivitySingle = memo(function ActivitySingle(
-  { activity, activities }: { activity: Activity, activities: Activity[]; },
+  { activity }: { activity: Activity; },
 ) {
   const [editMode, setEditMode] = useState(false);
 
@@ -72,7 +71,6 @@ const ActivitySingle = memo(function ActivitySingle(
       </Box>
       <Collapse in={editMode} unmountOnExit mountOnEnter>
         <ActivityEditor
-          activities={activities}
           activity={activity}
           onClose={() => setEditMode(false)}
         />
@@ -80,3 +78,5 @@ const ActivitySingle = memo(function ActivitySingle(
     </Box>
   );
 });
+
+export default ActivitiesHomeWidget;

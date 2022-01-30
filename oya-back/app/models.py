@@ -7,6 +7,7 @@ from sqlalchemy import (
     DateTime,
     Interval as IntervalType,
     Text,
+    desc,
 )
 from sqlalchemy.orm import relationship, validates
 from dateutil import parser
@@ -39,6 +40,7 @@ class Activity(Base):
         primaryjoin=id == Association.child_id,
         secondaryjoin=id == Association.parent_id,
         back_populates="children",
+        order_by=lambda: desc(Activity.id),
     )
     children = relationship(
         "Activity",
@@ -46,15 +48,16 @@ class Activity(Base):
         primaryjoin=id == Association.parent_id,
         secondaryjoin=id == Association.child_id,
         back_populates="parents",
+        order_by=lambda: desc(Activity.id),
     )
 
     @property
     def childIds(self):
-        return sorted(list(map(lambda x: x.id, self.children)))
+        return (list(map(lambda x: x.id, self.children)))
 
     @property
     def parentIds(self):
-        return sorted(list(map(lambda x: x.id, self.parents)))
+        return (list(map(lambda x: x.id, self.parents)))
 
     @property
     def allParents(self):
@@ -101,13 +104,13 @@ class Activity(Base):
     @validates("parents")
     def validate_parents(self, key, parent):
         if parent.id in self.allChildIds:
-            raise ValueError("failed validation")
+            raise ValueError("you are creating a loop")
         return parent
 
     @validates("children")
     def validate_children(self, key, child):
         if child.id in self.allParentIds:
-            raise ValueError("failed validation")
+            raise ValueError("you are creating a loop")
         return child
 
     entries = relationship("Entry", back_populates="activity", cascade="all")

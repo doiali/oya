@@ -1,24 +1,19 @@
-import { TextField, Autocomplete, Box, Checkbox, FormControlLabel } from '@mui/material';
-import { Activity } from './apiService';
+import { TextField, Autocomplete, Box, Checkbox, FormControlLabel, FormControl } from '@mui/material';
+import { ActivityCreate } from './apiService';
 import React, { memo } from 'react';
+import useActivities from './useActivities';
 
 export type ActivityFormProps = {
-  state: {
-    name: string,
-    is_suspended: boolean,
-    parents: Activity[],
-  },
-  activities: Activity[],
+  data: ActivityCreate,
   children?: React.ReactNode,
   onSubmit?: (e: React.FormEvent) => void;
-  onChange(name: 'name', value: string): void,
-  onChange(name: 'is_suspended', value: boolean): void,
-  onChange(name: 'parents', value: Activity[]): void,
+  onChange<T extends keyof ActivityCreate>(name: T, value: ActivityCreate[T]): void;
 };
 
 export default memo(function ActivityForm(
-  { activities, onSubmit: handleSubmit, onChange, state, children }: ActivityFormProps,
+  { onSubmit: handleSubmit, onChange, data, children }: ActivityFormProps,
 ) {
+  const { activities, activityMappings } = useActivities();
   return (
     <Box mb={2} component="form" onSubmit={handleSubmit}>
       <TextField
@@ -27,37 +22,39 @@ export default memo(function ActivityForm(
         required
         variant="outlined"
         label="Activity Name"
-        value={state.name}
+        value={data.name}
         onChange={(e) => onChange('name', e.target.value)}
       />
-      {activities && (
+      {(['parentIds', 'childIds'] as const).map((l) => (
         <Autocomplete
+          key={l}
           fullWidth
           multiple
-          isOptionEqualToValue={(o, v) => o.id === v.id}
-          options={activities}
-          getOptionLabel={(option) => option.name}
-          value={state.parents}
-          onChange={(_, newVal) => onChange('parents', newVal)}
+          options={activities.map(a => a.id)}
+          getOptionLabel={(option) => activityMappings[option]?.name ?? 'unknown activity...'}
+          value={data[l]}
+          onChange={(_, newVal) => onChange(l, newVal)}
           renderInput={(params) => (
             <TextField
               {...params}
               margin="dense"
               variant="outlined"
-              label="parent activities"
+              label={l === 'parentIds' ? 'parent activities' : 'child activities'}
             />
           )}
         />
-      )}
-      <FormControlLabel
-        control={(
-          <Checkbox
-            checked={state.is_suspended}
-            onChange={(e) => onChange('is_suspended', e.target.checked)}
-          />
-        )}
-        label="is suspended"
-      />
+      ))}
+      <FormControl fullWidth>
+        <FormControlLabel
+          control={(
+            <Checkbox
+              checked={data.is_suspended}
+              onChange={(e) => onChange('is_suspended', e.target.checked)}
+            />
+          )}
+          label="is suspended"
+        />
+      </FormControl>
       {children}
     </Box>
   );

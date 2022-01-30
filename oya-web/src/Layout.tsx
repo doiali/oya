@@ -59,7 +59,7 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const DrawerHeader = styled('div')(({ theme }) => ({
+export const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(0, 1),
@@ -70,7 +70,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function Layout() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -123,6 +123,7 @@ export default function Layout() {
         <List>
           <ListItemLink to="/" primary='Home' icon={<Home />} />
           <ListItemLink to="/reports" primary='Reports' icon={<Home />} />
+          <ListItemLink to="/activities" primary='Activity Manager' icon={<Home />} />
         </List>
         <Divider />
       </Drawer>

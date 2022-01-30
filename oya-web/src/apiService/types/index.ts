@@ -19,6 +19,7 @@ export type ActivityCreate = {
   name: string,
   is_suspended: boolean,
   parentIds: number[],
+  childIds: number[],
 };
 
 export type ActivityUpdate = ActivityCreate & { id: number; };
