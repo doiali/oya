@@ -8,7 +8,7 @@ import ActivityEditor from './ActivityEditor';
 import useActivities from './useActivities';
 
 export function getActivityParentsNames(a: Activity): string {
-  return a.name.toLowerCase() + ' ' + a.parents.map((p) => getActivityParentsNames(p)).join(' ');
+  return a.name.toLowerCase() + ' ' + a.allParents.map((p) => p.name).join(' ');
 }
 
 const ActivitiesHomeWidget = memo(function ActivitiesWidget() {
