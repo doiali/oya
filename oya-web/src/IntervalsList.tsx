@@ -1,8 +1,7 @@
 import { Interval } from './apiService/types';
 import { format } from 'date-fns-jalali';
 import { Stack, Divider, Chip, Box, Typography, Pagination } from '@mui/material';
-import React, { memo, useEffect, useMemo, useState } from 'react';
-import IntervalsFilter, { useIntervalsFilter } from './IntervalsFilter';
+import React, { memo, useEffect, useState } from 'react';
 import IntervalItem from './IntervalItem';
 
 type IntervalsListProps = {
@@ -11,16 +10,17 @@ type IntervalsListProps = {
 
 const rowsPerPage = 50;
 export default memo(function IntervalsList({ intervals }: IntervalsListProps) {
-  const { filteredIntervals, ...intervalsFilterProps } = useIntervalsFilter({ intervals });
-  const rows = filteredIntervals.length;
   const [page, setPage] = useState(1);
+  const rows = intervals.length;
   const totalPages = Math.ceil(rows / rowsPerPage) || 1;
+
   useEffect(() => { setPage(1); }, [rows]);
-  const list = useMemo(() => {
+
+  const renderList = () => {
     let prevEnd = new Date('2050-1-1');
     return (
       <Stack spacing={1}>
-        {filteredIntervals
+        {intervals
           .slice((page - 1) * rowsPerPage, page * rowsPerPage)
           .map((interval, i) => {
             const end = new Date(interval.end);
@@ -40,29 +40,25 @@ export default memo(function IntervalsList({ intervals }: IntervalsListProps) {
           })}
       </Stack>
     );
-  }, [filteredIntervals, rows, page]);
+  };
+
   const pagination = (rows > rowsPerPage) && (
-    <Stack spacing={1} direction="row"
+    <Stack
+      spacing={1} direction="row"
       sx={{ alignItems: 'center', justifyContent: 'space-between' }}
     >
-      <span>
-        total rows: {rows}
-      </span>
-      <Pagination
-        count={totalPages}
-        page={page}
-        onChange={(_, x) => setPage(x)}
-      />
+      <span>total rows: {rows}</span>
+      <Pagination count={totalPages} page={page} onChange={(_, x) => setPage(x)} />
     </Stack>
   );
+
   return (
     <Box component="section">
-      <IntervalsFilter {...intervalsFilterProps} />
       <Typography mb={2} variant="h5">
         Intervals List
       </Typography>
       {pagination}
-      {list}
+      {renderList()}
       {(rows > 10) && pagination}
     </Box>
   );
