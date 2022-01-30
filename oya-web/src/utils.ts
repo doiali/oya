@@ -16,11 +16,11 @@ export const getDeltaString = (start: string | Date, end: string | Date) => (
  * @returns delta string in format HH:mm
  */
 export const getDeltaStringOfRange = (dm: number) => {
-  const days = Math.floor(dm / 60 / 24);
-  const hours = Math.floor((dm % (60 * 24)) / 60);
+  // const days = Math.floor(dm / 60 / 24);
+  const hours = Math.floor((dm /* % (60 * 24)*/) / 60);
   const minutes = Math.round(dm % 60);
   return (
-    (days ? `${days} days ` : '') +
+    // (days ? `${days} days ` : '') +
     hours.toString().padStart(2, '0') +
     ':' +
     minutes.toString().padStart(2, '0')

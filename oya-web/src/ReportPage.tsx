@@ -52,6 +52,7 @@ export function ActivityOverViewReport({ activity, atrm }: ActivityOverViewRepor
     </Typography>
   );
   const r = atrm[activity.id];
+  if (!r) return null;
   return (
     <Paper sx={{ p: 2, height: '100%', flexShrink: 0 }}>
       <Typography gutterBottom variant='h5' textAlign="center">{activity.name}</Typography>
