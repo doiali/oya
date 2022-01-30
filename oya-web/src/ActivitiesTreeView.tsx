@@ -1,6 +1,6 @@
-import { ChevronRight, ExpandMore } from '@mui/icons-material';
-import { TreeItem, TreeView } from '@mui/lab';
-import { Box, Button, Stack } from '@mui/material';
+import { ChevronRight, ExpandMore, Remove } from '@mui/icons-material';
+import { TreeItem, treeItemClasses, TreeView } from '@mui/lab';
+import { alpha, Box, Button, Stack, styled } from '@mui/material';
 import React, { memo, useState } from 'react';
 import { Activity } from './apiService';
 import useActivities from './useActivities';
@@ -81,6 +81,7 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
           onNodeSelect={handleSelect}
           defaultCollapseIcon={<ExpandMore />}
           defaultExpandIcon={<ChevronRight />}
+          defaultEndIcon={<Remove sx={{ opacity: 0.4, width: 12 }} />}
         >
           {filteredActivities.map((a) => (
             <ActivityTreeSingle
@@ -95,6 +96,14 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
   );
 });
 
+const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
+  [`& .${treeItemClasses.group}`]: {
+    marginLeft: 15,
+    paddingLeft: 5,
+    borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`,
+  },
+}));
+
 type ActivityTreeSingleProps = {
   activity: Activity;
   parentNodeId?: string;
@@ -106,7 +115,7 @@ const ActivityTreeSingle = memo(function ActivityTreeSingle({
 }: ActivityTreeSingleProps) {
   const prefix = parentNodeId ? (parentNodeId + '-') : '';
   return (
-    <TreeItem
+    <StyledTreeItem
       nodeId={prefix + activity.id}
       label={activity.name}
     >
@@ -118,7 +127,7 @@ const ActivityTreeSingle = memo(function ActivityTreeSingle({
           parentNodeId={prefix + activity.id}
         />
       ))}
-    </TreeItem>
+    </StyledTreeItem>
   );
 });
 
