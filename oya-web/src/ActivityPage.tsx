@@ -6,12 +6,28 @@ import { Activity } from './apiService';
 import ActivityEditor from './ActivityEditor';
 import useActivities from './useActivities';
 import { ActivityAdderDialog } from './ActivityAdder';
-import { DrawerHeader } from './Layout';
 import ActivityFilter, { ActivityFilterProps, ActivityFilters, filterActivities } from './ActivityFilter';
 
 export default function ActivityPage() {
+  const [selectedNodeId, setSelectedNodeId] = useState<string>('');
+  const { activityMappings } = useActivities();
+  const selectedActivity = useMemo(() => {
+    const selectedIds = selectedNodeId.split('-');
+    const selectedActivityId = selectedIds[selectedIds.length - 1];
+    return activityMappings[selectedActivityId];
+  }, [selectedNodeId, activityMappings]);
+  const handleSelect = (nodeId: string) => { setSelectedNodeId(nodeId); };
   return (
-    <ActivitiesTreeView />
+    <>
+      <ActivitiesTreeView
+        selected={selectedNodeId}
+        onNodeSelect={handleSelect}
+      />
+      <ActivityActionPanel
+        activity={selectedActivity}
+        onClose={() => setSelectedNodeId('')}
+      />
+    </>
   );
 }
 
@@ -35,20 +51,19 @@ const initFilters: ActivityFilters = {
   orderType: 'asc',
 };
 
-function ActivitiesTreeView() {
-  const { activities, activityMappings } = useActivities();
+type ActivitiesTreeViewProps = {
+  selected: string;
+  onNodeSelect(nodeId: string): void;
+};
+
+function ActivitiesTreeView({ selected, onNodeSelect }: ActivitiesTreeViewProps) {
+  const { activities } = useActivities();
   const [expanded, setExpanded] = useState<string[]>([]);
-  const [selected, setSelected] = useState<string>('');
   const [filters, setFilters] = useState(initFilters);
   const handleFiltersChange: ActivityFilterProps['onChange'] = (name, value) => {
     setFilters(p => ({ ...p, [name]: value }));
   };
   const filteredActivities = filterActivities(activities, filters);
-  const selectedActivity = useMemo(() => {
-    const selectedIds = selected.split('-');
-    const selectedActivityId = selectedIds[selectedIds.length - 1];
-    return activityMappings[selectedActivityId];
-  }, [selected, activityMappings]);
 
   const allNodeIds = getAllTreeNodeIds(filteredActivities);
 
@@ -57,30 +72,30 @@ function ActivitiesTreeView() {
   };
 
   const handleSelect = (event: React.SyntheticEvent, nodeId: string) => {
-    setSelected(nodeId);
+    onNodeSelect(nodeId);
   };
 
   const handleExpandClick = () => {
     setExpanded(oldExpanded => {
       const shouldExpand = oldExpanded.length === 0;
-      if (!shouldExpand) setSelected('');
+      if (!shouldExpand) onNodeSelect('');
       return shouldExpand ? allNodeIds : [];
     });
   };
 
   return (
-    <>
-      <Box width={400}>
-        <ActivityFilter
-          value={filters}
-          onChange={handleFiltersChange}
-        />
-        <Stack sx={{ mb: 1 }} direction="row" spacing={1}>
-          <Button onClick={handleExpandClick}>
-            {expanded.length === 0 ? 'Expand all' : 'Collapse all'}
-          </Button>
-          <ActivityAdderDialog />
-        </Stack>
+    <Box width={400}>
+      <ActivityFilter
+        value={filters}
+        onChange={handleFiltersChange}
+      />
+      <Stack sx={{ mb: 1 }} direction="row" spacing={1}>
+        <Button onClick={handleExpandClick}>
+          {expanded.length === 0 ? 'Expand all' : 'Collapse all'}
+        </Button>
+        <ActivityAdderDialog />
+      </Stack>
+      <Box sx={{ maxHeight: 500, overflowY: 'auto' }}>
         <TreeView
           expanded={expanded}
           selected={selected}
@@ -98,44 +113,6 @@ function ActivitiesTreeView() {
           ))}
         </TreeView>
       </Box>
-      <ActivityFixedActionPanel
-        activity={selectedActivity}
-        onClose={() => setSelected('')}
-      />
-    </>
-  );
-}
-
-type ActivityFixedActionPanelProps = {
-  activity: Activity | undefined,
-  onClose: () => void,
-};
-
-function ActivityFixedActionPanel({ activity, onClose }: ActivityFixedActionPanelProps) {
-  return (
-    <Box
-      sx={{
-        position: 'fixed',
-        right: 0,
-        top: 0,
-        bottom: 0,
-        overflowY: 'auto',
-        p: 2,
-        width: 500,
-      }}
-    >
-      <DrawerHeader />
-      {activity && (
-        <Paper elevation={2} sx={{ p: 2, mt: 2 }}>
-          <Typography variant='h5'>
-            Update Activity
-          </Typography>
-          <ActivityEditor
-            activity={activity}
-            onClose={() => onClose()}
-          />
-        </Paper>
-      )}
     </Box>
   );
 }
@@ -166,3 +143,26 @@ const ActivityTreeSingle = memo(function ActivityTreeSingle({
     </TreeItem>
   );
 });
+
+type ActivityActionPanelProps = {
+  activity: Activity | undefined,
+  onClose: () => void,
+};
+
+function ActivityActionPanel({ activity, onClose }: ActivityActionPanelProps) {
+  return (
+    <Box sx={{ p: 2 }}>
+      {activity && (
+        <Paper elevation={2} sx={{ p: 2, mt: 2 }}>
+          <Typography variant='h5' mb={2}>
+            Update Activity
+          </Typography>
+          <ActivityEditor
+            activity={activity}
+            onClose={() => onClose()}
+          />
+        </Paper>
+      )}
+    </Box>
+  );
+}
