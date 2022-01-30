@@ -1,7 +1,7 @@
 import { ChevronRight, ExpandMore, Search } from '@mui/icons-material';
 import { TreeItem, TreeView } from '@mui/lab';
 import { Box, Button, InputAdornment, Paper, Stack, TextField, Typography } from '@mui/material';
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import { Activity } from './apiService';
 import ActivityEditor from './ActivityEditor';
 import useActivities from './useActivities';
@@ -13,10 +13,6 @@ export default function ActivityPage() {
     <ActivitiesTreeView />
   );
 }
-
-// type ActivityViewProps = {
-//   activities?: Activity[];
-// };
 
 const getAllTreeNodeIds = (activities: Activity[]) => {
   const ids: string[] = [];
@@ -30,11 +26,14 @@ const getAllTreeNodeIds = (activities: Activity[]) => {
 };
 
 function ActivitiesTreeView() {
-  const { activityMappings } = useActivities();
+  const { activities, activityMappings } = useActivities();
   const [expanded, setExpanded] = useState<string[]>([]);
   const [selected, setSelected] = useState<string>('');
-  const [filteredActivities, setFilteredActivities] = useState<Activity[]>([]);
   const [filters, setFilters] = useState(initFilters);
+  const handleFiltersChange: ActivityFilterProps['onChange'] = (name, value) => {
+    setFilters(p => ({ ...p, [name]: value }));
+  };
+  const filteredActivities = filterActivities(activities, filters);
   const selectedActivity = useMemo(() => {
     const selectedIds = selected.split('-');
     const selectedActivityId = selectedIds[selectedIds.length - 1];
@@ -63,10 +62,8 @@ function ActivitiesTreeView() {
     <>
       <Box width={400}>
         <ActivityFilter
-          onChange={(a, f) => {
-            setFilteredActivities(a);
-            setFilters(f);
-          }}
+          value={filters}
+          onChange={handleFiltersChange}
         />
         <Stack sx={{ mb: 1 }} direction="row" spacing={1}>
           <Button onClick={handleExpandClick}>
@@ -99,21 +96,28 @@ function ActivitiesTreeView() {
   );
 }
 
-const initFilters = {
+type ActivityFilters = {
+  searchVal: string,
+  treeView: boolean,
+  hideSubActivities: boolean,
+  orderBychildrenLength: boolean,
+  order: 'id' | 'name',
+  orderType: 'desc' | 'asc',
+};
+
+const initFilters: ActivityFilters = {
   searchVal: '',
   treeView: true,
   hideSubActivities: true,
   orderBychildrenLength: true,
-  order: 'name' as 'id' | 'name',
-  orderType: 'asc' as 'desc' | 'asc',
+  order: 'name',
+  orderType: 'asc',
 };
-
-type ActivityFilters = typeof initFilters;
 
 const filterActivities = (activities: Activity[], filters: ActivityFilters): Activity[] => {
   const { searchVal, treeView, hideSubActivities, order, orderType, orderBychildrenLength } = filters;
   const matches = (a: Activity) => a.name.trim().toLowerCase().includes(searchVal.toLowerCase().trim());
-  const fA = [...activities].filter(a => {
+  return [...activities].filter(a => {
     if (treeView && hideSubActivities && a.parents.length > 0) return false;
     if (!searchVal) return true;
     if (treeView) {
@@ -125,20 +129,7 @@ const filterActivities = (activities: Activity[], filters: ActivityFilters): Act
       if (a.allParents.some(matches)) return true;
     }
     return false;
-  });
-  // if (treeView && hideSubActivities) fA = fA.filter(a => a.parents.length === 0);
-  // if (searchVal) {
-  //   const matches = (a: Activity) => a.name.trim().toLowerCase().includes(searchVal.toLowerCase().trim());
-  //   if (treeView) {
-  //     fA = fA.filter(a => (
-  //       a.allChildren.some(matches) ||
-  //       (!hideSubActivities && a.allParents.some(matches))
-  //     ));
-  //   } else {
-  //     fA = fA.filter(a => a.allChildren.some(matches));
-  //   }
-  // }
-  fA.sort((a, b) => {
+  }).sort((a, b) => {
     if (orderBychildrenLength) {
       const la = a.allChildIds.length;
       const lb = b.allChildIds.length;
@@ -149,23 +140,14 @@ const filterActivities = (activities: Activity[], filters: ActivityFilters): Act
     if (a[order] > b[order]) diff = -1;
     return orderType === 'desc' ? diff : - diff;
   });
-  return fA;
 };
 
 type ActivityFilterProps = {
-  onChange?: (filteredActivities: Activity[], filters: ActivityFilters) => void;
+  value: ActivityFilters;
+  onChange<T extends keyof ActivityFilters>(name: T, value: ActivityFilters[T]): void;
 };
 
-function ActivityFilter({ onChange }: ActivityFilterProps) {
-  const { activities } = useActivities();
-  const [state, setState] = useState(initFilters);
-
-  const ref = useRef(onChange);
-  ref.current = onChange;
-  useEffect(() => {
-    ref.current?.(filterActivities(activities, state), state);
-  }, [state, activities]);
-
+function ActivityFilter({ value, onChange }: ActivityFilterProps) {
   return (
     <Box>
       <TextField
@@ -173,8 +155,8 @@ function ActivityFilter({ onChange }: ActivityFilterProps) {
         variant='outlined'
         label='search'
         fullWidth
-        value={state.searchVal}
-        onChange={({ target: { value } }) => setState(p => ({ ...p, searchVal: value }))}
+        value={value.searchVal}
+        onChange={(e) => onChange('searchVal', e.target.value)}
         InputProps={{
           endAdornment: (
             <InputAdornment position='end'>
