@@ -1,20 +1,21 @@
 
 import { alpha, Button, Paper, Typography, useTheme } from '@mui/material';
 import React, { memo, useState } from 'react';
-import { Interval, IntervalCreate, Entry } from './apiService/types';
+import { IntervalCreate, Entry } from './apiService/types';
 import { addInterval } from './apiService';
 import { mutate } from 'swr';
 import AlertService from './AlertService';
 import IntervalForm, { IntervalFormProps } from './IntervalForm';
+import useIntervals from './useIntervals';
 
-type IntervalAdderProps = {
-  intervals: Interval[],
+const now = (plus = 0) => {
+  const x = new Date();
+  x.setMinutes(x.getMinutes() + plus, 0, 0);
+  return x;
 };
 
-const now = () => { const x = new Date(); x.setSeconds(0); return x; };
-
-export default memo(function IntervalAdder({ intervals }: IntervalAdderProps) {
-  const intervalFormProps = useIntervalCreate({ intervals });
+export default memo(function IntervalAdder() {
+  const intervalFormProps = useIntervalCreate();
   const theme = useTheme();
   return (
     <Paper component="section" sx={{ mb: 2, py: 3, backgroundColor: alpha(theme.palette.secondary.main, 0.1) }}>
@@ -28,13 +29,16 @@ export default memo(function IntervalAdder({ intervals }: IntervalAdderProps) {
       </IntervalForm>
     </Paper>
   );
-}, (prevProps, nextProps) => (
-  prevProps.intervals[0]?.end === nextProps.intervals[0]?.end
-));
+});
 
-function useIntervalCreate({ intervals }: { intervals: Interval[]; }) {
+function useIntervalCreate() {
+  const { intervals } = useIntervals({
+    onLoad: (intervals) => setState(p => ({
+      ...p, start: intervals[0]?.end ? new Date(intervals[0]?.end) : now(-1),
+    })),
+  });
   const [state, setState] = useState({
-    start: intervals[0]?.end ? new Date(intervals[0]?.end) : now(),
+    start: intervals[0]?.end ? new Date(intervals[0]?.end) : now(-1),
     end: now(),
     note: '' as string,
     selectedEntries: [] as Entry[],

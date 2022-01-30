@@ -8,7 +8,7 @@ type IntervalsListProps = {
   intervals: Interval[],
 };
 
-const rowsPerPage = 50;
+const rowsPerPage = 40;
 export default memo(function IntervalsList({ intervals }: IntervalsListProps) {
   const [page, setPage] = useState(1);
   const rows = intervals.length;

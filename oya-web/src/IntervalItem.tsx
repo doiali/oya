@@ -47,10 +47,10 @@ export default memo(function IntervalItem(
           <span>{' '}-{' '}</span>
           <Chip dir="rtl" variant="outlined" label={format(end, 'MM/dd-HH:mm eeee')} />
           <span>{' '}:{' '}</span>
-          {interval.entries.map(({ activity_id }) => (
+          {interval.entries.map(({ activity_id }, i) => (
             <Chip
               label={activityMappings[activity_id]?.name}
-              key={String(interval.id) + '-' + activityMappings[activity_id]?.id}
+              key={String(interval.id) + '-' + (activityMappings[activity_id]?.id ?? ('i' + i))}
             />
           ))}
         </Stack>

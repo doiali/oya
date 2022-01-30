@@ -1,11 +1,11 @@
 import { Autocomplete, Box, Button, emphasize, Paper, Stack, TextField, Typography, useTheme } from '@mui/material';
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { Activity, Interval } from './apiService';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { DateTimePicker } from '@mui/lab';
 import AdapterJalali from '@date-io/date-fns-jalali';
-import useDelayedState from './useDelayedState';
 import useActivities from './useActivities';
+import useIntervals from './useIntervals';
 
 type IntervalsFilterProps = {
   // intervals: Interval[],
@@ -107,42 +107,48 @@ export const isChildOf = (a: Activity | undefined, b: Activity | undefined): boo
   return b.allParentIds.includes(a.id);
 };
 
-type useIntervalsFilterProps = {
-  intervals: Interval[],
+const getInitState = (intervals: Interval[], loaded = false) => {
+  let min = new Date();
+  if (loaded)
+    intervals.forEach(i => { const s = new Date(i.start); if (s < min) min = s; });
+  else min = new Date(0);
+  const start = new Date(min);
+  start.setDate(start.getDate() - 2);
+  const end = new Date();
+  end.setDate(end.getDate() + 2);
+  return { start, end, selectedActivities: [] as Activity[] };
 };
 
-export function useIntervalsFilter({ intervals }: useIntervalsFilterProps) {
-  const initState = useMemo(() => {
-    let min = new Date().toISOString();
-    intervals.forEach(i => { if (i.start < min) min = i.start; });
-    const start = new Date(min);
-    start.setDate(start.getDate() - 2);
-    const end = new Date();
-    end.setDate(end.getDate() + 2);
-    return { start, end, selectedActivities: [] as Activity[] };
-  }, [intervals]);
-  const [state, setState, delayedSate] = useDelayedState(initState);
+export function useIntervalsFilter() {
+  const { intervals, loaded } = useIntervals({
+    onLoad: (intervals) => { setState(getInitState(intervals, true)); },
+  });
+  const [state, setState] = useState(() => getInitState(intervals));
   const { activityMappings } = useActivities();
 
   const onReset = () => {
-    setState(initState);
+    setState(getInitState(intervals));
   };
 
   const onChange: IntervalsFilterProps['onChange'] = (name, value) => {
     setState(prev => ({ ...prev, [name]: value }));
   };
 
-  const filteredIntervals = useMemo(() => {
-    const timeFiltered = intervals.filter(i => (
-      (new Date(i.start) <= delayedSate.end && new Date(i.start) >= delayedSate.start) ||
-      (new Date(i.end) <= delayedSate.end && new Date(i.end) >= delayedSate.start)
-    ));
-    if (delayedSate.selectedActivities.length === 0) return timeFiltered;
-    return timeFiltered.filter(i => (
-      i.entries.map(e => activityMappings[e.activity_id])
-        .some(a => delayedSate.selectedActivities.some(b => isChildOf(b, a)))
-    ));
-  }, [delayedSate, intervals, activityMappings]);
+  const filteredIntervals = useMemo(() => intervals.filter((i) => {
+    if (!loaded) return true;
+    if (
+      isNaN(state.end.getTime()) || isNaN(state.start.getTime()) ||
+      (new Date(i.start) <= state.end && new Date(i.start) >= state.start) ||
+      (new Date(i.end) <= state.end && new Date(i.end) >= state.start)
+    ) {
+      if (state.selectedActivities.length === 0) return true;
+      if (
+        i.entries.map(e => activityMappings[e.activity_id])
+          .some(a => state.selectedActivities.some(b => isChildOf(b, a)))
+      ) return true;
+    }
+    return false;
+  }), [state, intervals, activityMappings, loaded]);
 
   const results = useMemo(() => ({
     sum: filteredIntervals.reduce((a, v) => (new Date(v.end).getTime() - new Date(v.start).getTime()) / 60000 + a, 0),

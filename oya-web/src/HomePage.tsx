@@ -1,27 +1,16 @@
-import { Box, CircularProgress, Container } from '@mui/material';
+import { Container } from '@mui/material';
 import IntervalAdder from './IntervalAdder';
 import IntervalsList from './IntervalsList';
-import useIntervals from './useIntervals';
-import useActivities from './useActivities';
 import IntervalsFilter, { useIntervalsFilter } from './IntervalsFilter';
 
-const PageLoading = () => (
-  <Box sx={{ textAlign: 'center', pt: 6 }}>
-    <CircularProgress />
-  </Box>
-);
-
 export default function HomePage() {
-  const { intervals, loaded: loadedIntervals } = useIntervals();
-  const { loaded: loadedActivities } = useActivities();
-  const { filteredIntervals, ...intervalsFilterProps } = useIntervalsFilter({ intervals });
+  const { filteredIntervals, ...intervalsFilterProps } = useIntervalsFilter();
 
-  if (!(loadedIntervals && loadedActivities)) return <PageLoading />;
   return (
     <Container maxWidth="lg">
-      <IntervalAdder intervals={filteredIntervals} />
+      <IntervalAdder />
       <IntervalsFilter {...intervalsFilterProps} />
-      <IntervalsList intervals={intervals} />
+      <IntervalsList intervals={filteredIntervals} />
     </Container>
   );
 }
