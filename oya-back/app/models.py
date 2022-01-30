@@ -32,7 +32,7 @@ class Activity(Base):
     __tablename__ = "activities"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String)
+    name = Column(String, unique=True)
     is_suspended = Column(Boolean, default=False, nullable=False)
     parents = relationship(
         "Activity",
@@ -53,11 +53,11 @@ class Activity(Base):
 
     @property
     def childIds(self):
-        return (list(map(lambda x: x.id, self.children)))
+        return list(map(lambda x: x.id, self.children))
 
     @property
     def parentIds(self):
-        return (list(map(lambda x: x.id, self.parents)))
+        return list(map(lambda x: x.id, self.parents))
 
     @property
     def allParents(self):
@@ -71,7 +71,7 @@ class Activity(Base):
                 recur(parent)
 
         recur(self)
-        return sorted(x,key=lambda x:x.id)
+        return sorted(x, key=lambda x: x.id)
 
     @property
     def allChildren(self):
@@ -85,7 +85,7 @@ class Activity(Base):
                 recur(child)
 
         recur(self)
-        return sorted(x,key=lambda x:x.id)
+        return sorted(x, key=lambda x: x.id)
 
     @property
     def allChildIds(self):
@@ -136,9 +136,7 @@ class Interval(Base):
     entries = relationship("Entry", back_populates="interval", cascade="all")
 
     def __repr__(self):
-        return (
-            f"<interval {self.start} to {self.end}: {self.entries}>"
-        )
+        return f"<interval {self.start} to {self.end}: {self.entries}>"
 
 
 class Entry(Base):
