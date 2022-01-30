@@ -11,7 +11,7 @@ export default function ReportPage() {
     const atr = createActivityTotalReport(ddm);
     console.log(ddm);
     const atrValues = Object.values(atr).map(a => ({
-      n: a.activity.name, t: Math.round(a.totalTime / 60), ...a,
+      n: a.activity.name, t: Math.round(a.time / 60), ...a,
     }));
     atrValues.sort((a, b) => Number(b.t) - Number(a.t));
     console.log(atrValues);
