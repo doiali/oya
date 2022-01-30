@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { Activity } from './apiService';
 import ActivityEditor from './ActivityEditor';
@@ -15,16 +15,20 @@ export default function ActivityPage() {
   }, [selectedNodeId, activityMappings]);
   const handleSelect = (nodeId: string) => { setSelectedNodeId(nodeId); };
   return (
-    <>
-      <ActivitiesTreeView
-        selected={selectedNodeId}
-        onNodeSelect={handleSelect}
-      />
-      <ActivityActionPanel
-        activity={selectedActivity}
-        onClose={() => setSelectedNodeId('')}
-      />
-    </>
+    <Grid container spacing={2}>
+      <Grid item xs={12} md={5} sx={{ order: { xs: 2, md: 1 } }}>
+        <ActivitiesTreeView
+          selected={selectedNodeId}
+          onNodeSelect={handleSelect}
+        />
+      </Grid>
+      <Grid item xs={12} md={7} sx={{ order: { xs: 1, md: 2 } }}>
+        <ActivityActionPanel
+          activity={selectedActivity}
+          onClose={() => setSelectedNodeId('')}
+        />
+      </Grid>
+    </Grid>
   );
 }
 
@@ -35,9 +39,9 @@ type ActivityActionPanelProps = {
 
 function ActivityActionPanel({ activity, onClose }: ActivityActionPanelProps) {
   return (
-    <Box sx={{ p: 2 }}>
+    <Box>
       {activity && (
-        <Paper elevation={2} sx={{ p: 2, mt: 2 }}>
+        <Paper elevation={2} sx={{ p: 2 }}>
           <Typography variant='h5' mb={2}>
             Update Activity
           </Typography>

@@ -62,7 +62,7 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
   };
 
   return (
-    <Box width={400}>
+    <Box>
       <ActivityFilter
         value={filters}
         onChange={handleFiltersChange}
