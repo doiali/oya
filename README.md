@@ -39,7 +39,7 @@ npm install -g yarn serve
 open your terminal and go to oya-web.  
 install the node_modules using
 ```
-yarn add
+yarn install
 ```
 
 to run development server, use
