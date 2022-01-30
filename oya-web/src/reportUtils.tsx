@@ -181,9 +181,9 @@ export const createDailyDataMap = (
   return dailyDataMap;
 };
 
-export const createActivityTotalReport = (ddm: DailyDataMap): ActivityTotalReport => {
+export const createActivityTotalReport = (dda: DailyData[]): ActivityTotalReport => {
   const atr: ActivityTotalReport = {};
-  const ddmValues = Object.values(ddm);
+  const ddmValues = dda;
   const allDays = ddmValues.length;
   ddmValues.forEach(({ report }) => {
     Object.values(report).forEach((r) => {
