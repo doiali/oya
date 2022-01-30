@@ -1,9 +1,10 @@
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Grid, Paper, Stack, Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { Activity } from './apiService';
 import ActivityEditor from './ActivityEditor';
 import useActivities from './useActivities';
 import ActivitiesTreeView from './ActivitiesTreeView';
+import { ActivityOverViewReport, useReport } from './ReportPage';
 
 export default function ActivityPage() {
   const [selectedNodeId, setSelectedNodeId] = useState<string>('');
@@ -38,19 +39,23 @@ type ActivityActionPanelProps = {
 };
 
 function ActivityActionPanel({ activity, onClose }: ActivityActionPanelProps) {
+  const { atrm } = useReport();
+  if (!activity) return null;
   return (
-    <Box>
-      {activity && (
-        <Paper elevation={2} sx={{ p: 2 }}>
-          <Typography variant='h5' mb={2}>
-            Update Activity
-          </Typography>
-          <ActivityEditor
-            activity={activity}
-            onClose={() => onClose()}
-          />
-        </Paper>
-      )}
-    </Box>
+    <Stack spacing={2}>
+      <Paper elevation={2} sx={{ p: 2, minWidth: 500 }}>
+        <Typography variant='h5' mb={2}>
+          Update Activity
+        </Typography>
+        <ActivityEditor
+          activity={activity}
+          onClose={() => onClose()}
+        />
+      </Paper>
+      <ActivityOverViewReport
+        activity={activity}
+        atrm={atrm}
+      />
+    </Stack>
   );
 }
