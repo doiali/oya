@@ -1,7 +1,7 @@
 import { Interval } from './apiService/types';
 import { format } from 'date-fns-jalali';
 import { Stack, Divider, Chip, Box, Typography, Pagination } from '@mui/material';
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import IntervalItem from './IntervalItem';
 
 type IntervalsListProps = {
@@ -13,8 +13,16 @@ export default memo(function IntervalsList({ intervals }: IntervalsListProps) {
   const [page, setPage] = useState(1);
   const rows = intervals.length;
   const totalPages = Math.ceil(rows / rowsPerPage) || 1;
-
+  const ref = useRef<HTMLDivElement>(null);
+  const prevPage = useRef(page);
   useEffect(() => { setPage(1); }, [rows]);
+  useEffect(() => {
+    if (page > prevPage.current) {
+      const top = (ref.current?.offsetTop ?? 0) - 75;
+      window.scroll({ top, behavior: 'smooth' });
+    }
+    prevPage.current = page;
+  }, [page]);
 
   const renderList = () => {
     let prevEnd = new Date('2050-1-1');
@@ -53,7 +61,7 @@ export default memo(function IntervalsList({ intervals }: IntervalsListProps) {
   );
 
   return (
-    <Box component="section">
+    <Box component="section" ref={ref}>
       <Typography mb={2} variant="h5">
         Intervals List
       </Typography>
