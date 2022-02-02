@@ -1,4 +1,4 @@
-import { Grid, Paper, Stack, Typography } from '@mui/material';
+import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { Activity } from './apiService';
 import { ActivityTotalReport, createActivityTotalReport, createDailyDataMap } from './reportUtils';
@@ -8,12 +8,12 @@ import { getDeltaStringOfRange as ts } from './utils';
 
 export function useReport() {
   const { intervals } = useIntervals();
-  const { activityMappings } = useActivities();
+  const { activityMappings, activities } = useActivities();
   const ddm = createDailyDataMap(intervals, activityMappings);
   const dda = Object.values(ddm);
   const atrm = createActivityTotalReport(dda);
-  const atra = Object.values(atrm).sort((a, b) => Number(b.time) - Number(a.time));
-  return { intervals, activityMappings, ddm, dda, atrm, atra };
+  const atra = Object.values(atrm).sort((a, b) => Number(b?.time) - Number(a?.time));
+  return { intervals, activityMappings, activities, ddm, dda, atrm, atra };
 }
 
 export default function ReportPage() {
@@ -27,16 +27,18 @@ export default function ReportPage() {
   }, [atra, dda]);
 
   return (
-    <Grid container spacing={2}>
-      {atra.map((r) => (
-        <Grid key={r.activity.id} item xs={6} md={4} lg={3} xl={2}>
-          <ActivityOverViewReport
-            activity={r.activity}
-            atrm={atrm}
-          />
-        </Grid>
-      ))}
-    </Grid>
+    <Box>
+      <Grid container spacing={2}>
+        {atra.map((r) => r && (
+          <Grid key={r.activity.id} item xs={6} md={4} lg={3} xl={2}>
+            <ActivityOverViewReport
+              activity={r.activity}
+              atrm={atrm}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   );
 }
 

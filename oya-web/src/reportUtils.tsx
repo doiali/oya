@@ -24,7 +24,7 @@ export type ActivityTotalReportSingle = {
 };
 
 export type ActivityTotalReport = {
-  [id: number]: ActivityTotalReportSingle,
+  [id: number]: ActivityTotalReportSingle | undefined,
 };
 
 export type SanitizedInterval = {
@@ -203,19 +203,24 @@ export const createActivityTotalReport = (dda: DailyData[]): ActivityTotalReport
           children: {},
         };
       } else {
-        atr[id].time += r.time;
-        atr[id].timePure += r.timePure;
-        atr[id].days += 1;
-        atr[id].occurance += r.occurance;
-        atr[id].occurancePure += r.occurancePure;
+        const report = atr[id];
+        if (report) {
+          report.time += r.time;
+          report.timePure += r.timePure;
+          report.days += 1;
+          report.occurance += r.occurance;
+          report.occurancePure += r.occurancePure;
+        }
       }
     });
   });
   Object.values(atr).forEach(a => {
     const atrs = a;
-    atrs.avgPerDays = atrs.time / atrs.days;
-    atrs.avgPerAllDays = atrs.time / atrs.allDays;
-    atrs.avgTimePerOccurance = atrs.time / atrs.occurance;
+    if (atrs) {
+      atrs.avgPerDays = atrs.time / atrs.days;
+      atrs.avgPerAllDays = atrs.time / atrs.allDays;
+      atrs.avgTimePerOccurance = atrs.time / atrs.occurance;
+    }
   });
   return atr;
 };
