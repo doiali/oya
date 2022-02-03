@@ -1,7 +1,7 @@
-import { Box } from '@mui/material';
-import { Treemap, Tooltip } from 'recharts';
+import { Box, styled } from '@mui/material';
+import { Treemap, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts';
 import { ActivityTotalReport } from './reportUtils';
-import { useReport } from './ReportPage';
+import { ActivityOverViewReport, useReport } from './ReportPage';
 import { Activity } from './apiService';
 
 type RechartTreeData = {
@@ -33,22 +33,40 @@ export const generateRechartsTreeData = (atrm: ActivityTotalReport, activities: 
   return data;
 };
 
+const TooltipWrapper = styled('div')(() => ({
+  opacity: 0.75,
+}));
+
+function CustomTooltip(props: TooltipProps<number, string> & { atrm: ActivityTotalReport; }) {
+  const { active, payload, atrm } = props;
+  if (!active || !payload?.length) return null;
+  const { payload: p } = payload[0];
+  return (
+    <TooltipWrapper>
+      <ActivityOverViewReport activity={p.activity as Activity} atrm={atrm} />
+    </TooltipWrapper>
+  );
+}
+
 export default function TreemapReportRechart() {
   const { atrm, activities } = useReport();
   const data = generateRechartsTreeData(atrm, activities);
   return (
-    <Box>
-      <Treemap
-        width={1500}
-        height={800}
-        data={data}
-        isAnimationActive={false}
-        nameKey="name"
-        dataKey="size"
+    <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>
+      <ResponsiveContainer>
+        <Treemap
+          data={data}
+          isAnimationActive
+          nameKey="name"
+          dataKey="size"
+          animationDuration={500}
         // content={<DemoTreemapItem bgColors={ColorPlatte} />}
-      >
-        <Tooltip />
-      </Treemap>
+        >
+          <Tooltip
+            content={<CustomTooltip atrm={atrm} />}
+          />
+        </Treemap>
+      </ResponsiveContainer>
     </Box>
   );
 }

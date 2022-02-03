@@ -36,6 +36,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     }),
     marginLeft: 0,
   }),
+  maxWidth: open ? `calc(100% - ${drawerWidth}px)` : '100%',
 }));
 
 interface AppBarProps extends MuiAppBarProps {

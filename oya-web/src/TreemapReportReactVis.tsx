@@ -66,7 +66,7 @@ export default function TreemapReportReactVis() {
         mode="squarify"
         title="report"
         width={1500}
-        height={800}
+        height={700}
         // sortFunction={(a, b) => a?.activity?.name > b?.activity?.name ? 1 : -1}
         data={generateReactVisTreeData(atrm, activities)}
       />
