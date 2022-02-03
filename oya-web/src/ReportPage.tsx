@@ -2,7 +2,8 @@ import { Box, Grid, Paper, Stack, Tab, Tabs, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Activity } from './apiService';
 import { ActivityTotalReport, createActivityTotalReport, createDailyDataMap } from './reportUtils';
-import TreemapReport from './TreemapReport';
+import TreemapReportReactVis from './TreemapReportReactVis';
+import TreemapReportRechart from './TreemapReportRechart';
 import useActivities from './useActivities';
 import useIntervals from './useIntervals';
 import { getDeltaStringOfRange as ts } from './utils';
@@ -57,8 +58,8 @@ export default function ReportPage() {
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label="cards" />
-          <Tab label="vis-tree" />
-          <Tab label="Item Three" />
+          <Tab label="vis tree" />
+          <Tab label="recharts tree" />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -74,10 +75,10 @@ export default function ReportPage() {
         </Grid>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <TreemapReport />
+        <TreemapReportReactVis />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Item Three
+        <TreemapReportRechart />
       </TabPanel>
     </Box>
   );

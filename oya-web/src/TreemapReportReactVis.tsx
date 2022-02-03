@@ -41,7 +41,7 @@ export const generateReactVisTreeData = (atrm: ActivityTotalReport, activities: 
   return data;
 };
 
-export default function TreemapReport() {
+export default function TreemapReportReactVis() {
   const { atrm, activities } = useReport();
 
   return (
