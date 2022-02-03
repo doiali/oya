@@ -1,10 +1,31 @@
-import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
-import { useEffect } from 'react';
+import { Box, Grid, Paper, Stack, Tab, Tabs, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { Activity } from './apiService';
 import { ActivityTotalReport, createActivityTotalReport, createDailyDataMap } from './reportUtils';
+import TreemapReport from './TreemapReport';
 import useActivities from './useActivities';
 import useIntervals from './useIntervals';
 import { getDeltaStringOfRange as ts } from './utils';
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div role="tabpanel" hidden={value !== index} {...other}>
+      {value === index && (
+        <Box sx={{ py: 2 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
 
 export function useReport() {
   const { intervals } = useIntervals();
@@ -18,6 +39,11 @@ export function useReport() {
 
 export default function ReportPage() {
   const { atrm, dda, atra } = useReport();
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
 
   useEffect(() => {
     // eslint-disable-next-line no-console
@@ -28,16 +54,31 @@ export default function ReportPage() {
 
   return (
     <Box>
-      <Grid container spacing={2}>
-        {atra.map((r) => r && (
-          <Grid key={r.activity.id} item xs={6} md={4} lg={3} xl={2}>
-            <ActivityOverViewReport
-              activity={r.activity}
-              atrm={atrm}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+          <Tab label="cards" />
+          <Tab label="vis-tree" />
+          <Tab label="Item Three" />
+        </Tabs>
+      </Box>
+      <TabPanel value={value} index={0}>
+        <Grid container spacing={2}>
+          {atra.map((r) => r && (
+            <Grid key={r.activity.id} item xs={6} md={4} lg={3} xl={2}>
+              <ActivityOverViewReport
+                activity={r.activity}
+                atrm={atrm}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <TreemapReport />
+      </TabPanel>
+      <TabPanel value={value} index={2}>
+        Item Three
+      </TabPanel>
     </Box>
   );
 }
