@@ -4,6 +4,7 @@ import { Route, Routes, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Activity } from './apiService';
 import BarReportTotal from './BarReportTotal';
+import PieReportTotal from './PieReportTotal';
 import { ActivityTotalReport, createActivityTotalReport, createDailyDataMap } from './reportUtils';
 import TreemapReportReactVis from './TreemapReportReactVis';
 import TreemapReportRechart from './TreemapReportRechart';
@@ -23,9 +24,10 @@ export function useReport() {
 
 const reportRoutes = [
   { link: 'cards', label: 'cards', element: <GripOverviewReport /> },
+  { link: 'bar', label: 'bars', element: <BarReportTotal /> },
+  { link: 'pie', label: 'pie', element: <PieReportTotal /> },
   { link: 'vis-tree', label: 'vis tree', element: <TreemapReportReactVis /> },
   { link: 're-tree', label: 'recharts tree', element: <TreemapReportRechart /> },
-  { link: 'bar', label: 'bars', element: <BarReportTotal /> },
 ];
 
 export default function ReportPage() {
