@@ -1,12 +1,11 @@
-import { Box, Paper, Stack, styled, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import {
-  BarChart, Bar, TooltipProps,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 import { ActivityTotalReport } from './reportUtils';
 import { useReport } from './ReportPage';
 import { Activity } from './apiService';
-import { getDeltaStringOfRange as ts } from './utils';
+import RechartsTooltip from './RechartsTooltip';
 
 type Data = {
   name: string;
@@ -29,54 +28,6 @@ export const generateData = (atrm: ActivityTotalReport, activities: Activity[]) 
   return data.sort((a, b) => b.value - a.value);
 };
 
-const TooltipWrapper = styled('div')(() => ({
-  opacity: 0.75,
-}));
-
-type ActivityOverViewReportProps = {
-  activity: Activity,
-  atrm: ActivityTotalReport,
-  prefix?: string,
-};
-
-export function ActivityOverViewReport({ activity, atrm, prefix }: ActivityOverViewReportProps) {
-  const renderRow = (name: string, value: string | number) => (
-    <Typography textAlign="center" key={name}>
-      {name}: <b>{value}</b>
-    </Typography>
-  );
-  const r = atrm[activity.id];
-  if (!r) return null;
-  return (
-    <Paper sx={{ p: 2, height: '100%', flexShrink: 0 }}>
-      <Typography gutterBottom variant='h5' textAlign="center">{activity.name}</Typography>
-      <Stack>
-        {renderRow('days', `${r.days} of ${r.allDays}`)}
-        {renderRow('total time', ts(r.time))}
-        {renderRow('avg per all days', ts(r.avgPerAllDays))}
-        {renderRow('avg per days', ts(r.avgPerDays))}
-        {renderRow('occurance', r.occurance.toString())}
-        {prefix && (
-          <Typography textAlign="center">
-            {prefix}
-          </Typography>
-        )}
-      </Stack>
-    </Paper>
-  );
-}
-
-function CustomTooltip(props: TooltipProps<number, string> & { atrm: ActivityTotalReport; }) {
-  const { active, payload, atrm } = props;
-  if (!active || !payload?.length) return null;
-  const { payload: p } = payload[0];
-  return (
-    <TooltipWrapper>
-      <ActivityOverViewReport prefix={p.prefix} activity={p.activity as Activity} atrm={atrm} />
-    </TooltipWrapper>
-  );
-}
-
 export default function BarReportTotal() {
   const { atrm, activities } = useReport();
   const data = generateData(atrm, activities);
@@ -98,7 +49,7 @@ export default function BarReportTotal() {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" />
           <YAxis type="category" dataKey="name" />
-          <Tooltip content={<CustomTooltip atrm={atrm} />} />
+          <Tooltip content={<RechartsTooltip atrm={atrm} />} />
           <Legend />
           <Bar layout='vertical' dataKey="value" fill="#8884d8" />
         </BarChart>
