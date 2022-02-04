@@ -45,7 +45,7 @@ function ActivityActionPanel({ activity, onClose }: ActivityActionPanelProps) {
     <Stack spacing={2}>
       <Paper elevation={2} sx={{ p: 2, minWidth: 500 }}>
         <Typography variant='h5' mb={2}>
-          Update Activity
+          Update Activity <span style={{ fontSize: '0.7em' }}>id: {activity.id}</span>
         </Typography>
         <ActivityEditor
           activity={activity}
