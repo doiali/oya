@@ -25,6 +25,7 @@ const reportRoutes = [
   { link: 'vis-tree', label: 'vis tree', element: <TreemapReportReactVis /> },
   { link: 're-tree', label: 'recharts tree', element: <TreemapReportRechart /> },
 ];
+
 export default function ReportPage() {
   const { dda, atra } = useReport();
   const loc = useLocation();
