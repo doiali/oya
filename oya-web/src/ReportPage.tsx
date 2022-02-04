@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Activity } from './apiService';
+import BarReportTotal from './BarReportTotal';
 import { ActivityTotalReport, createActivityTotalReport, createDailyDataMap } from './reportUtils';
 import TreemapReportReactVis from './TreemapReportReactVis';
 import TreemapReportRechart from './TreemapReportRechart';
@@ -24,6 +25,7 @@ const reportRoutes = [
   { link: 'cards', label: 'cards', element: <GripOverviewReport /> },
   { link: 'vis-tree', label: 'vis tree', element: <TreemapReportReactVis /> },
   { link: 're-tree', label: 'recharts tree', element: <TreemapReportRechart /> },
+  { link: 'bar', label: 'bars', element: <BarReportTotal /> },
 ];
 
 export default function ReportPage() {

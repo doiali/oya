@@ -94,7 +94,7 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
       </Box>
     </Box>
   );
-});
+}, (pp, np) => pp.selected === np.selected);
 
 const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
   [`& .${treeItemClasses.group}`]: {
