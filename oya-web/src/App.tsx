@@ -29,7 +29,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Layout />}>
           <Route index element={<HomePage />} />
-          <Route path='reports' element={<ReportPage />} />
+          <Route path='reports/*' element={<ReportPage />} />
           <Route path="activities" element={<ActivityPage />} />
           <Route path="activities-widget" element={<ActivitiesWidgetPage />} />
         </Route>

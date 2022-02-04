@@ -1,5 +1,7 @@
 import { Box, Grid, Paper, Stack, Tab, Tabs, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { Route, Routes, useLocation } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Activity } from './apiService';
 import { ActivityTotalReport, createActivityTotalReport, createDailyDataMap } from './reportUtils';
 import TreemapReportReactVis from './TreemapReportReactVis';
@@ -7,26 +9,6 @@ import TreemapReportRechart from './TreemapReportRechart';
 import useActivities from './useActivities';
 import useIntervals from './useIntervals';
 import { getDeltaStringOfRange as ts } from './utils';
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div role="tabpanel" hidden={value !== index} {...other}>
-      {value === index && (
-        <Box sx={{ py: 2 }}>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
 
 export function useReport() {
   const { intervals } = useIntervals();
@@ -38,13 +20,17 @@ export function useReport() {
   return { intervals, activityMappings, activities, ddm, dda, atrm, atra };
 }
 
+const reportRoutes = [
+  { link: 'cards', label: 'cards', element: <GripOverviewReport /> },
+  { link: 'vis-tree', label: 'vis tree', element: <TreemapReportReactVis /> },
+  { link: 're-tree', label: 'recharts tree', element: <TreemapReportRechart /> },
+];
 export default function ReportPage() {
-  const { atrm, dda, atra } = useReport();
-  const [value, setValue] = useState(0);
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
+  const { dda, atra } = useReport();
+  const loc = useLocation();
+  const paths = loc.pathname.split('/');
+  const path = paths[paths.length - 1];
+  const allowed = reportRoutes.map(r => r.link);
 
   useEffect(() => {
     // eslint-disable-next-line no-console
@@ -53,33 +39,20 @@ export default function ReportPage() {
     console.log(atra);
   }, [atra, dda]);
 
+  if (!allowed.includes(path)) return null;
+
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="cards" />
-          <Tab label="vis tree" />
-          <Tab label="recharts tree" />
+        <Tabs value={allowed.indexOf(path)} aria-label="basic tabs example">
+          {reportRoutes.map(r => <Tab key={r.link} component={Link} to={r.link} label={r.label} />)}
         </Tabs>
       </Box>
-      <TabPanel value={value} index={0}>
-        <Grid container spacing={2}>
-          {atra.map((r) => r && (
-            <Grid key={r.activity.id} item xs={6} md={4} lg={3} xl={2}>
-              <ActivityOverViewReport
-                activity={r.activity}
-                atrm={atrm}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <TreemapReportReactVis />
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <TreemapReportRechart />
-      </TabPanel>
+      <Box sx={{ py: 2 }}>
+        <Routes>
+          {reportRoutes.map(r => <Route key={r.link} path={r.link} element={r.element} />)}
+        </Routes>
+      </Box>
     </Box>
   );
 }
@@ -88,6 +61,22 @@ type ActivityOverViewReportProps = {
   activity: Activity,
   atrm: ActivityTotalReport,
 };
+
+function GripOverviewReport() {
+  const { atrm, atra } = useReport();
+  return (
+    <Grid container spacing={2}>
+      {atra.map((r) => r && (
+        <Grid key={r.activity.id} item xs={6} md={4} lg={3} xl={2}>
+          <ActivityOverViewReport
+            activity={r.activity}
+            atrm={atrm}
+          />
+        </Grid>
+      ))}
+    </Grid>
+  );
+}
 
 export function ActivityOverViewReport({ activity, atrm }: ActivityOverViewReportProps) {
   const renderRow = (name: string, value: string | number) => (
