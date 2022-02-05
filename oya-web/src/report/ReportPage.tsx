@@ -12,6 +12,7 @@ import TreemapReportRechart from './TreemapReportRechart';
 import useActivities from '../useActivities';
 import useIntervals from '../useIntervals';
 import { getDeltaStringOfRange as ts } from '../utils';
+import TreemapNivo from './TreemapNivo';
 
 export function useReport() {
   const { intervals } = useIntervals();
@@ -29,6 +30,7 @@ const reportRoutes = [
   { link: 'pie', label: 'pie', element: <PieReportTotal /> },
   { link: 'vis-tree', label: 'vis tree', element: <TreemapReportReactVis /> },
   { link: 're-tree', label: 'recharts tree', element: <TreemapReportRechart /> },
+  { link: 'nivo-tree', label: 'nivo tree', element: <TreemapNivo /> },
 ];
 
 export default function ReportPage() {
