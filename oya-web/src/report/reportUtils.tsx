@@ -1,5 +1,5 @@
-import { Interval, Activity } from './apiService';
-import { ActivityMappings } from './useActivities';
+import { Interval, Activity } from '../apiService';
+import { ActivityMappings } from '../useActivities';
 
 export type ActivityChildrenReport = {
   [id: number]: {

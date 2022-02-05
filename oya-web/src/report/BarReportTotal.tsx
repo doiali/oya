@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 import { ActivityTotalReport } from './reportUtils';
-import { Activity } from './apiService';
+import { Activity } from '../apiService';
 import RechartsTooltip from './RechartsTooltip';
 import { useReportContext } from './ReportProvider';
 

@@ -2,16 +2,16 @@ import { Box, Grid, Paper, Stack, Tab, Tabs, Typography } from '@mui/material';
 import React from 'react';
 import { Route, Routes, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Activity } from './apiService';
+import { Activity } from '../apiService';
 import BarReportTotal from './BarReportTotal';
 import PieReportTotal from './PieReportTotal';
 import ReportProvider, { useReportContext } from './ReportProvider';
 import { createActivityTotalReport, createDailyDataMap } from './reportUtils';
 import TreemapReportReactVis from './TreemapReportReactVis';
 import TreemapReportRechart from './TreemapReportRechart';
-import useActivities from './useActivities';
-import useIntervals from './useIntervals';
-import { getDeltaStringOfRange as ts } from './utils';
+import useActivities from '../useActivities';
+import useIntervals from '../useIntervals';
+import { getDeltaStringOfRange as ts } from '../utils';
 
 export function useReport() {
   const { intervals } = useIntervals();

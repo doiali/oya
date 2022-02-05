@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo } from 'react';
-import { Activity, Interval } from './apiService';
-import useActivities, { ActivityMappings } from './useActivities';
+import { Activity, Interval } from '../apiService';
+import useActivities, { ActivityMappings } from '../useActivities';
 import {
   ActivityTotalReport,
   ActivityTotalReportSingle,
@@ -9,7 +9,7 @@ import {
   createDailyDataMap,
   createActivityTotalReport,
 } from './reportUtils';
-import useIntervals from './useIntervals';
+import useIntervals from '../useIntervals';
 export type ReportContext = {
   atrm: ActivityTotalReport;
   atra: ActivityTotalReportSingle[];

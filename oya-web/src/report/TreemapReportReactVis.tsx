@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { ActivityTotalReport } from './reportUtils';
 import { Treemap, TreemapPoint } from 'react-vis';
-import { Activity } from './apiService';
+import { Activity } from '../apiService';
 import { useReportContext } from './ReportProvider';
 
 interface ReportTreemap extends TreemapPoint {

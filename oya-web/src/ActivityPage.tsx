@@ -4,8 +4,8 @@ import { Activity } from './apiService';
 import ActivityEditor from './ActivityEditor';
 import useActivities from './useActivities';
 import ActivitiesTreeView from './ActivitiesTreeView';
-import { ActivityOverViewReport } from './ReportPage';
-import ReportProvider from './ReportProvider';
+import { ActivityOverViewReport } from './report/ReportPage';
+import ReportProvider from './report/ReportProvider';
 
 export default function ActivityPage() {
   const [selectedNodeId, setSelectedNodeId] = useState<string>('');

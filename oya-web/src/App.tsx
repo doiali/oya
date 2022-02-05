@@ -4,7 +4,7 @@ import Layout from './Layout';
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './HomePage';
 import { dequal } from 'dequal';
-import ReportPage from './ReportPage';
+import ReportPage from './report/ReportPage';
 import ActivityPage from './ActivityPage';
 import ActivitiesHomeWidget from './ActivitiesHomeWidget';
 

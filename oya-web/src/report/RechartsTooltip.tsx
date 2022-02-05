@@ -1,7 +1,7 @@
 import { Paper, Stack, styled, Typography } from '@mui/material';
 import { TooltipProps } from 'recharts';
-import { Activity } from './apiService';
-import { getDeltaStringOfRange as ts } from './utils';
+import { Activity } from '../apiService';
+import { getDeltaStringOfRange as ts } from '../utils';
 import { useReportContext } from './ReportProvider';
 
 const TooltipWrapper = styled('div')(() => ({
