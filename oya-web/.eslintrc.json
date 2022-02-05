@@ -232,10 +232,10 @@
         "beforeClosing": "never"
       }
     ],
-    "react/jsx-boolean-value": [
-      "warn",
-      "never"
-    ],
+    // "react/jsx-boolean-value": [
+    //   "warn",
+    //   "never"
+    // ],
     "react/jsx-closing-bracket-location": [
       "warn",
       "tag-aligned"
