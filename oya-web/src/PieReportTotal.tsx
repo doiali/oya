@@ -3,9 +3,9 @@ import {
   Tooltip, ResponsiveContainer, PieChart, Pie, PieLabelRenderProps,
 } from 'recharts';
 import { ActivityTotalReport } from './reportUtils';
-import { useReport } from './ReportPage';
 import { Activity } from './apiService';
 import RechartsTooltip from './RechartsTooltip';
+import { useReportContext } from './ReportProvider';
 
 type Data = {
   name: string;
@@ -52,7 +52,7 @@ const renderCustomizedLabel = (props: PieLabelRenderProps) => {
 };
 
 export default function PieReportTotal() {
-  const { atrm, activities } = useReport();
+  const { atrm, activities } = useReportContext();
   const data = generateData(atrm, activities);
   return (
     <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>
@@ -69,7 +69,7 @@ export default function PieReportTotal() {
             // label
             label={renderCustomizedLabel}
           />
-          <Tooltip content={<RechartsTooltip atrm={atrm} />} />
+          <Tooltip content={<RechartsTooltip />} />
         </PieChart>
       </ResponsiveContainer>
     </Box>

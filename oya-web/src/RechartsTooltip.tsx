@@ -1,8 +1,8 @@
 import { Paper, Stack, styled, Typography } from '@mui/material';
 import { TooltipProps } from 'recharts';
-import { ActivityTotalReport } from './reportUtils';
 import { Activity } from './apiService';
 import { getDeltaStringOfRange as ts } from './utils';
+import { useReportContext } from './ReportProvider';
 
 const TooltipWrapper = styled('div')(() => ({
   opacity: 0.75,
@@ -10,11 +10,11 @@ const TooltipWrapper = styled('div')(() => ({
 
 type ActivityOverViewReportProps = {
   activity: Activity,
-  atrm: ActivityTotalReport,
   prefix?: string,
 };
 
-export function ActivityOverViewReport({ activity, atrm, prefix }: ActivityOverViewReportProps) {
+export function ActivityOverViewReport({ activity, prefix }: ActivityOverViewReportProps) {
+  const { atrm } = useReportContext();
   const renderRow = (name: string, value: string | number) => (
     <Typography textAlign="center" key={name}>
       {name}: <b>{value}</b>
@@ -41,13 +41,13 @@ export function ActivityOverViewReport({ activity, atrm, prefix }: ActivityOverV
   );
 }
 
-export default function RechartsTooltip(props: TooltipProps<number, string> & { atrm: ActivityTotalReport; }) {
-  const { active, payload, atrm } = props;
+export default function RechartsTooltip(props: TooltipProps<number, string>) {
+  const { active, payload } = props;
   if (!active || !payload?.length) return null;
   const { payload: p } = payload[0];
   return (
     <TooltipWrapper>
-      <ActivityOverViewReport prefix={p.prefix} activity={p.activity as Activity} atrm={atrm} />
+      <ActivityOverViewReport prefix={p.prefix} activity={p.activity as Activity} />
     </TooltipWrapper>
   );
 }

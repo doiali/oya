@@ -4,7 +4,8 @@ import { Activity } from './apiService';
 import ActivityEditor from './ActivityEditor';
 import useActivities from './useActivities';
 import ActivitiesTreeView from './ActivitiesTreeView';
-import { ActivityOverViewReport, useReport } from './ReportPage';
+import { ActivityOverViewReport } from './ReportPage';
+import ReportProvider from './ReportProvider';
 
 export default function ActivityPage() {
   const [selectedNodeId, setSelectedNodeId] = useState<string>('');
@@ -16,20 +17,22 @@ export default function ActivityPage() {
   }, [selectedNodeId, activityMappings]);
   const handleSelect = (nodeId: string) => { setSelectedNodeId(nodeId); };
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={5} sx={{ order: { xs: 2, md: 1 } }}>
-        <ActivitiesTreeView
-          selected={selectedNodeId}
-          onNodeSelect={handleSelect}
-        />
+    <ReportProvider>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={5} sx={{ order: { xs: 2, md: 1 } }}>
+          <ActivitiesTreeView
+            selected={selectedNodeId}
+            onNodeSelect={handleSelect}
+          />
+        </Grid>
+        <Grid item xs={12} md={7} sx={{ order: { xs: 1, md: 2 } }}>
+          <ActivityActionPanel
+            activity={selectedActivity}
+            onClose={() => setSelectedNodeId('')}
+          />
+        </Grid>
       </Grid>
-      <Grid item xs={12} md={7} sx={{ order: { xs: 1, md: 2 } }}>
-        <ActivityActionPanel
-          activity={selectedActivity}
-          onClose={() => setSelectedNodeId('')}
-        />
-      </Grid>
-    </Grid>
+    </ReportProvider>
   );
 }
 
@@ -39,7 +42,6 @@ type ActivityActionPanelProps = {
 };
 
 function ActivityActionPanel({ activity, onClose }: ActivityActionPanelProps) {
-  const { atrm } = useReport();
   if (!activity) return null;
   return (
     <Stack spacing={2}>
@@ -52,10 +54,7 @@ function ActivityActionPanel({ activity, onClose }: ActivityActionPanelProps) {
           onClose={() => onClose()}
         />
       </Paper>
-      <ActivityOverViewReport
-        activity={activity}
-        atrm={atrm}
-      />
+      <ActivityOverViewReport activity={activity} />
     </Stack>
   );
 }

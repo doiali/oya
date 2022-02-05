@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
 import { ActivityTotalReport } from './reportUtils';
 import { Treemap, TreemapPoint } from 'react-vis';
-import { useReport } from './ReportPage';
 import { Activity } from './apiService';
+import { useReportContext } from './ReportProvider';
 
 interface ReportTreemap extends TreemapPoint {
   activity?: Activity;
@@ -42,7 +42,7 @@ export const generateReactVisTreeData = (atrm: ActivityTotalReport, activities: 
 };
 
 export default function TreemapReportReactVis() {
-  const { atrm, activities } = useReport();
+  const { atrm, activities } = useReportContext();
 
   return (
     <Box

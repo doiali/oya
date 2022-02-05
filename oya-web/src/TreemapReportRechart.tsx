@@ -1,9 +1,9 @@
 import { Box } from '@mui/material';
 import { Treemap, Tooltip, ResponsiveContainer } from 'recharts';
 import { ActivityTotalReport } from './reportUtils';
-import { useReport } from './ReportPage';
 import { Activity } from './apiService';
 import RechartsTooltip from './RechartsTooltip';
+import { useReportContext } from './ReportProvider';
 
 type RechartTreeData = {
   name: string;
@@ -37,7 +37,7 @@ export const generateRechartsTreeData = (atrm: ActivityTotalReport, activities: 
 };
 
 export default function TreemapReportRechart() {
-  const { atrm, activities } = useReport();
+  const { atrm, activities } = useReportContext();
   const data = generateRechartsTreeData(atrm, activities);
   return (
     <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>
@@ -52,7 +52,7 @@ export default function TreemapReportRechart() {
         >
           <Tooltip
             // isAnimationActive={false}
-            content={<RechartsTooltip atrm={atrm} />}
+            content={<RechartsTooltip />}
           />
         </Treemap>
       </ResponsiveContainer>
