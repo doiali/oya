@@ -7,7 +7,7 @@ import {
   DailyDataMap,
   DailyData,
   createDailyDataMap,
-  createActivityTotalReport,
+  createActivityTotalReportMap,
 } from './reportUtils';
 import useIntervals from '../useIntervals';
 export type ReportContext = {
@@ -36,7 +36,7 @@ export default function ReportProvider({ children }: { children?: React.ReactNod
   const value = useMemo(() => {
     const ddm = createDailyDataMap(intervals, activityMappings);
     const dda = Object.values(ddm);
-    const atrm = createActivityTotalReport(dda);
+    const atrm = createActivityTotalReportMap(dda);
     const atra = Object.values(atrm).sort((a, b) => (
       Number(b?.time) - Number(a?.time)
     )) as ActivityTotalReport[];

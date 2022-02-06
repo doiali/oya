@@ -1,39 +1,6 @@
 import { Interval, Activity } from '../apiService';
 import { ActivityMappings } from '../useActivities';
 
-export type ActivityChildrenReport = {
-  [id: number]: {
-    activity: Activity,
-    percent: number,
-    children: ActivityChildrenReport,
-  };
-};
-
-export type ActivityTotalReport = {
-  activity: Activity,
-  days: number,
-  allDays: number,
-  time: number,
-  timePure: number,
-  occurance: number,
-  occurancePure: number,
-  avgPerDays: number,
-  avgPerAllDays: number,
-  occurancePerDays: number,
-  occurancePerAllDays: number,
-  avgTimePerOccurance: number,
-  avgPerDaysPure: number,
-  avgPerAllDaysPure: number,
-  occurancePerDaysPure: number,
-  occurancePerAllDaysPure: number,
-  avgTimePerOccurancePure: number,
-  children: ActivityChildrenReport,
-};
-
-export type ActivityTotalReportMap = {
-  [id: number]: ActivityTotalReport | undefined,
-};
-
 export type SanitizedInterval = {
   id: number,
   l: number,
@@ -49,8 +16,7 @@ export type SanitizedInterval = {
   note?: string,
 };
 
-export type ActivityDailyReport = {
-  name: string,
+export type ActivityReportBase = {
   activity: Activity,
   time: number,
   timePure: number,
@@ -58,10 +24,32 @@ export type ActivityDailyReport = {
   occurancePure: number,
 };
 
+export type ActivityReportAnalysis = {
+  avgPerDays: number,
+  avgPerAllDays: number,
+  occurancePerDays: number,
+  occurancePerAllDays: number,
+  avgTimePerOccurance: number,
+  avgPerDaysPure: number,
+  avgPerAllDaysPure: number,
+  occurancePerDaysPure: number,
+  occurancePerAllDaysPure: number,
+  avgTimePerOccurancePure: number,
+};
+
+export type ActivityTotalReport = {
+  days: number,
+  allDays: number,
+} & ActivityReportBase & ActivityReportAnalysis;
+
+export type ActivityTotalReportMap = {
+  [id: number]: ActivityTotalReport | undefined,
+};
+
 export type DailyData = {
   date: Date;
   logs: SanitizedInterval[],
-  report: Record<number, ActivityDailyReport>;
+  report: Record<number, ActivityReportBase>;
 };
 
 export type DailyDataMap = Record<string, DailyData>;
@@ -165,7 +153,7 @@ export const createDailyDataMap = (
           const { id } = p;
           if (!report[id]) {
             report[id] = {
-              name: p.name, time: t, occurance: 1, activity: p,
+              time: t, occurance: 1, activity: p,
               occurancePure: id === a.id ? 1 : 0,
               timePure: id === a.id ? t : 0,
             };
@@ -188,7 +176,7 @@ export const createDailyDataMap = (
   return dailyDataMap;
 };
 
-export const createActivityTotalReport = (dda: DailyData[]): ActivityTotalReportMap => {
+export const createActivityTotalReportMap = (dda: DailyData[]): ActivityTotalReportMap => {
   const atr: ActivityTotalReportMap = {};
   const ddmValues = dda;
   const allDays = ddmValues.length;
@@ -214,7 +202,6 @@ export const createActivityTotalReport = (dda: DailyData[]): ActivityTotalReport
           occurancePerDaysPure: 0,
           occurancePerAllDaysPure: 0,
           avgTimePerOccurancePure: 0,
-          children: {},
         };
       } else {
         const report = atr[id];
