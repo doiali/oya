@@ -4,22 +4,22 @@ import { Activity } from '../apiService';
 import { useReportContext } from './ReportProvider';
 import { ResponsiveTreeMap } from '@nivo/treemap';
 
-type TreeData = {
+type TreeDataNivo = {
   name: string;
   prefix?: string;
   activity?: Activity;
   value?: number;
-  children?: TreeData[];
+  children?: TreeDataNivo[];
 };
 
-export const generateData = (atrm: ActivityTotalReport, activities: Activity[]) => {
-  const data: TreeData = {
+export const generateTreeDataNivo = (atrm: ActivityTotalReport, activities: Activity[]) => {
+  const data: TreeDataNivo = {
     name: 'report',
     children: [],
   };
-  const f = (a: Activity, s: string): TreeData => {
+  const f = (a: Activity, s: string): TreeDataNivo => {
     const ss = s + ' > ' + a.name;
-    const data: TreeData = {
+    const data: TreeDataNivo = {
       activity: a,
       name: a.name,
       prefix: ss,
@@ -42,7 +42,7 @@ export const generateData = (atrm: ActivityTotalReport, activities: Activity[]) 
 
 export default function TreemapNivo() {
   const { atrm, activities } = useReportContext();
-  const data = generateData(atrm, activities);
+  const data = generateTreeDataNivo(atrm, activities);
   return (
     <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>
       <ResponsiveTreeMap

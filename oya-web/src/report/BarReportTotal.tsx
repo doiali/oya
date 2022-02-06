@@ -7,14 +7,14 @@ import { Activity } from '../apiService';
 import RechartsTooltip from './RechartsTooltip';
 import { useReportContext } from './ReportProvider';
 
-type Data = {
+type DataRe = {
   name: string;
   activity?: Activity;
   value: number;
 };
 
-export const generateData = (atrm: ActivityTotalReport, activities: Activity[]) => {
-  const data: Data[] = [];
+export const generateDataRe = (atrm: ActivityTotalReport, activities: Activity[]) => {
+  const data: DataRe[] = [];
   activities.forEach(a => {
     if (a.parentIds.length !== 0) return;
     const r = atrm[a.id];
@@ -30,7 +30,7 @@ export const generateData = (atrm: ActivityTotalReport, activities: Activity[]) 
 
 export default function BarReportTotal() {
   const { atrm, activities } = useReportContext();
-  const data = generateData(atrm, activities);
+  const data = generateDataRe(atrm, activities);
   return (
     <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>
       <ResponsiveContainer width="100%" height="100%">

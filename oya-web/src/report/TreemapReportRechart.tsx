@@ -5,20 +5,20 @@ import { Activity } from '../apiService';
 import RechartsTooltip from './RechartsTooltip';
 import { useReportContext } from './ReportProvider';
 
-type RechartTreeData = {
+type TreeDataRe = {
   name: string;
   prefix: string;
   activity?: Activity;
   size?: number;
-  children?: RechartTreeData[];
+  children?: TreeDataRe[];
 };
 
-export const generateRechartsTreeData = (atrm: ActivityTotalReport, activities: Activity[]) => {
+export const generateTreeDataRe = (atrm: ActivityTotalReport, activities: Activity[]) => {
   const total = Object.values(atrm).reduce((a, r) => a + (r?.timePure ?? 0), 0);
-  const data: RechartTreeData[] = [];
-  const f = (a: Activity, s: string): RechartTreeData => {
+  const data: TreeDataRe[] = [];
+  const f = (a: Activity, s: string): TreeDataRe => {
     const ss = s + ' > ' + a.name;
-    const data: RechartTreeData = {
+    const data: TreeDataRe = {
       activity: a,
       name: a.name,
       prefix: ss,
@@ -38,7 +38,7 @@ export const generateRechartsTreeData = (atrm: ActivityTotalReport, activities: 
 
 export default function TreemapReportRechart() {
   const { atrm, activities } = useReportContext();
-  const data = generateRechartsTreeData(atrm, activities);
+  const data = generateTreeDataRe(atrm, activities);
   return (
     <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>
       <ResponsiveContainer>
