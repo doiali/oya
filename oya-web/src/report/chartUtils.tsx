@@ -23,6 +23,37 @@ export const generateDataRe = (atrm: ActivityTotalReport, activities: Activity[]
   return data.sort((a, b) => b.value - a.value);
 };
 
+type TreeDataRe = {
+  name: string;
+  prefix: string;
+  activity?: Activity;
+  size?: number;
+  children?: TreeDataRe[];
+};
+
+export const generateTreeDataRe = (atrm: ActivityTotalReport, activities: Activity[]) => {
+  const total = Object.values(atrm).reduce((a, r) => a + (r?.timePure ?? 0), 0);
+  const data: TreeDataRe[] = [];
+  const f = (a: Activity, s: string): TreeDataRe => {
+    const ss = s + ' > ' + a.name;
+    const data: TreeDataRe = {
+      activity: a,
+      name: a.name,
+      prefix: ss,
+      size: atrm[a.id]?.timePure ?? 0,
+    };
+    if (a.childIds.length > 0) {
+      data.children = a.children.filter(c => atrm[c.id]).map(c => f(c, ss));
+      data.children.push({ activity: a, prefix: ss, name: '', size: atrm[a.id]?.timePure ?? 0 });
+    }
+    return data;
+  };
+  activities.filter(a => a.parentIds.length === 0 && (atrm[a.id]?.time ?? 0) / total > 0).forEach(a => {
+    data.push(f(a, ''));
+  });
+  return data;
+};
+
 export type TreeDataNivo = {
   name: string;
   prefix?: string;

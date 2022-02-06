@@ -30,7 +30,7 @@ const renderCustomizedLabel = (props: PieLabelRenderProps) => {
   );
 };
 
-export default function PieReportTotal() {
+export default function PieTotalRechart() {
   const { atrm, activities } = useReportContext();
   const data = generateDataRe(atrm, activities);
   return (

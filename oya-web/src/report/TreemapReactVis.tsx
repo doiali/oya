@@ -3,7 +3,7 @@ import { Treemap } from 'react-vis';
 import { useReportContext } from './ReportProvider';
 import { generateTreeDataReactVis } from './chartUtils';
 
-export default function TreemapReportReactVis() {
+export default function TreemapReactVis() {
   const { atrm, activities } = useReportContext();
   const data = generateTreeDataReactVis(atrm, activities);
   return (

@@ -6,7 +6,7 @@ import RechartsTooltip from './RechartsTooltip';
 import { useReportContext } from './ReportProvider';
 import { generateDataRe } from './chartUtils';
 
-export default function BarReportTotal() {
+export default function BarTotalRechart() {
   const { atrm, activities } = useReportContext();
   const data = generateDataRe(atrm, activities);
   return (
