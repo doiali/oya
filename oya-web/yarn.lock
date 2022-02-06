@@ -3669,6 +3669,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nivo/legends@npm:^0.79.1":
+  version: 0.79.1
+  resolution: "@nivo/legends@npm:0.79.1"
+  peerDependencies:
+    "@nivo/core": 0.79.0
+    prop-types: ">= 15.5.10 < 16.0.0"
+    react: ">= 16.14.0 < 18.0.0"
+  checksum: 1f4bb8da28352d81771d50ce6d5929c9fefe1de9f682cd537e4a718c39828aba3df0c8a50887467571d79a36e329e41b0699c1cd9e14fd6e98f0d5771e887b8b
+  languageName: node
+  linkType: hard
+
 "@nivo/recompose@npm:0.79.0":
   version: 0.79.0
   resolution: "@nivo/recompose@npm:0.79.0"
@@ -11625,6 +11636,7 @@ __metadata:
     "@mui/lab": ^5.0.0-alpha.66
     "@mui/material": ^5.3.1
     "@nivo/core": ^0.79.0
+    "@nivo/legends": ^0.79.1
     "@nivo/sunburst": ^0.79.1
     "@nivo/treemap": ^0.79.1
     "@reduxjs/toolkit": ^1.7.1

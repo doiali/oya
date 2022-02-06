@@ -5,7 +5,7 @@ import { generateTreeDataNivo, TreeDataNivo } from './chartUtils';
 import { useEffect, useMemo, useState } from 'react';
 import TooltipNivo from './TooltipNivo';
 import { getDeltaStringOfRange as ts } from '../utils';
-
+import { LegendSvg } from '@nivo/legends';
 const CenteredMetric = ({
   centerX, centerY, data,
 }: SunburstCustomLayerProps<TreeDataNivo> & { data: TreeDataNivo; }) => {
@@ -35,6 +35,24 @@ const CenteredMetric = ({
   );
 };
 
+const Legends = ({
+  nodes, centerY,
+}: SunburstCustomLayerProps<TreeDataNivo> & { data: TreeDataNivo; }) => {
+  const data = nodes.filter(n => n.depth === 1).map(n => (
+    { ...n, label: n.data.activity?.name ?? '' }
+  ));
+  return (
+    <LegendSvg
+      direction='column'
+      itemWidth={25}
+      itemHeight={25}
+      x={0}
+      y={centerY - data.length * 25 / 2}
+      data={data}
+    />
+  );
+};
+
 export default function SunburstNivo() {
   const { atrm, activities } = useReportContext();
   const originalData = useMemo(() => generateTreeDataNivo(atrm, activities), [atrm, activities]);
@@ -50,7 +68,11 @@ export default function SunburstNivo() {
         reset
       </Button>
       <ResponsiveSunburst
-        layers={['arcs', 'arcLabels', (props) => <CenteredMetric {...props} data={data} />]}
+        layers={[
+          'arcs', 'arcLabels',
+          (props) => <CenteredMetric {...props} data={data} />,
+          (props) => <Legends {...props} data={data} />,
+        ]}
         onClick={(datum) => {
           if (datum.data.children?.length)
             setData(datum.data);
