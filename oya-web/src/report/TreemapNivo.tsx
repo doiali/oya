@@ -1,44 +1,7 @@
 import { Box } from '@mui/material';
-import { ActivityTotalReport } from './reportUtils';
-import { Activity } from '../apiService';
 import { useReportContext } from './ReportProvider';
 import { ResponsiveTreeMap } from '@nivo/treemap';
-
-type TreeDataNivo = {
-  name: string;
-  prefix?: string;
-  activity?: Activity;
-  value?: number;
-  children?: TreeDataNivo[];
-};
-
-export const generateTreeDataNivo = (atrm: ActivityTotalReport, activities: Activity[]) => {
-  const data: TreeDataNivo = {
-    name: 'report',
-    children: [],
-  };
-  const f = (a: Activity, s: string): TreeDataNivo => {
-    const ss = s + ' > ' + a.name;
-    const data: TreeDataNivo = {
-      activity: a,
-      name: a.name,
-      prefix: ss,
-      value: atrm[a.id]?.timePure ?? 0,
-    };
-    if (a.childIds.length > 0) {
-      data.children = a.children.filter(c => atrm[c.id]).map(c => f(c, ss));
-      // data.children.push({ activity: a, prefix: ss, name: '', value: atrm[a.id]?.timePure ?? 0 });
-    }
-    return data;
-  };
-  activities.forEach(a => {
-    if (a.parentIds.length !== 0) return;
-    const r = atrm[a.id];
-    if (r && r.time && data.children)
-      data.children.push(f(a, ''));
-  });
-  return data;
-};
+import { generateTreeDataNivo } from './chartUtils';
 
 export default function TreemapNivo() {
   const { atrm, activities } = useReportContext();

@@ -2,31 +2,9 @@ import { Box } from '@mui/material';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
-import { ActivityTotalReport } from './reportUtils';
-import { Activity } from '../apiService';
 import RechartsTooltip from './RechartsTooltip';
 import { useReportContext } from './ReportProvider';
-
-type DataRe = {
-  name: string;
-  activity?: Activity;
-  value: number;
-};
-
-export const generateDataRe = (atrm: ActivityTotalReport, activities: Activity[]) => {
-  const data: DataRe[] = [];
-  activities.forEach(a => {
-    if (a.parentIds.length !== 0) return;
-    const r = atrm[a.id];
-    if (r && r.time)
-      data.push({
-        activity: a,
-        name: a.name,
-        value: r.avgPerAllDays,
-      });
-  });
-  return data.sort((a, b) => b.value - a.value);
-};
+import { generateDataRe } from './chartUtils';
 
 export default function BarReportTotal() {
   const { atrm, activities } = useReportContext();
