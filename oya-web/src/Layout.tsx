@@ -36,6 +36,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     }),
     marginLeft: 0,
   }),
+  maxWidth: open ? `calc(100% - ${drawerWidth}px)` : '100%',
 }));
 
 interface AppBarProps extends MuiAppBarProps {
@@ -122,9 +123,9 @@ export default function Layout() {
         <Divider />
         <List>
           <ListItemLink to="/" primary='Home' icon={<Home />} />
-          <ListItemLink to="/reports" primary='Reports' icon={<Home />} />
+          <ListItemLink to="/reports/sunburst" primary='Reports' icon={<Home />} />
           <ListItemLink to="/activities" primary='Activity Manager' icon={<Home />} />
-          <ListItemLink to="/activities-widget" primary='Activities Old Widget' icon={<Home />} />
+          <ListItemLink to="/home-old" primary='Old Home' icon={<Home />} />
         </List>
         <Divider />
       </Drawer>

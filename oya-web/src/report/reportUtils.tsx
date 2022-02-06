@@ -1,29 +1,5 @@
-import { Interval, Entry, Activity } from './apiService';
-import { ActivityMappings } from './useActivities';
-
-export type ActivityChildrenReport = {
-  [id: number]: {
-    activity: Activity,
-    percent: number,
-    children: ActivityChildrenReport,
-  };
-};
-
-export type ActivityTotalReportSingle = {
-  activity: Activity,
-  totalTime: number,
-  days: number,
-  allDays: number,
-  avgPerDays: number,
-  avgPerAllDays: number,
-  occurance: number,
-  avgTimePerOccurance: number,
-  children: ActivityChildrenReport,
-};
-
-export type ActivityTotalReport = {
-  [id: number]: ActivityTotalReportSingle,
-};
+import { Interval, Activity } from '../apiService';
+import { ActivityMappings } from '../useActivities';
 
 export type SanitizedInterval = {
   id: number,
@@ -33,23 +9,47 @@ export type SanitizedInterval = {
   e: number,
   d: number,
   p: number,
-  entries: Entry[];
+  entries: {
+    activity_id: number,
+    time: number,
+  }[];
   note?: string,
 };
 
-export type ActivityDailyReport = {
-  name: string,
+export type ActivityReportBase = {
   activity: Activity,
-  occurance: number,
   time: number,
-  pureOccurance: number,
-  pureTime: number,
+  timePure: number,
+  occurance: number,
+  occurancePure: number,
+};
+
+export type ActivityReportAnalysis = {
+  avgPerDays: number,
+  avgPerAllDays: number,
+  occurancePerDays: number,
+  occurancePerAllDays: number,
+  avgTimePerOccurance: number,
+  avgPerDaysPure: number,
+  avgPerAllDaysPure: number,
+  occurancePerDaysPure: number,
+  occurancePerAllDaysPure: number,
+  avgTimePerOccurancePure: number,
+};
+
+export type ActivityTotalReport = {
+  days: number,
+  allDays: number,
+} & ActivityReportBase & ActivityReportAnalysis;
+
+export type ActivityTotalReportMap = {
+  [id: number]: ActivityTotalReport | undefined,
 };
 
 export type DailyData = {
   date: Date;
   logs: SanitizedInterval[],
-  report: Record<number, ActivityDailyReport>;
+  report: Record<number, ActivityReportBase>;
 };
 
 export type DailyDataMap = Record<string, DailyData>;
@@ -60,16 +60,19 @@ export const getDateString = (x: Date) => (
   (x.getDate()).toString().padStart(2, '0')
 );
 
+/** @returns daytime in micro seconds */
 export const getDayTime = (x: Date) => {
   const floor = new Date(x);
   floor.setHours(0, 0, 0, 0);
   return (x.getTime() - floor.getTime());
 };
 
+/** @returns timeDelta in micro seconds */
 export const getTimeDelta = (x: Date, base: Date) => (
   (x.getTime() - base.getTime())
 );
 
+/** micro seconds */
 export const getRange = (start: Date, end: Date) => {
   const startDate = new Date(start);
   const startTime = getDayTime(startDate);
@@ -100,9 +103,15 @@ export const sanitizeInterval = (interval: Interval): SanitizedInterval[] => {
       e = 60000 * 60 * 24;
     const date = new Date(startDate);
     date.setDate(date.getDate() + i);
+    const p = (e - s) / (getTimeDelta(end, start));
+    const d = (e - s) / 60000;
+    const entries = interval.entries.map(e => ({
+      activity_id: e.activity_id,
+      time: e.time ? e.time * p / 60 : d,
+    }));
     return {
-      s, e, d: (e - s) / 60000, p: (e - s) / (getTimeDelta(end, start)), date,
-      id: interval.id, l: i + 1, entries: interval.entries, note: interval.note,
+      s, e, d, p, date,
+      id: interval.id, l: i + 1, entries, note: interval.note,
     };
   });
 };
@@ -139,21 +148,21 @@ export const createDailyDataMap = (
       const { report } = dailyData;
       entries.forEach(e => {
         const a = am[e.activity_id];
-        const t = e.time ? e.time / 60 : si.d;
+        const t = e.time;
         a?.allParents.forEach(p => {
           const { id } = p;
           if (!report[id]) {
             report[id] = {
-              name: p.name, time: t, occurance: 1, activity: p,
-              pureOccurance: id === a.id ? 1 : 0,
-              pureTime: id === a.id ? t : 0,
+              time: t, occurance: 1, activity: p,
+              occurancePure: id === a.id ? 1 : 0,
+              timePure: id === a.id ? t : 0,
             };
           } else {
             report[id].occurance += 1;
             report[id].time += t;
             if (id === a.id) {
-              report[id].pureTime += t;
-              report[id].pureOccurance += 1;
+              report[id].timePure += t;
+              report[id].occurancePure += 1;
             }
           }
         });
@@ -167,9 +176,9 @@ export const createDailyDataMap = (
   return dailyDataMap;
 };
 
-export const createActivityTotalReport = (ddm: DailyDataMap): ActivityTotalReport => {
-  const atr: ActivityTotalReport = {};
-  const ddmValues = Object.values(ddm);
+export const createActivityTotalReportMap = (dda: DailyData[]): ActivityTotalReportMap => {
+  const atr: ActivityTotalReportMap = {};
+  const ddmValues = dda;
   const allDays = ddmValues.length;
   ddmValues.forEach(({ report }) => {
     Object.values(report).forEach((r) => {
@@ -177,27 +186,50 @@ export const createActivityTotalReport = (ddm: DailyDataMap): ActivityTotalRepor
       if (!atr[id]) {
         atr[id] = {
           activity: r.activity,
-          totalTime: r.time,
+          time: r.time,
+          timePure: r.timePure,
           days: 1,
           occurance: r.occurance,
+          occurancePure: r.occurancePure,
           allDays,
           avgPerDays: 0,
           avgPerAllDays: 0,
+          occurancePerDays: 0,
+          occurancePerAllDays: 0,
           avgTimePerOccurance: 0,
-          children: {},
+          avgPerDaysPure: 0,
+          avgPerAllDaysPure: 0,
+          occurancePerDaysPure: 0,
+          occurancePerAllDaysPure: 0,
+          avgTimePerOccurancePure: 0,
         };
       } else {
-        atr[id].totalTime += r.time;
-        atr[id].days += 1;
-        atr[id].occurance += r.occurance;
+        const report = atr[id];
+        if (report) {
+          report.time += r.time;
+          report.timePure += r.timePure;
+          report.days += 1;
+          report.occurance += r.occurance;
+          report.occurancePure += r.occurancePure;
+        }
       }
     });
   });
   Object.values(atr).forEach(a => {
     const atrs = a;
-    atrs.avgPerDays = atrs.totalTime / atrs.days;
-    atrs.avgPerAllDays = atrs.totalTime / atrs.allDays;
-    atrs.avgTimePerOccurance = atrs.totalTime / atrs.occurance;
+    if (atrs)
+      Object.assign(atrs, {
+        avgPerDays: atrs.time / atrs.days,
+        avgPerAllDays: atrs.time / atrs.allDays,
+        occurancePerDays: atrs.occurance / atrs.days,
+        occurancePerAllDays: atrs.occurance / atrs.allDays,
+        avgTimePerOccurance: atrs.time / atrs.occurance,
+        avgPerDaysPure: atrs.timePure / atrs.days,
+        avgPerAllDaysPure: atrs.timePure / atrs.allDays,
+        occurancePerDaysPure: atrs.occurancePure / atrs.days,
+        occurancePerAllDaysPure: atrs.occurancePure / atrs.allDays,
+        avgTimePerOccurancePure: atrs.timePure / atrs.occurancePure,
+      });
   });
   return atr;
 };

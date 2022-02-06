@@ -1,12 +1,11 @@
-import { Container, CssBaseline } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 import { AlertServiceContainer } from './AlertService';
 import Layout from './Layout';
 import { Routes, Route } from 'react-router-dom';
-import HomePage from './HomePage';
+import HomePage, { HomePageOld } from './HomePage';
 import { dequal } from 'dequal';
-import ReportPage from './ReportPage';
+import ReportPage from './report/ReportPage';
 import ActivityPage from './ActivityPage';
-import ActivitiesHomeWidget from './ActivitiesHomeWidget';
 
 declare global {
   interface Window {
@@ -14,12 +13,6 @@ declare global {
   }
 }
 window.dequal = dequal;
-
-const ActivitiesWidgetPage = () => (
-  <Container maxWidth="md">
-    <ActivitiesHomeWidget />
-  </Container>
-);
 
 function App() {
   return (
@@ -29,9 +22,10 @@ function App() {
       <Routes>
         <Route path='/' element={<Layout />}>
           <Route index element={<HomePage />} />
-          <Route path='reports' element={<ReportPage />} />
+          <Route path='reports/*' element={<ReportPage />} />
           <Route path="activities" element={<ActivityPage />} />
-          <Route path="activities-widget" element={<ActivitiesWidgetPage />} />
+          <Route path="home-old" element={<HomePageOld />} />
+          <Route path="*" element="404 not found" />
         </Route>
       </Routes>
     </>
