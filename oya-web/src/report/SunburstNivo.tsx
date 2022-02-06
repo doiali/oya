@@ -1,9 +1,39 @@
-import { ResponsiveSunburst } from '@nivo/sunburst';
+import { ResponsiveSunburst, SunburstCustomLayerProps } from '@nivo/sunburst';
 import { Box, Button } from '@mui/material';
 import { useReportContext } from './ReportProvider';
-import { generateTreeDataNivo } from './chartUtils';
+import { generateTreeDataNivo, TreeDataNivo } from './chartUtils';
 import { useEffect, useMemo, useState } from 'react';
 import TooltipNivo from './TooltipNivo';
+import { getDeltaStringOfRange as ts } from '../utils';
+
+const CenteredMetric = ({
+  centerX, centerY, data,
+}: SunburstCustomLayerProps<TreeDataNivo> & { data: TreeDataNivo; }) => {
+  const { activity, report, prefix } = data;
+  if (!activity || !report) return null;
+  const renderRow = (name: string, value: string | number) => (
+    <tspan x={centerX} dy={22}>
+      {name}: <tspan style={{ fontWeight: 'bold' }}>{value}</tspan>
+    </tspan>
+  );
+  return (
+    <text
+      x={centerX}
+      y={centerY - 75}
+      textAnchor="middle"
+      dominantBaseline="central"
+    >
+      <tspan x={centerX} dy={0} style={{ fontSize: 32, fontWeight: 'bold' }}>{activity.name}</tspan>
+      <tspan x={centerX} dy={22}> </tspan>
+      {renderRow('days', `${report.days} of ${report.allDays}`)}
+      {renderRow('total time', ts(report.time))}
+      {renderRow('avg per all days', ts(report.avgPerAllDays))}
+      {renderRow('avg per days', ts(report.avgPerDays))}
+      {renderRow('occurance', report.occurance.toString())}
+      <tspan x={centerX} dy={22}>{prefix ?? ''}</tspan>
+    </text>
+  );
+};
 
 export default function SunburstNivo() {
   const { atrm, activities } = useReportContext();
@@ -20,8 +50,10 @@ export default function SunburstNivo() {
         reset
       </Button>
       <ResponsiveSunburst
+        layers={['arcs', 'arcLabels', (props) => <CenteredMetric {...props} data={data} />]}
         onClick={(datum) => {
-          setData(datum.data);
+          if (datum.data.children?.length)
+            setData(datum.data);
         }}
         onMouseMove={(props, e) => {
           if (e.clientY > window.innerHeight / 2 && isTop) setIsTop(false);
