@@ -24,7 +24,7 @@ export default function TimeReport() {
           />
         </Grid>
         <Grid item xs={12} md={7} lg={8} sx={{ order: { xs: 1, md: 2 } }}>
-          {selectedActivity && <TimeRe activity={selectedActivity} />}
+          <TimeRe activity={selectedActivity} />
         </Grid>
       </Grid>
     </ReportProvider>

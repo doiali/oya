@@ -50,6 +50,7 @@ export type DailyData = {
   date: Date;
   logs: SanitizedInterval[],
   report: Record<number, ActivityReportBase>;
+  totalTime: number;
 };
 
 export type DailyDataMap = Record<string, DailyData>;
@@ -130,7 +131,7 @@ export const createDailyDataMap = (
     const date = new Date(startDate);
     date.setDate(date.getDate() + i);
     dailyDataMap[getDateString(date)] = {
-      logs: [], date, report: {},
+      logs: [], date, report: {}, totalTime: 0,
     };
   });
 
@@ -140,7 +141,7 @@ export const createDailyDataMap = (
       const dateString = getDateString(si.date);
       if (!dailyDataMap[dateString]) {
         dailyDataMap[dateString] = {
-          date: si.date, logs: [], report: {},
+          date: si.date, logs: [], report: {}, totalTime: 0,
         };
       }
       const { entries } = si;
@@ -167,6 +168,7 @@ export const createDailyDataMap = (
           }
         });
       });
+      dailyData.totalTime = Object.values(report).reduce((a, r) => a + r.timePure, 0);
       dailyData.logs.push(si);
     });
   };

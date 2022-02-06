@@ -6,17 +6,19 @@ import { useReportContext } from './ReportProvider';
 import { format } from 'date-fns-jalali';
 import { Activity } from '../apiService';
 
-export default function TimeRe({ activity }: { activity: Activity; }) {
+export default function TimeRe({ activity }: { activity?: Activity; }) {
   const { dda } = useReportContext();
   const data = dda.map(d => {
     return {
       name: format(d.date, 'MM/dd'),
-      value: Math.round(d.report[activity.id]?.time ?? 0),
+      value: activity
+        ? Math.round(d.report[activity?.id ?? 0]?.time ?? 0)
+        : Math.round(d.totalTime),
     };
   });
   return (
     <Box sx={{ width: '100%', height: 600, maxWidth: 1700 }}>
-      <Typography align='center' variant='h5'>{activity.name}</Typography>
+      <Typography align='center' variant='h5'>{activity?.name ?? 'Total Time'}</Typography>
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart
           width={500}
