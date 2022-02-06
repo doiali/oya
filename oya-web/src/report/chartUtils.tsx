@@ -1,6 +1,6 @@
 import { TreemapPoint } from 'react-vis';
 import { Activity } from '../apiService';
-import { ActivityTotalReportMap } from './reportUtils';
+import { ActivityTotalReport, ActivityTotalReportMap } from './reportUtils';
 
 export type DataRe = {
   name: string;
@@ -58,6 +58,7 @@ export type TreeDataNivo = {
   name: string;
   prefix?: string;
   activity?: Activity;
+  report?: ActivityTotalReport;
   value?: number;
   children?: TreeDataNivo[];
 };
@@ -65,19 +66,21 @@ export type TreeDataNivo = {
 export const generateTreeDataNivo = (atrm: ActivityTotalReportMap, activities: Activity[]) => {
   const data: TreeDataNivo = {
     name: 'report',
+    prefix: '',
     children: [],
   };
   const f = (a: Activity, s: string): TreeDataNivo => {
     const ss = s + ' > ' + a.name;
+    const report = atrm[a.id];
     const data: TreeDataNivo = {
       activity: a,
+      report,
       name: a.name,
       prefix: ss,
-      value: atrm[a.id]?.timePure ?? 0,
+      value: report?.timePure ?? 0,
     };
     if (a.childIds.length > 0) {
       data.children = a.children.filter(c => atrm[c.id]).map(c => f(c, ss));
-      // data.children.push({ activity: a, prefix: ss, name: '', value: atrm[a.id]?.timePure ?? 0 });
     }
     return data;
   };
