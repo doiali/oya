@@ -19,7 +19,14 @@ export type ActivityTotalReportSingle = {
   occurancePure: number,
   avgPerDays: number,
   avgPerAllDays: number,
+  occurancePerDays: number,
+  occurancePerAllDays: number,
   avgTimePerOccurance: number,
+  avgPerDaysPure: number,
+  avgPerAllDaysPure: number,
+  occurancePerDaysPure: number,
+  occurancePerAllDaysPure: number,
+  avgTimePerOccurancePure: number,
   children: ActivityChildrenReport,
 };
 
@@ -199,7 +206,14 @@ export const createActivityTotalReport = (dda: DailyData[]): ActivityTotalReport
           allDays,
           avgPerDays: 0,
           avgPerAllDays: 0,
+          occurancePerDays: 0,
+          occurancePerAllDays: 0,
           avgTimePerOccurance: 0,
+          avgPerDaysPure: 0,
+          avgPerAllDaysPure: 0,
+          occurancePerDaysPure: 0,
+          occurancePerAllDaysPure: 0,
+          avgTimePerOccurancePure: 0,
           children: {},
         };
       } else {
@@ -216,11 +230,19 @@ export const createActivityTotalReport = (dda: DailyData[]): ActivityTotalReport
   });
   Object.values(atr).forEach(a => {
     const atrs = a;
-    if (atrs) {
-      atrs.avgPerDays = atrs.time / atrs.days;
-      atrs.avgPerAllDays = atrs.time / atrs.allDays;
-      atrs.avgTimePerOccurance = atrs.time / atrs.occurance;
-    }
+    if (atrs)
+      Object.assign(atrs, {
+        avgPerDays: atrs.time / atrs.days,
+        avgPerAllDays: atrs.time / atrs.allDays,
+        occurancePerDays: atrs.occurance / atrs.days,
+        occurancePerAllDays: atrs.occurance / atrs.allDays,
+        avgTimePerOccurance: atrs.time / atrs.occurance,
+        avgPerDaysPure: atrs.timePure / atrs.days,
+        avgPerAllDaysPure: atrs.timePure / atrs.allDays,
+        occurancePerDaysPure: atrs.occurancePure / atrs.days,
+        occurancePerAllDaysPure: atrs.occurancePure / atrs.allDays,
+        avgTimePerOccurancePure: atrs.timePure / atrs.occurancePure,
+      });
   });
   return atr;
 };
