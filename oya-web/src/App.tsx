@@ -32,6 +32,7 @@ function App() {
           <Route path='reports/*' element={<ReportPage />} />
           <Route path="activities" element={<ActivityPage />} />
           <Route path="activities-widget" element={<ActivitiesWidgetPage />} />
+          <Route path="*" element="404 not found" />
         </Route>
       </Routes>
     </>

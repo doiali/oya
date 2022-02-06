@@ -4,8 +4,8 @@ import { Activity } from './apiService';
 import ActivityEditor from './ActivityEditor';
 import useActivities from './useActivities';
 import ActivitiesTreeView from './ActivitiesTreeView';
-import { ActivityOverViewReport } from './report/ReportPage';
 import ReportProvider from './report/ReportProvider';
+import ActivityOverviewReport from './report/ActivityOverviewReport';
 
 export default function ActivityPage() {
   const [selectedNodeId, setSelectedNodeId] = useState<string>('');
@@ -54,7 +54,7 @@ function ActivityActionPanel({ activity, onClose }: ActivityActionPanelProps) {
           onClose={() => onClose()}
         />
       </Paper>
-      <ActivityOverViewReport activity={activity} />
+      <ActivityOverviewReport activity={activity} />
     </Stack>
   );
 }
