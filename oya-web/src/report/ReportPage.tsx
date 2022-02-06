@@ -10,12 +10,12 @@ import TreemapNivo from './TreemapNivo';
 import { GridOverviewReport } from './ActivityOverviewReport';
 
 export const reportRoutes = [
-  { link: 'cards', label: 'cards', element: <GridOverviewReport /> },
-  { link: 'bar', label: 'bars', element: <BarTotalRechart /> },
-  { link: 'pie', label: 'pie', element: <PieTotalRechart /> },
-  { link: 'vis-tree', label: 'vis tree', element: <TreemapReactVis /> },
-  { link: 're-tree', label: 'recharts tree', element: <TreemapRechart /> },
-  { link: 'nivo-tree', label: 'nivo tree', element: <TreemapNivo /> },
+  { link: 'cards', label: 'Cards', element: <GridOverviewReport /> },
+  { link: 'bar', label: 'Bars', element: <BarTotalRechart /> },
+  { link: 'pie', label: 'Pie', element: <PieTotalRechart /> },
+  { link: 're-tree', label: 'Re Tree', element: <TreemapRechart /> },
+  { link: 'vis-tree', label: 'Vis Tree', element: <TreemapReactVis /> },
+  { link: 'nivo-tree', label: 'Nivo Tree', element: <TreemapNivo /> },
 ];
 
 function ReportPageLayout() {
