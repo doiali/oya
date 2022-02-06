@@ -17,7 +17,7 @@ export default function TooltipNivo(
   const { atrm } = useReportContext();
   if (!activity) return <TooltipWrapper>{id}: {percentage}%</TooltipWrapper>;
   const renderRow = (name: string, value: string | number) => (
-    <Typography variant='caption' textAlign="center" key={name}>
+    <Typography variant='body2' textAlign="center" key={name}>
       {name}: <b>{value}</b>
     </Typography>
   );
@@ -41,7 +41,7 @@ export default function TooltipNivo(
         {renderRow('avg per days', ts(r.avgPerDays))}
         {renderRow('occurance', r.occurance.toString())}
         {prefix && (
-          <Typography variant='caption' textAlign="center">
+          <Typography variant='body2' textAlign="center">
             {prefix}
           </Typography>
         )}
