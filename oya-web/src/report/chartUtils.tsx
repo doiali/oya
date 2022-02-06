@@ -1,6 +1,6 @@
 import { TreemapPoint } from 'react-vis';
 import { Activity } from '../apiService';
-import { ActivityTotalReport } from './reportUtils';
+import { ActivityTotalReportMap } from './reportUtils';
 
 export type DataRe = {
   name: string;
@@ -8,7 +8,7 @@ export type DataRe = {
   value: number;
 };
 
-export const generateDataRe = (atrm: ActivityTotalReport, activities: Activity[]) => {
+export const generateDataRe = (atrm: ActivityTotalReportMap, activities: Activity[]) => {
   const data: DataRe[] = [];
   activities.forEach(a => {
     if (a.parentIds.length !== 0) return;
@@ -31,7 +31,7 @@ type TreeDataRe = {
   children?: TreeDataRe[];
 };
 
-export const generateTreeDataRe = (atrm: ActivityTotalReport, activities: Activity[]) => {
+export const generateTreeDataRe = (atrm: ActivityTotalReportMap, activities: Activity[]) => {
   const total = Object.values(atrm).reduce((a, r) => a + (r?.timePure ?? 0), 0);
   const data: TreeDataRe[] = [];
   const f = (a: Activity, s: string): TreeDataRe => {
@@ -62,7 +62,7 @@ export type TreeDataNivo = {
   children?: TreeDataNivo[];
 };
 
-export const generateTreeDataNivo = (atrm: ActivityTotalReport, activities: Activity[]) => {
+export const generateTreeDataNivo = (atrm: ActivityTotalReportMap, activities: Activity[]) => {
   const data: TreeDataNivo = {
     name: 'report',
     children: [],
@@ -94,7 +94,7 @@ export interface TreeDataReactVis extends TreemapPoint {
   activity?: Activity;
 }
 
-export const generateTreeDataReactVis = (atrm: ActivityTotalReport, activities: Activity[]) => {
+export const generateTreeDataReactVis = (atrm: ActivityTotalReportMap, activities: Activity[]) => {
   const c = (o = 1) => {
     const [r, g, b] = [...Array(3)].map(() => Math.random() * 128 + 20);
     return `rgba(${r},${g},${b},${o / 1.5})`;

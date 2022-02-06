@@ -9,7 +9,7 @@ export type ActivityChildrenReport = {
   };
 };
 
-export type ActivityTotalReportSingle = {
+export type ActivityTotalReport = {
   activity: Activity,
   days: number,
   allDays: number,
@@ -30,8 +30,8 @@ export type ActivityTotalReportSingle = {
   children: ActivityChildrenReport,
 };
 
-export type ActivityTotalReport = {
-  [id: number]: ActivityTotalReportSingle | undefined,
+export type ActivityTotalReportMap = {
+  [id: number]: ActivityTotalReport | undefined,
 };
 
 export type SanitizedInterval = {
@@ -188,8 +188,8 @@ export const createDailyDataMap = (
   return dailyDataMap;
 };
 
-export const createActivityTotalReport = (dda: DailyData[]): ActivityTotalReport => {
-  const atr: ActivityTotalReport = {};
+export const createActivityTotalReport = (dda: DailyData[]): ActivityTotalReportMap => {
+  const atr: ActivityTotalReportMap = {};
   const ddmValues = dda;
   const allDays = ddmValues.length;
   ddmValues.forEach(({ report }) => {
