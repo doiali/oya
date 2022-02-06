@@ -49,7 +49,7 @@ export default function SunburstNivo() {
           modifiers: [
             [
               'darker',
-              1.5,
+              3,
             ],
           ],
         }}

@@ -23,7 +23,7 @@ export default function TreemapNivo() {
           modifiers: [
             [
               'darker',
-              1.2,
+              3,
             ],
           ],
         }}
@@ -42,7 +42,7 @@ export default function TreemapNivo() {
           modifiers: [
             [
               'darker',
-              0.1,
+              1.5,
             ],
           ],
         }}
