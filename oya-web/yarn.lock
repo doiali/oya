@@ -3617,6 +3617,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nivo/arcs@npm:0.79.1":
+  version: 0.79.1
+  resolution: "@nivo/arcs@npm:0.79.1"
+  dependencies:
+    "@nivo/colors": 0.79.1
+    "@react-spring/web": 9.3.1
+    d3-shape: ^1.3.5
+  peerDependencies:
+    "@nivo/core": 0.79.0
+    react: ">= 16.14.0 < 18.0.0"
+  checksum: b940f81a72fa7aee26ac9a525247360c69ee158fc7505cb3454bd873725376bc6fdfd5ecc763a35379d28b8a499d4adbb9712caa2f43bf4dde3e8061dad6af19
+  languageName: node
+  linkType: hard
+
 "@nivo/colors@npm:0.79.1":
   version: 0.79.1
   resolution: "@nivo/colors@npm:0.79.1"
@@ -3663,6 +3677,22 @@ __metadata:
   peerDependencies:
     react: ">= 16.14.0 < 18.0.0"
   checksum: acc0dc5bde0b67cdf8e5970cbec7788fbc91e3567b7fbeb5f470e8e0b706aeb5acae885d9413d14d845fc11032611ad1011e3a9fc4055acbc55a2baecd9e16ff
+  languageName: node
+  linkType: hard
+
+"@nivo/sunburst@npm:^0.79.1":
+  version: 0.79.1
+  resolution: "@nivo/sunburst@npm:0.79.1"
+  dependencies:
+    "@nivo/arcs": 0.79.1
+    "@nivo/colors": 0.79.1
+    "@nivo/tooltip": 0.79.0
+    d3-hierarchy: ^1.1.8
+    lodash: ^4.17.21
+  peerDependencies:
+    "@nivo/core": 0.79.0
+    react: ">= 16.14.0 < 18.0.0"
+  checksum: d820ee245848d429934f5b8976eb6aa7cd0a1593f277c1c646ccb62abc0c4067da0b2b14c127c24debbd43264652d7cf45c2a2a6e56b6feaf652cb8428b74159
   languageName: node
   linkType: hard
 
@@ -11595,6 +11625,7 @@ __metadata:
     "@mui/lab": ^5.0.0-alpha.66
     "@mui/material": ^5.3.1
     "@nivo/core": ^0.79.0
+    "@nivo/sunburst": ^0.79.1
     "@nivo/treemap": ^0.79.1
     "@reduxjs/toolkit": ^1.7.1
     "@testing-library/jest-dom": ^5.16.1

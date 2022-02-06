@@ -8,6 +8,7 @@ import TreemapReactVis from './TreemapReactVis';
 import TreemapRechart from './TreemapRechart';
 import TreemapNivo from './TreemapNivo';
 import { GridOverviewReport } from './ActivityOverviewReport';
+import SunburstNivo from './SunburstNivo';
 
 export const reportRoutes = [
   { link: 'cards', label: 'Cards', element: <GridOverviewReport /> },
@@ -16,6 +17,7 @@ export const reportRoutes = [
   { link: 're-tree', label: 'Re Tree', element: <TreemapRechart /> },
   { link: 'vis-tree', label: 'Vis Tree', element: <TreemapReactVis /> },
   { link: 'nivo-tree', label: 'Nivo Tree', element: <TreemapNivo /> },
+  { link: 'sunburst', label: 'Nivo Sunburst', element: <SunburstNivo /> },
 ];
 
 function ReportPageLayout() {
