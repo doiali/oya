@@ -12,7 +12,7 @@ const TooltipWrapper = styled(Paper)(({ theme }) => ({
 export default function TooltipNivo(
   props: ComputedDatum<TreeDataNivo> & { isTop?: boolean; isLeft?: boolean; },
 ) {
-  const { data, percentage, id, isTop, isLeft } = props;
+  const { data, percentage, id, isTop } = props;
   const { activity, prefix } = data;
   const { atrm } = useReportContext();
   if (!activity) return <TooltipWrapper>{id}: {percentage}%</TooltipWrapper>;
@@ -27,7 +27,7 @@ export default function TooltipNivo(
   return (
     <TooltipWrapper style={{
       transform: (
-        `translate(calc(${isLeft ? '50% + 16px' : '-50% - 16px'}), ${isTop ? 'calc(100% + 32px)' : 0})`
+        `translate(0, ${isTop ? 'calc(100% + 32px)' : 0})`
       ),
     }}
     >
