@@ -1,15 +1,16 @@
 import { ResponsiveSunburst, SunburstCustomLayerProps } from '@nivo/sunburst';
-import { Box, Button } from '@mui/material';
+import { Box, Button, useTheme } from '@mui/material';
 import { useReportContext } from './ReportProvider';
 import { generateTreeDataNivo, TreeDataNivo } from './chartUtils';
 import { useEffect, useMemo, useState } from 'react';
 import TooltipNivo from './TooltipNivo';
 import { getDeltaStringOfRange as ts } from '../utils';
-import { LegendSvg } from '@nivo/legends';
+
 const CenteredMetric = ({
   centerX, centerY, data,
 }: SunburstCustomLayerProps<TreeDataNivo> & { data: TreeDataNivo; }) => {
   const { activity, report, prefix } = data;
+  const theme = useTheme();
   if (!activity || !report) return null;
   const renderRow = (name: string, value: string | number) => (
     <tspan x={centerX} dy={22}>
@@ -22,6 +23,7 @@ const CenteredMetric = ({
       y={centerY - 75}
       textAnchor="middle"
       dominantBaseline="central"
+      fill={theme.palette.text.primary}
     >
       <tspan x={centerX} dy={0} style={{ fontSize: 32, fontWeight: 'bold' }}>{activity.name}</tspan>
       <tspan x={centerX} dy={22}> </tspan>
@@ -36,20 +38,28 @@ const CenteredMetric = ({
 };
 
 const Legends = ({
-  nodes, centerY,
-}: SunburstCustomLayerProps<TreeDataNivo> & { data: TreeDataNivo; }) => {
+  nodes,
+}: SunburstCustomLayerProps<TreeDataNivo>) => {
   const data = nodes.filter(n => n.depth === 1).map(n => (
     { ...n, label: n.data.activity?.name ?? '' }
   ));
+  const theme = useTheme();
+  const l = 25;
+  let y = -l; // centerY - (data.length) * l - l * 1.5;
   return (
-    <LegendSvg
-      direction='column'
-      itemWidth={25}
-      itemHeight={25}
-      x={0}
-      y={centerY - data.length * 25 / 2}
-      data={data}
-    />
+    <g fontSize={theme.typography.fontSize} fill={theme.palette.text.primary}>
+      {data.map(d => {
+        y = y + l + 10;
+        return (
+          <g key={d.id}>
+            <rect x={0} y={y} width={l} height={l} fill={d.color} />
+            <text x={l + 10} y={y + l / 2 + 4}>
+              {d.label}
+            </text>
+          </g>
+        );
+      })}
+    </g>
   );
 };
 
@@ -71,7 +81,7 @@ export default function SunburstNivo() {
         layers={[
           'arcs', 'arcLabels',
           (props) => <CenteredMetric {...props} data={data} />,
-          (props) => <Legends {...props} data={data} />,
+          (props) => <Legends {...props} />,
         ]}
         onClick={(datum) => {
           if (datum.data.children?.length)
