@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import useActivities from '../useActivities';
 import ActivitiesTreeView from '../ActivitiesTreeView';
 import ReportProvider from '../report/ReportProvider';
-import TimeRe from './TimeRe';
+import ActivityPanel from '../ActivityPanel';
 
 export default function TimeReport() {
   const [selectedNodeId, setSelectedNodeId] = useState<string>('');
@@ -24,7 +24,10 @@ export default function TimeReport() {
           />
         </Grid>
         <Grid item xs={12} md={7} lg={8} sx={{ order: { xs: 1, md: 2 } }}>
-          <TimeRe activity={selectedActivity} />
+          <ActivityPanel
+            activity={selectedActivity}
+            onClose={() => setSelectedNodeId('')}
+          />
         </Grid>
       </Grid>
     </ReportProvider>
