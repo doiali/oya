@@ -9,14 +9,14 @@ import TreemapRechart from './TreemapRechart';
 import TreemapNivo from './TreemapNivo';
 import { GridOverviewReport } from './ActivityOverviewReport';
 import SunburstNivo from './SunburstNivo';
-import TimeReport from './TimeReport';
+import ActivityPage from '../ActivityPage';
 
 export const reportRoutes = [
   { link: 'cards', label: 'Cards', element: <GridOverviewReport /> },
   { link: 'bar', label: 'Bars', element: <BarTotalRechart /> },
   { link: 'pie', label: 'Pie', element: <PieTotalRechart /> },
   { link: 're-tree', label: 'Re Tree', element: <TreemapRechart /> },
-  { link: 'time-re/*', to: 'time-re', label: 'Re Time', element: <TimeReport /> },
+  { link: 'time-re/*', to: 'time-re', label: 'Re Time', element: <ActivityPage /> },
   { link: 'vis-tree', label: 'Vis Tree', element: <TreemapReactVis /> },
   { link: 'nivo-tree', label: 'Nivo Tree', element: <TreemapNivo /> },
   { link: 'sunburst', label: 'Nivo Sunburst', element: <SunburstNivo /> },
