@@ -5,7 +5,7 @@ import { Outlet, Route, Routes, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import TimeRe from './report/TimeRe';
 import React from 'react';
-import { ActivityContext, useActivityContext } from './ActivityPage';
+import ActivityPage, { ActivityContext, useActivityContext } from './ActivityPage';
 
 const ActivityPanelHome = () => {
   const { activity, onClose } = useActivityContext();
@@ -25,7 +25,7 @@ const ActivityPanelHome = () => {
   ) : null;
 };
 
-const PanelRoutes: { link: string; label: string, element: React.ReactElement; }[] = [
+export const ActivityPanelRoutes: { link: string; label: string, element: React.ReactElement; }[] = [
   {
     link: 'overview',
     label: 'overview',
@@ -38,34 +38,34 @@ const PanelRoutes: { link: string; label: string, element: React.ReactElement; }
   },
 ];
 
-function ActivityPanelLayout({ context }: { context: ActivityContext; }) {
+export function ActivityPanelLayout(props: ActivityContext) {
   const loc = useLocation();
   const paths = loc.pathname.split('/');
   const path = paths[paths.length - 1];
-  const allowed = PanelRoutes.map(r => r.link);
+  const allowed = ActivityPanelRoutes.map(r => r.link);
 
   const current = allowed.indexOf(path);
   return (
     <>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={current === -1 ? 0 : current}>
-          {PanelRoutes.map(r => (
+          {ActivityPanelRoutes.map(r => (
             <Tab key={r.link} component={Link} to={r.link} label={r.label} />
           ))}
         </Tabs>
       </Box>
       <Box sx={{ py: 2 }}>
-        <Outlet context={context} />
+        <Outlet context={props} />
       </Box>
     </>
   );
 }
 
-export default function ActivityPanel(props: ActivityContext) {
+export function ActivityPanelRouter() {
   return (
     <Routes>
-      <Route path="/" element={<ActivityPanelLayout context={props} />}>
-        {PanelRoutes.map(({ link, element }) => (
+      <Route path="/" element={<ActivityPage />}>
+        {ActivityPanelRoutes.map(({ link, element }) => (
           <Route key={link} path={link} element={element} />
         ))}
         <Route index element={<ActivityPanelHome />} />

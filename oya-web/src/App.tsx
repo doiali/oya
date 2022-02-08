@@ -6,6 +6,7 @@ import HomePage, { HomePageOld } from './HomePage';
 import { dequal } from 'dequal';
 import ReportPage, { reportRoutes } from './report/ReportPage';
 import ActivityPage from './ActivityPage';
+import { ActivityPanelRouter, ActivityPanelRoutes } from './ActivityPanel';
 
 declare global {
   interface Window {
@@ -26,7 +27,8 @@ function App() {
             {reportRoutes.map(r => <Route key={r.link} path={r.link} element={r.element} />)}
             <Route path="*" element="404 not found" />
           </Route>
-          <Route path="activities/*" element={<ActivityPage />} />
+          <Route path="activities/*" element={<ActivityPanelRouter />}>
+          </Route>
           <Route path="home-old" element={<HomePageOld />} />
           <Route path="*" element="404 not found" />
         </Route>
