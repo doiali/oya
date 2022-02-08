@@ -1,13 +1,13 @@
 import { Box, Paper, Stack, Tab, Tabs, Typography } from '@mui/material';
 import ActivityEditor from './ActivityEditor';
 import ActivityOverviewReport from './report/ActivityOverviewReport';
-import { Outlet, Route, Routes, useLocation } from 'react-router';
+import { Outlet, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import TimeRe from './report/TimeRe';
 import React from 'react';
-import ActivityPage, { ActivityContext, useActivityContext } from './ActivityPage';
+import { ActivityContext, useActivityContext } from './ActivityPage';
+import { ActivityPanelRoutes } from './App';
 
-const ActivityPanelHome = () => {
+export const ActivityPanelHome = () => {
   const { activity, onClose } = useActivityContext();
   return activity ? (
     <Stack spacing={2}>
@@ -24,19 +24,6 @@ const ActivityPanelHome = () => {
     </Stack>
   ) : null;
 };
-
-export const ActivityPanelRoutes: { link: string; label: string, element: React.ReactElement; }[] = [
-  {
-    link: 'overview',
-    label: 'overview',
-    element: <ActivityPanelHome />,
-  },
-  {
-    link: 'time',
-    label: 'time chart',
-    element: <TimeRe />,
-  },
-];
 
 export function ActivityPanelLayout(props: ActivityContext) {
   const loc = useLocation();
@@ -58,19 +45,5 @@ export function ActivityPanelLayout(props: ActivityContext) {
         <Outlet context={props} />
       </Box>
     </>
-  );
-}
-
-export function ActivityPanelRouter() {
-  return (
-    <Routes>
-      <Route path="/" element={<ActivityPage />}>
-        {ActivityPanelRoutes.map(({ link, element }) => (
-          <Route key={link} path={link} element={element} />
-        ))}
-        <Route index element={<ActivityPanelHome />} />
-        <Route path="*" element="not found" />
-      </Route>
-    </Routes>
   );
 }

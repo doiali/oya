@@ -1,26 +1,8 @@
 import { Box, Tab, Tabs } from '@mui/material';
 import { Outlet, useLocation, useResolvedPath, matchPath } from 'react-router';
 import { Link } from 'react-router-dom';
-import BarTotalRechart from './BarTotalRechart';
-import PieTotalRechart from './PieTotalRechart';
+import { reportRoutes } from '../App';
 import { useReport } from './ReportProvider';
-import TreemapReactVis from './TreemapReactVis';
-import TreemapRechart from './TreemapRechart';
-import TreemapNivo from './TreemapNivo';
-import { GridOverviewReport } from './ActivityOverviewReport';
-import SunburstNivo from './SunburstNivo';
-import { ActivityPanelRouter } from '../ActivityPanel';
-
-export const reportRoutes = [
-  { link: 'cards', label: 'Cards', element: <GridOverviewReport /> },
-  { link: 'bar', label: 'Bars', element: <BarTotalRechart /> },
-  { link: 'pie', label: 'Pie', element: <PieTotalRechart /> },
-  { link: 're-tree', label: 'Re Tree', element: <TreemapRechart /> },
-  { link: 'time-re/*', to: 'time-re', label: 'Re Time', element: <ActivityPanelRouter /> },
-  { link: 'vis-tree', label: 'Vis Tree', element: <TreemapReactVis /> },
-  { link: 'nivo-tree', label: 'Nivo Tree', element: <TreemapNivo /> },
-  { link: 'sunburst', label: 'Nivo Sunburst', element: <SunburstNivo /> },
-];
 
 export default function ReportPage() {
   const loc = useLocation();
