@@ -38,7 +38,7 @@ function MainRouter() {
       <Route path='/' element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path='reports' element={<ReportPage />}>
-          {reportRoutes.map(r => <Route key={r.link} path={r.link} element={r.element} />)}
+          {reportRoutes.map(r => <Route key={r.path} path={r.path} element={r.element} />)}
           <Route path="*" element="404 not found" />
         </Route>
         <Route path="activities/*" element={<ActivityPanelRouter />}>
@@ -54,7 +54,7 @@ export function ActivityPanelRouter() {
   return (
     <Routes>
       <Route path="/" element={<ActivityPage />}>
-        {ActivityPanelRoutes.map(routeMapper)}
+        {activityPanelRoutes.map(routeMapper)}
         <Route index element={<ActivityPanelHome />} />
         <Route path="*" element="not found" />
       </Route>
@@ -62,25 +62,30 @@ export function ActivityPanelRouter() {
   );
 }
 
-type RouteInfo = { link: string; to?: string; label: string, element: React.ReactElement; };
+type RouteInfo = {
+  path: string;
+  label: string,
+  element: React.ReactElement;
+  to?: string;
+};
 
-export const routeMapper = (r: RouteInfo) => <Route key={r.link} path={r.link} element={r.element} />;
+export const routeMapper = (r: RouteInfo) => <Route key={r.path} path={r.path} element={r.element} />;
 export const mapRoutes = (routes: RouteInfo[]) => routes.map(routeMapper);
 
-export const ActivityPanelRoutes: RouteInfo[] = [
-  { link: 'overview', label: 'overview', element: <ActivityPanelHome /> },
-  { link: 'time', label: 'time chart', element: <TimeRe /> },
+export const activityPanelRoutes: RouteInfo[] = [
+  { path: 'overview', label: 'overview', element: <ActivityPanelHome /> },
+  { path: 'time', label: 'time chart', element: <TimeRe /> },
 ];
 
 export const reportRoutes: RouteInfo[] = [
-  { link: 'cards', label: 'Cards', element: <GridOverviewReport /> },
-  { link: 'bar', label: 'Bars', element: <BarTotalRechart /> },
-  { link: 'pie', label: 'Pie', element: <PieTotalRechart /> },
-  { link: 're-tree', label: 'Re Tree', element: <TreemapRechart /> },
-  { link: 'time-re/*', to: 'time-re', label: 'Re Time', element: <ActivityPanelRouter /> },
-  { link: 'vis-tree', label: 'Vis Tree', element: <TreemapReactVis /> },
-  { link: 'nivo-tree', label: 'Nivo Tree', element: <TreemapNivo /> },
-  { link: 'sunburst', label: 'Nivo Sunburst', element: <SunburstNivo /> },
+  { path: 'cards', label: 'Cards', element: <GridOverviewReport /> },
+  { path: 'bar', label: 'Bars', element: <BarTotalRechart /> },
+  { path: 'pie', label: 'Pie', element: <PieTotalRechart /> },
+  { path: 're-tree', label: 'Re Tree', element: <TreemapRechart /> },
+  { path: 'time-re/*', to: 'time-re', label: 'Re Time', element: <ActivityPanelRouter /> },
+  { path: 'vis-tree', label: 'Vis Tree', element: <TreemapReactVis /> },
+  { path: 'nivo-tree', label: 'Nivo Tree', element: <TreemapNivo /> },
+  { path: 'sunburst', label: 'Nivo Sunburst', element: <SunburstNivo /> },
 ];
 
 declare global {

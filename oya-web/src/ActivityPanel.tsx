@@ -5,7 +5,7 @@ import { Outlet, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import React from 'react';
 import { ActivityContext, useActivityContext } from './ActivityPage';
-import { ActivityPanelRoutes } from './App';
+import { activityPanelRoutes } from './App';
 
 export const ActivityPanelHome = () => {
   const { activity, onClose } = useActivityContext();
@@ -29,15 +29,15 @@ export function ActivityPanelLayout(props: ActivityContext) {
   const loc = useLocation();
   const paths = loc.pathname.split('/');
   const path = paths[paths.length - 1];
-  const allowed = ActivityPanelRoutes.map(r => r.link);
+  const allowed = activityPanelRoutes.map(r => r.path);
 
   const current = allowed.indexOf(path);
   return (
     <>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={current === -1 ? 0 : current}>
-          {ActivityPanelRoutes.map(r => (
-            <Tab key={r.link} component={Link} to={r.link} label={r.label} />
+          {activityPanelRoutes.map(r => (
+            <Tab key={r.path} component={Link} to={r.path} label={r.label} />
           ))}
         </Tabs>
       </Box>

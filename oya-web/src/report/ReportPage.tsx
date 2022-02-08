@@ -10,7 +10,7 @@ export default function ReportPage() {
   let value = 0;
   reportRoutes.forEach((r, i) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const p = useResolvedPath(r.link);
+    const p = useResolvedPath(r.path);
     const m = matchPath(p.pathname, loc.pathname);
     if (m) { value = i; }
   });
@@ -19,7 +19,7 @@ export default function ReportPage() {
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value}>
           {reportRoutes.map(r => (
-            <Tab key={r.link} component={Link} to={r.to ?? r.link} label={r.label} />
+            <Tab key={r.path} component={Link} to={r.to ?? r.path} label={r.label} />
           ))}
         </Tabs>
       </Box>
