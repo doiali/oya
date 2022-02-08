@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useMemo } from 'react';
 import { Activity, Interval } from '../apiService';
 import useActivities, { ActivityMappings } from '../useActivities';
 import {
@@ -10,6 +10,7 @@ import {
   createActivityTotalReportMap,
 } from './reportUtils';
 import useIntervals from '../useIntervals';
+import { useOutletContext } from 'react-router';
 export type ReportContext = {
   atrm: ActivityTotalReportMap;
   atra: ActivityTotalReport[];
@@ -30,7 +31,7 @@ const defaultValue: ReportContext = {
 };
 const ReportContext = createContext<ReportContext>(defaultValue);
 
-export default function ReportProvider({ children }: { children?: React.ReactNode; }) {
+export function useReport() {
   const { intervals } = useIntervals();
   const { activityMappings, activities } = useActivities();
   const value = useMemo(() => {
@@ -42,6 +43,11 @@ export default function ReportProvider({ children }: { children?: React.ReactNod
     )) as ActivityTotalReport[];
     return { intervals, activityMappings, activities, ddm, dda, atrm, atra };
   }, [intervals, activities, activityMappings]);
+  return value;
+}
+
+export default function ReportProvider({ children }: { children?: React.ReactNode; }) {
+  const value = useReport();
   return (
     <ReportContext.Provider value={value}>
       {children}
@@ -50,6 +56,6 @@ export default function ReportProvider({ children }: { children?: React.ReactNod
 }
 
 export function useReportContext() {
-  const report = useContext(ReportContext);
+  const report = useOutletContext<ReportContext>();
   return report;
 }

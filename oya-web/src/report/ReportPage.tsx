@@ -3,7 +3,7 @@ import { Outlet, Route, Routes, useLocation, useResolvedPath, matchPath } from '
 import { Link } from 'react-router-dom';
 import BarTotalRechart from './BarTotalRechart';
 import PieTotalRechart from './PieTotalRechart';
-import ReportProvider from './ReportProvider';
+import { useReport } from './ReportProvider';
 import TreemapReactVis from './TreemapReactVis';
 import TreemapRechart from './TreemapRechart';
 import TreemapNivo from './TreemapNivo';
@@ -24,6 +24,7 @@ export const reportRoutes = [
 
 function ReportPageLayout() {
   const loc = useLocation();
+  const report = useReport();
   let value = 0;
   reportRoutes.forEach((r, i) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -32,20 +33,18 @@ function ReportPageLayout() {
     if (m) { value = i; }
   });
   return (
-    <ReportProvider>
-      <Box>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={value}>
-            {reportRoutes.map(r => (
-              <Tab key={r.link} component={Link} to={r.to ?? r.link} label={r.label} />
-            ))}
-          </Tabs>
-        </Box>
-        <Box sx={{ py: 2 }}>
-          <Outlet />
-        </Box>
+    <Box>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={value}>
+          {reportRoutes.map(r => (
+            <Tab key={r.link} component={Link} to={r.to ?? r.link} label={r.label} />
+          ))}
+        </Tabs>
       </Box>
-    </ReportProvider>
+      <Box sx={{ py: 2 }}>
+        <Outlet context={report} />
+      </Box>
+    </Box>
   );
 }
 
