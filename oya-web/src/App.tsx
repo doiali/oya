@@ -23,7 +23,7 @@ function App() {
         <Route path='/' element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path='reports/*' element={<ReportPage />} />
-          <Route path="activities" element={<ActivityPage />} />
+          <Route path="activities/*" element={<ActivityPage />} />
           <Route path="home-old" element={<HomePageOld />} />
           <Route path="*" element="404 not found" />
         </Route>

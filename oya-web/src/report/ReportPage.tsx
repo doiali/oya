@@ -1,5 +1,5 @@
 import { Box, Tab, Tabs } from '@mui/material';
-import { Outlet, Route, Routes, useLocation } from 'react-router';
+import { Outlet, Route, Routes, useLocation, useResolvedPath, matchPath } from 'react-router';
 import { Link } from 'react-router-dom';
 import BarTotalRechart from './BarTotalRechart';
 import PieTotalRechart from './PieTotalRechart';
@@ -9,14 +9,14 @@ import TreemapRechart from './TreemapRechart';
 import TreemapNivo from './TreemapNivo';
 import { GridOverviewReport } from './ActivityOverviewReport';
 import SunburstNivo from './SunburstNivo';
-import TimeReport from './TimeReport';
+import ActivityPage from '../ActivityPage';
 
 export const reportRoutes = [
   { link: 'cards', label: 'Cards', element: <GridOverviewReport /> },
   { link: 'bar', label: 'Bars', element: <BarTotalRechart /> },
   { link: 'pie', label: 'Pie', element: <PieTotalRechart /> },
   { link: 're-tree', label: 'Re Tree', element: <TreemapRechart /> },
-  { link: 'time-re', label: 'Re Time', element: <TimeReport /> },
+  { link: 'time-re/*', to: 'time-re', label: 'Re Time', element: <ActivityPage /> },
   { link: 'vis-tree', label: 'Vis Tree', element: <TreemapReactVis /> },
   { link: 'nivo-tree', label: 'Nivo Tree', element: <TreemapNivo /> },
   { link: 'sunburst', label: 'Nivo Sunburst', element: <SunburstNivo /> },
@@ -24,17 +24,20 @@ export const reportRoutes = [
 
 function ReportPageLayout() {
   const loc = useLocation();
-  const paths = loc.pathname.split('/');
-  const path = paths[paths.length - 1];
-  const allowed = reportRoutes.map(r => r.link);
-
+  let value = 0;
+  reportRoutes.forEach((r, i) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const p = useResolvedPath(r.link);
+    const m = matchPath(p.pathname, loc.pathname);
+    if (m) { value = i; }
+  });
   return (
     <ReportProvider>
       <Box>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={allowed.indexOf(path)}>
+          <Tabs value={value}>
             {reportRoutes.map(r => (
-              <Tab key={r.link} component={Link} to={r.link} label={r.label} />
+              <Tab key={r.link} component={Link} to={r.to ?? r.link} label={r.label} />
             ))}
           </Tabs>
         </Box>
