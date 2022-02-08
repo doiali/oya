@@ -2,12 +2,11 @@ import { Box, Typography } from '@mui/material';
 import {
   Brush, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Bar, ComposedChart,
 } from 'recharts';
-import { useReportContext } from './ReportProvider';
 import { format } from 'date-fns-jalali';
-import { Activity } from '../apiService';
+import { useActivityContext } from '../ActivityPage';
 
-export default function TimeRe({ activity }: { activity?: Activity; }) {
-  const { dda } = useReportContext();
+export default function TimeRe() {
+  const { activity, report: { dda } } = useActivityContext();
   const data = dda.map(d => {
     return {
       name: format(d.date, 'MM/dd'),

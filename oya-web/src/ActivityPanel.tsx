@@ -1,5 +1,4 @@
 import { Box, Paper, Stack, Tab, Tabs, Typography } from '@mui/material';
-import { Activity } from './apiService';
 import ActivityEditor from './ActivityEditor';
 import ActivityOverviewReport from './report/ActivityOverviewReport';
 import { Outlet, Route, Routes, useLocation } from 'react-router';
@@ -7,39 +6,35 @@ import { Link } from 'react-router-dom';
 import TimeRe from './report/TimeRe';
 import React from 'react';
 import { ActivityContext, useActivityContext } from './ActivityPage';
-import { ReportContext } from './report/ReportProvider';
 
-type ActivityPanelProps = {
-  activity?: Activity,
-  onClose?: () => void,
-  report: ReportContext,
+const ActivityPanelHome = () => {
+  const { activity, onClose } = useActivityContext();
+  return activity ? (
+    <Stack spacing={2}>
+      <Paper elevation={2} sx={{ p: 2, minWidth: 500 }}>
+        <Typography variant='h5' mb={2}>
+          Update Activity <span style={{ fontSize: '0.7em' }}>id: {activity.id}</span>
+        </Typography>
+        <ActivityEditor
+          activity={activity}
+          onClose={() => onClose?.()}
+        />
+      </Paper>
+      <ActivityOverviewReport activity={activity} />
+    </Stack>
+  ) : null;
 };
 
-const ActivityPanelHome = ({ activity, onClose }: ActivityPanelProps) => activity ? (
-  <Stack spacing={2}>
-    <Paper elevation={2} sx={{ p: 2, minWidth: 500 }}>
-      <Typography variant='h5' mb={2}>
-        Update Activity <span style={{ fontSize: '0.7em' }}>id: {activity.id}</span>
-      </Typography>
-      <ActivityEditor
-        activity={activity}
-        onClose={() => onClose?.()}
-      />
-    </Paper>
-    <ActivityOverviewReport activity={activity} />
-  </Stack>
-) : null;
-
-const PanelRoutes: { link: string; label: string, element: React.FC<ActivityPanelProps>; }[] = [
+const PanelRoutes: { link: string; label: string, element: React.ReactElement; }[] = [
   {
     link: 'overview',
     label: 'overview',
-    element: ActivityPanelHome,
+    element: <ActivityPanelHome />,
   },
   {
     link: 'time',
     label: 'time chart',
-    element: TimeRe,
+    element: <TimeRe />,
   },
 ];
 
@@ -70,10 +65,11 @@ export default function ActivityPanel(props: ActivityContext) {
   return (
     <Routes>
       <Route path="/" element={<ActivityPanelLayout context={props} />}>
-        {PanelRoutes.map(({ link, element: C }) => (
-          <Route key={link} path={link} element={<C {...props} />} />
+        {PanelRoutes.map(({ link, element }) => (
+          <Route key={link} path={link} element={element} />
         ))}
-        <Route path="*" element={<ActivityPanelHome {...props} />} />
+        <Route index element={<ActivityPanelHome />} />
+        <Route path="*" element="not found" />
       </Route>
     </Routes>
   );
