@@ -1,5 +1,5 @@
 import { Box, Tab, Tabs } from '@mui/material';
-import { Outlet, Route, Routes, useLocation, useResolvedPath, matchPath } from 'react-router';
+import { Outlet, useLocation, useResolvedPath, matchPath } from 'react-router';
 import { Link } from 'react-router-dom';
 import BarTotalRechart from './BarTotalRechart';
 import PieTotalRechart from './PieTotalRechart';
@@ -22,7 +22,7 @@ export const reportRoutes = [
   { link: 'sunburst', label: 'Nivo Sunburst', element: <SunburstNivo /> },
 ];
 
-function ReportPageLayout() {
+export default function ReportPage() {
   const loc = useLocation();
   const report = useReport();
   let value = 0;
@@ -45,16 +45,5 @@ function ReportPageLayout() {
         <Outlet context={{ report }} />
       </Box>
     </Box>
-  );
-}
-
-export default function ReportPage() {
-  return (
-    <Routes>
-      <Route path='/' element={<ReportPageLayout />}>
-        {reportRoutes.map(r => <Route key={r.link} path={r.link} element={r.element} />)}
-        <Route path="*" element="404 not found" />
-      </Route>
-    </Routes>
   );
 }
