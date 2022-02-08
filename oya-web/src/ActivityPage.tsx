@@ -2,11 +2,24 @@ import { Grid } from '@mui/material';
 import { useMemo, useState } from 'react';
 import useActivities from './useActivities';
 import ActivitiesTreeView from './ActivitiesTreeView';
-import ReportProvider from './report/ReportProvider';
+import ReportProvider, { ReportContext, useReport } from './report/ReportProvider';
 import ActivityPanel from './ActivityPanel';
+import { Activity } from './apiService';
+import { useOutletContext } from 'react-router';
+
+export type ActivityContext = {
+  activity?: Activity,
+  onClose?: () => void,
+  report: ReportContext,
+};
+
+export function useActivityContext() {
+  return useOutletContext<ActivityContext>();
+}
 
 export default function ActivityPage() {
   const [selectedNodeId, setSelectedNodeId] = useState<string>('');
+  const report = useReport();
   const { activityMappings } = useActivities();
   const selectedActivity = useMemo(() => {
     const selectedIds = selectedNodeId.split('-');
@@ -27,6 +40,7 @@ export default function ActivityPage() {
           <ActivityPanel
             activity={selectedActivity}
             onClose={() => setSelectedNodeId('')}
+            report={report}
           />
         </Grid>
       </Grid>

@@ -2,14 +2,17 @@ import { Box, Paper, Stack, Tab, Tabs, Typography } from '@mui/material';
 import { Activity } from './apiService';
 import ActivityEditor from './ActivityEditor';
 import ActivityOverviewReport from './report/ActivityOverviewReport';
-import { Route, Routes, useLocation } from 'react-router';
+import { Outlet, Route, Routes, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import TimeRe from './report/TimeRe';
 import React from 'react';
+import { ActivityContext, useActivityContext } from './ActivityPage';
+import { ReportContext } from './report/ReportProvider';
 
 type ActivityPanelProps = {
   activity?: Activity,
   onClose?: () => void,
+  report: ReportContext,
 };
 
 const ActivityPanelHome = ({ activity, onClose }: ActivityPanelProps) => activity ? (
@@ -40,7 +43,7 @@ const PanelRoutes: { link: string; label: string, element: React.FC<ActivityPane
   },
 ];
 
-export default function ActivityPanel({ activity, onClose }: ActivityPanelProps) {
+function ActivityPanelLayout({ context }: { context: ActivityContext; }) {
   const loc = useLocation();
   const paths = loc.pathname.split('/');
   const path = paths[paths.length - 1];
@@ -57,13 +60,21 @@ export default function ActivityPanel({ activity, onClose }: ActivityPanelProps)
         </Tabs>
       </Box>
       <Box sx={{ py: 2 }}>
-        <Routes>
-          {PanelRoutes.map(({ link, element: C }) => (
-            <Route key={link} path={link} element={<C {...{ activity, onClose }} />} />
-          ))}
-          <Route path="*" element={<ActivityPanelHome {...{ activity, onClose }} />} />
-        </Routes>
+        <Outlet context={context} />
       </Box>
     </>
+  );
+}
+
+export default function ActivityPanel(props: ActivityContext) {
+  return (
+    <Routes>
+      <Route path="/" element={<ActivityPanelLayout context={props} />}>
+        {PanelRoutes.map(({ link, element: C }) => (
+          <Route key={link} path={link} element={<C {...props} />} />
+        ))}
+        <Route path="*" element={<ActivityPanelHome {...props} />} />
+      </Route>
+    </Routes>
   );
 }

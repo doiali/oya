@@ -42,7 +42,7 @@ function ReportPageLayout() {
         </Tabs>
       </Box>
       <Box sx={{ py: 2 }}>
-        <Outlet context={report} />
+        <Outlet context={{ report }} />
       </Box>
     </Box>
   );

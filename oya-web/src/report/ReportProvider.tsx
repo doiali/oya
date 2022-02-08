@@ -56,6 +56,6 @@ export default function ReportProvider({ children }: { children?: React.ReactNod
 }
 
 export function useReportContext() {
-  const report = useOutletContext<ReportContext>();
+  const { report } = useOutletContext<{ report: ReportContext; }>();
   return report;
 }
