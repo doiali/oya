@@ -10,10 +10,10 @@ export default function TreemapNivo() {
     <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>
       <ResponsiveTreeMap
         data={data}
-        identity="name"
+        identity="nodeId"
         value="value"
         label={(node) => {
-          return `${node.id}`;
+          return `${node.data.activity?.name ?? ''}`;
         }}
         enableParentLabel={false}
         margin={{ top: 10, right: 10, bottom: 10, left: 10 }}

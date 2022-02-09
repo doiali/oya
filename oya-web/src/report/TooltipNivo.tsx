@@ -13,7 +13,7 @@ export default function TooltipNivo(
   props: ComputedDatum<TreeDataNivo> & { isTop?: boolean; isLeft?: boolean; },
 ) {
   const { data, percentage, id, isTop } = props;
-  const { activity, prefix } = data;
+  const { activity, path } = data;
   const { atrm } = useReportContext();
   if (!activity) return <TooltipWrapper>{id}: {percentage}%</TooltipWrapper>;
   const renderRow = (name: string, value: string | number) => (
@@ -40,11 +40,9 @@ export default function TooltipNivo(
         {renderRow('avg per all days', ts(r.avgPerAllDays))}
         {renderRow('avg per days', ts(r.avgPerDays))}
         {renderRow('occurance', r.occurance.toString())}
-        {prefix && (
-          <Typography variant='body2' textAlign="center">
-            {prefix}
-          </Typography>
-        )}
+        <Typography variant='body2' textAlign="center">
+          {path.map(a => a.name).join(' > ')}
+        </Typography>
       </Stack>
     </TooltipWrapper>
   );

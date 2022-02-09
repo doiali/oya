@@ -9,7 +9,7 @@ import { getDeltaStringOfRange as ts } from '../utils';
 const CenteredMetric = ({
   centerX, centerY, data,
 }: SunburstCustomLayerProps<TreeDataNivo> & { data: TreeDataNivo; }) => {
-  const { activity, report, prefix } = data;
+  const { activity, report, path } = data;
   const theme = useTheme();
   if (!activity || !report) return null;
   const renderRow = (name: string, value: string | number) => (
@@ -32,7 +32,7 @@ const CenteredMetric = ({
       {renderRow('avg per all days', ts(report.avgPerAllDays))}
       {renderRow('avg per days', ts(report.avgPerDays))}
       {renderRow('occurance', report.occurance.toString())}
-      <tspan x={centerX} dy={22}>{prefix ?? ''}</tspan>
+      <tspan x={centerX} dy={22}>{path.map(a => a.name).join(' > ') ?? ''}</tspan>
     </text>
   );
 };
@@ -96,7 +96,7 @@ export default function SunburstNivo() {
         tooltip={(props) => <TooltipNivo {...props} {...{ isTop, isLeft }} />}
         data={data}
         margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-        id="prefix"
+        id="nodeId"
         value="value"
         cornerRadius={2}
         borderColor={{
