@@ -79,9 +79,9 @@ export const mapRoutes = (routes: RouteInfo[]) => routes.map(routeMapper);
 
 export const mainRoutes: RouteInfo[] = [
   { path: '', label: 'home', element: <HomePage /> },
-  { path: 'reports/*', label: 'home', element: <ReportsRouter /> },
-  { path: 'activities/*', label: 'home', element: <ActivityPanelRouter /> },
-  { path: 'home-old', label: 'home', element: <HomePageOld /> },
+  { path: 'reports/*', to: 'reports', label: 'reports', element: <ReportsRouter /> },
+  { path: 'activities/*', to: 'activities', label: 'activities', element: <ActivityPanelRouter /> },
+  { path: 'home-old', label: 'home-old', element: <HomePageOld /> },
   { path: '*', element: '404 not found', hideLink: true },
 ];
 

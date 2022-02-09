@@ -16,6 +16,7 @@ import { Outlet } from 'react-router-dom';
 import ListItemLink from './ListItemLink';
 import { Home } from '@mui/icons-material';
 import ThemeModeSwitch from './ThemeModeSwitch';
+import { mainRoutes } from './App';
 
 const drawerWidth = 240;
 
@@ -122,10 +123,14 @@ export default function Layout() {
         </DrawerHeader>
         <Divider />
         <List>
-          <ListItemLink to="/" primary='Home' icon={<Home />} />
-          <ListItemLink to="/reports/sunburst" primary='Reports' icon={<Home />} />
-          <ListItemLink to="/activities" primary='Activity Manager' icon={<Home />} />
-          <ListItemLink to="/home-old" primary='Old Home' icon={<Home />} />
+          {mainRoutes.filter(r => r.path !== '*' && !r.hideLink).map(r => (
+            <ListItemLink
+              key={r.path}
+              to={r.to ?? r.path}
+              primary={r.label ?? ''}
+              icon={<Home />}
+            />
+          ))}
         </List>
         <Divider />
       </Drawer>
