@@ -36,7 +36,16 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
   selected, onNodeSelect,
 }: ActivitiesTreeViewProps) {
   const { activities } = useActivities();
-  const [expanded, setExpanded] = useState<string[]>([]);
+  const [expanded, setExpanded] = useState<string[]>(() => {
+    if (!selected) return [];
+    const nodes: string[] = [];
+    let prefix = '';
+    selected.split('-').forEach((v) => {
+      nodes.push(prefix + v);
+      prefix = prefix + v + '-';
+    });
+    return nodes;
+  });
   const [filters, setFilters] = useState(initFilters);
   const handleFiltersChange: ActivityFilterProps['onChange'] = (name, value) => {
     setFilters(p => ({ ...p, [name]: value }));
@@ -94,7 +103,7 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
       </Box>
     </Box>
   );
-}, (pp, np) => pp.selected === np.selected);
+});
 
 const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
   [`& .${treeItemClasses.group}`]: {
