@@ -1,5 +1,5 @@
 import { Tab, Tabs } from '@mui/material';
-import { matchPath, useLocation, useResolvedPath } from 'react-router';
+import { matchPath, resolvePath, useLocation, useResolvedPath } from 'react-router';
 import { Link } from 'react-router-dom';
 import { RouteInfo } from './App';
 
@@ -9,14 +9,12 @@ type TabsNavProps = {
 };
 
 export default function TabsNav({ routes, disabled }: TabsNavProps) {
-  const { pathname: resolvedPath } = useResolvedPath('');
+  const { pathname: base } = useResolvedPath('');
   const { pathname } = useLocation();
-  const base = resolvedPath.endsWith('/') ? resolvedPath : resolvedPath + '/';
-
   const value: false | string = !disabled && (
     routes.find(r => (
       r.path !== '*' && !r.hideLink &&
-      matchPath(r.path.startsWith('/') ? r.path : base + r.path, pathname)
+      matchPath(resolvePath(r.path, base).pathname, pathname)
     ))?.path ?? false
   );
 
