@@ -17,7 +17,7 @@ export function useActivityContext() {
   return useOutletContext<ActivityContext>();
 }
 
-export default function ActivityPage() {
+export default function ActivityPageLayout() {
   const [selectedNodeId, setSelectedNodeId] = useState<string>('');
   const report = useReport();
   const { activityMappings } = useActivities();

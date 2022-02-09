@@ -5,10 +5,10 @@ import Layout from './Layout';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import HomePage, { HomePageOld } from './HomePage';
 import { dequal } from 'dequal';
-import ReportPage from './report/ReportPage';
+import ReportPageLayout from './report/ReportPageLayout';
 import { ActivityPanelHome } from './ActivityPanel';
 import TimeRe from './report/TimeRe';
-import ActivityPage from './ActivityPage';
+import ActivityPageLayout from './ActivityPageLayout';
 import { GridOverviewReport } from './report/ActivityOverviewReport';
 import BarTotalRechart from './report/BarTotalRechart';
 import PieTotalRechart from './report/PieTotalRechart';
@@ -37,7 +37,7 @@ function MainRouter() {
     <Routes>
       <Route path='/' element={<Layout />}>
         <Route index element={<HomePage />} />
-        <Route path='reports' element={<ReportPage />}>
+        <Route path='reports' element={<ReportPageLayout />}>
           {reportRoutes.map(r => <Route key={r.path} path={r.path} element={r.element} />)}
           <Route path="*" element="404 not found" />
         </Route>
@@ -53,7 +53,7 @@ function MainRouter() {
 export function ActivityPanelRouter() {
   return (
     <Routes>
-      <Route path="/" element={<ActivityPage />}>
+      <Route path="/" element={<ActivityPageLayout />}>
         {activityPanelRoutes.map(routeMapper)}
         <Route index element={<ActivityPanelHome />} />
         <Route path="*" element="not found" />

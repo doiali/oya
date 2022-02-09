@@ -3,7 +3,7 @@ import {
   Brush, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Bar, ComposedChart,
 } from 'recharts';
 import { format } from 'date-fns-jalali';
-import { useActivityContext } from '../ActivityPage';
+import { useActivityContext } from '../ActivityPageLayout';
 
 export default function TimeRe() {
   const { activity, report: { dda } } = useActivityContext();

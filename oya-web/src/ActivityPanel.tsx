@@ -4,7 +4,7 @@ import ActivityOverviewReport from './report/ActivityOverviewReport';
 import { Outlet, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import React from 'react';
-import { ActivityContext, useActivityContext } from './ActivityPage';
+import { ActivityContext, useActivityContext } from './ActivityPageLayout';
 import { activityPanelRoutes } from './App';
 
 export const ActivityPanelHome = () => {

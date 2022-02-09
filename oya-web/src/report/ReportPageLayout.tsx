@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { reportRoutes } from '../App';
 import { useReport } from './ReportProvider';
 
-export default function ReportPage() {
+export default function ReportPageLayout() {
   const loc = useLocation();
   const report = useReport();
   let value = 0;
