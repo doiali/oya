@@ -44,11 +44,9 @@ export default function ActivityPageLayout() {
     }
   }, [resolvedPath, nodeId, pathname, navigate]);
 
-  let value: false | string = false;
-  activityPanelRoutes.forEach((r) => {
-    const m = matchPath(resolvedPath + '/' + r.path, pathname);
-    if (m) { value = r.path; }
-  });
+  const value: false | string = activityPanelRoutes.find(r => (
+    r.path !== '*' && !r.hideLink && Boolean(matchPath(resolvedPath + '/' + r.path, pathname))
+  ))?.path ?? false;
 
   const context = useMemo<ActivityContext>(() => ({
     report,
@@ -67,7 +65,7 @@ export default function ActivityPageLayout() {
       <Box sx={{ flexGrow: 1 }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={nodeId ? value : false}>
-            {activityPanelRoutes.map(r => (
+            {activityPanelRoutes.filter(r => r.path !== '*' && !r.hideLink).map(r => (
               <Tab
                 disabled={!nodeId}
                 value={r.path}
