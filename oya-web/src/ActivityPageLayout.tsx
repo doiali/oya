@@ -1,4 +1,4 @@
-import { Box, Grid, Tab, Tabs } from '@mui/material';
+import { Box, Stack, Tab, Tabs } from '@mui/material';
 import { useCallback, useMemo } from 'react';
 import useActivities, { ActivityMappings } from './useActivities';
 import ActivitiesTreeView from './ActivitiesTreeView';
@@ -57,14 +57,14 @@ export default function ActivityPageLayout() {
   }), [report, selectedActivity, handleSelect]);
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={5} sx={{ order: { xs: 2, md: 1 } }}>
+    <Stack spacing={2} direction="row">
+      <Box sx={{ minWidth: 400 }}>
         <ActivitiesTreeView
           selected={nodeId}
           onNodeSelect={handleSelect}
         />
-      </Grid>
-      <Grid item xs={12} md={7} sx={{ order: { xs: 1, md: 2 } }}>
+      </Box>
+      <Box sx={{ flexGrow: 1 }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={nodeId ? value : false}>
             {activityPanelRoutes.map(r => (
@@ -82,7 +82,7 @@ export default function ActivityPageLayout() {
         <Box sx={{ py: 2 }}>
           <Outlet context={context} />
         </Box>
-      </Grid>
-    </Grid>
+      </Box>
+    </Stack>
   );
 }
