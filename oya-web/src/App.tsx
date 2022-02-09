@@ -64,7 +64,7 @@ export function ActivityPanelRouter() {
   );
 }
 
-interface RouteInfo {
+export interface RouteInfo {
   path: string;
   label?: string,
   to?: string;
