@@ -7,19 +7,19 @@ import { useReport } from './ReportProvider';
 export default function ReportPageLayout() {
   const loc = useLocation();
   const report = useReport();
-  let value = 0;
-  reportRoutes.forEach((r, i) => {
+  let value: false | string = false;
+  const { pathname: base } = useResolvedPath('');
+  reportRoutes.forEach((r) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const p = useResolvedPath(r.path);
-    const m = matchPath(p.pathname, loc.pathname);
-    if (m) { value = i; }
+    const m = matchPath(base + '/' + r.path, loc.pathname);
+    if (m) { value = r.path; }
   });
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value}>
           {reportRoutes.map(r => (
-            <Tab key={r.path} component={Link} to={r.to ?? r.path} label={r.label} />
+            <Tab value={r.path} key={r.path} component={Link} to={r.to ?? r.path} label={r.label} />
           ))}
         </Tabs>
       </Box>
