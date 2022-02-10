@@ -93,8 +93,8 @@ export const activityPanelRoutes: RouteInfo[] = [
 
 export const reportRoutes: RouteInfo[] = [
   { path: '', label: 'overview', element: <SunburstNivo /> },
-  { path: 'activity/*', to: 'activity', label: 'activity', element: <ActivityPanelRouter /> },
   { path: 'nivo-tree', label: 'tree map', element: <TreemapNivo /> },
+  // { path: 'activity/*', to: 'activity', label: 'activity', element: <ActivityPanelRouter /> },
   // { path: 'bar', label: 'Bars', element: <BarTotalRechart /> },
   // { path: 'pie', label: 'Pie', element: <PieTotalRechart /> },
   // { path: 're-tree', label: 'Re Tree', element: <TreemapRechart /> },

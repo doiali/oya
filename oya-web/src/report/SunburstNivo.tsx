@@ -35,7 +35,7 @@ const CenteredMetric = ({
       {renderRow('avg per days', ts(report.avgPerDays))}
       {renderRow('occurance', report.occurance.toString())}
       <tspan x={centerX} dy={dy}>{path.map(a => a.name).join(' > ') ?? ''}</tspan>
-      <Link to={`/reports/activity/${nodeId}/times`}>
+      <Link to={`/activities/${nodeId}/times`}>
         <tspan x={centerX} dy={dy}>view chart</tspan>
       </Link>
     </text>
