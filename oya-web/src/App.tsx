@@ -11,11 +11,11 @@ import ReportPageLayout from './report/ReportPageLayout';
 import { ActivityPanelHome } from './ActivityPanel';
 import TimeRe from './report/TimeRe';
 import ActivityPageLayout from './ActivityPageLayout';
-import { GridOverviewReport } from './report/ActivityOverviewReport';
-import BarTotalRechart from './report/BarTotalRechart';
-import PieTotalRechart from './report/PieTotalRechart';
-import TreemapRechart from './report/TreemapRechart';
-import TreemapReactVis from './report/TreemapReactVis';
+// import { GridOverviewReport } from './report/ActivityOverviewReport';
+// import BarTotalRechart from './report/BarTotalRechart';
+// import PieTotalRechart from './report/PieTotalRechart';
+// import TreemapRechart from './report/TreemapRechart';
+// import TreemapReactVis from './report/TreemapReactVis';
 import TreemapNivo from './report/TreemapNivo';
 import SunburstNivo from './report/SunburstNivo';
 
@@ -92,14 +92,14 @@ export const activityPanelRoutes: RouteInfo[] = [
 ];
 
 export const reportRoutes: RouteInfo[] = [
+  { path: '', label: 'overview', element: <SunburstNivo /> },
   { path: 'activity/*', to: 'activity', label: 'activity', element: <ActivityPanelRouter /> },
-  { path: 'bar', label: 'Bars', element: <BarTotalRechart /> },
-  { path: 'pie', label: 'Pie', element: <PieTotalRechart /> },
-  { path: 're-tree', label: 'Re Tree', element: <TreemapRechart /> },
-  { path: 'vis-tree', label: 'Vis Tree', element: <TreemapReactVis /> },
-  { path: 'nivo-tree', label: 'Nivo Tree', element: <TreemapNivo /> },
-  { path: 'sunburst', label: 'Nivo Sunburst', element: <SunburstNivo /> },
-  { path: 'cards', label: 'Cards', element: <GridOverviewReport /> },
+  { path: 'nivo-tree', label: 'tree map', element: <TreemapNivo /> },
+  // { path: 'bar', label: 'Bars', element: <BarTotalRechart /> },
+  // { path: 'pie', label: 'Pie', element: <PieTotalRechart /> },
+  // { path: 're-tree', label: 'Re Tree', element: <TreemapRechart /> },
+  // { path: 'vis-tree', label: 'Vis Tree', element: <TreemapReactVis /> },
+  // { path: 'cards', label: 'Cards', element: <GridOverviewReport /> },
   { path: '*', element: '404 not found', hideLink: true },
 ];
 

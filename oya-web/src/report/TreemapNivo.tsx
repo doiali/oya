@@ -9,6 +9,14 @@ export default function TreemapNivo() {
   return (
     <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>
       <ResponsiveTreeMap
+        theme={{
+          fontSize: 14,
+          tooltip: {
+            container: {
+              fontSize: 14,
+            },
+          },
+        }}
         data={data}
         identity="nodeId"
         value="value"
@@ -17,7 +25,7 @@ export default function TreemapNivo() {
         }}
         enableParentLabel={false}
         margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-        labelSkipSize={12}
+        labelSkipSize={80}
         labelTextColor={{
           from: 'color',
           modifiers: [
