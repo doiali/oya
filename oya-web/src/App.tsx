@@ -1,7 +1,6 @@
 import React from 'react';
 import { dequal } from 'dequal';
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
-// import { RouteObject } from 'react-router';
+import { BrowserRouter, useRoutes } from 'react-router-dom';
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from './theme';
 import { AlertServiceContainer } from './AlertService';
@@ -11,11 +10,6 @@ import ReportPageLayout from './report/ReportPageLayout';
 import { ActivityPanelHome } from './ActivityPanel';
 import TimeRe from './report/TimeRe';
 import ActivityPageLayout from './ActivityPageLayout';
-// import { GridOverviewReport } from './report/ActivityOverviewReport';
-// import BarTotalRechart from './report/BarTotalRechart';
-// import PieTotalRechart from './report/PieTotalRechart';
-// import TreemapRechart from './report/TreemapRechart';
-// import TreemapReactVis from './report/TreemapReactVis';
 import TreemapNivo from './report/TreemapNivo';
 import SunburstNivo from './report/SunburstNivo';
 
@@ -33,36 +27,18 @@ export default function App() {
   );
 }
 
-function MainRouter() {
-  return (
-    <Routes>
-      <Route path='/' element={<Layout />}>
-        {mainRoutes.map(routeMapper)}
-      </Route>
-    </Routes>
-  );
-}
+const MainRouter = () => useRoutes([
+  { element: <Layout />, children: mainRoutes },
+]);
 
-export function ReportsRouter() {
-  return (
-    <Routes>
-      <Route path='/' element={<ReportPageLayout />}>
-        {reportRoutes.map(routeMapper)}
-      </Route>
-    </Routes>
-  );
-}
+const ReportsRouter = () => useRoutes([
+  { element: <ReportPageLayout />, children: reportRoutes },
+]);
 
-export function ActivityPanelRouter() {
-  return (
-    <Routes>
-      <Route path="/" element={<ActivityPageLayout />} />
-      <Route path="/:id" element={<ActivityPageLayout />}>
-        {activityPanelRoutes.map(routeMapper)}
-      </Route>
-    </Routes>
-  );
-}
+const ActivityPanelRouter = () => useRoutes([
+  { path: '/', element: <ActivityPageLayout /> },
+  { path: '/:id', element: <ActivityPageLayout />, children: activityPanelRoutes },
+]);
 
 export interface RouteInfo {
   path: string;
@@ -71,11 +47,6 @@ export interface RouteInfo {
   hideLink?: boolean;
   element?: React.ReactNode;
 }
-
-export const routeMapper = (r: RouteInfo) => (
-  <Route key={r.path} path={r.path} element={r.element} />
-);
-export const mapRoutes = (routes: RouteInfo[]) => routes.map(routeMapper);
 
 export const mainRoutes: RouteInfo[] = [
   { path: '', label: 'home', element: <HomePage /> },
@@ -94,12 +65,6 @@ export const activityPanelRoutes: RouteInfo[] = [
 export const reportRoutes: RouteInfo[] = [
   { path: '', label: 'overview', element: <SunburstNivo /> },
   { path: 'nivo-tree', label: 'tree map', element: <TreemapNivo /> },
-  // { path: 'activity/*', to: 'activity', label: 'activity', element: <ActivityPanelRouter /> },
-  // { path: 'bar', label: 'Bars', element: <BarTotalRechart /> },
-  // { path: 'pie', label: 'Pie', element: <PieTotalRechart /> },
-  // { path: 're-tree', label: 'Re Tree', element: <TreemapRechart /> },
-  // { path: 'vis-tree', label: 'Vis Tree', element: <TreemapReactVis /> },
-  // { path: 'cards', label: 'Cards', element: <GridOverviewReport /> },
   { path: '*', element: '404 not found', hideLink: true },
 ];
 
