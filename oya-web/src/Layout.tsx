@@ -16,7 +16,7 @@ import { Outlet } from 'react-router-dom';
 import ListItemLink from './ListItemLink';
 import { Home } from '@mui/icons-material';
 import ThemeModeSwitch from './ThemeModeSwitch';
-import { mainRoutes } from './App';
+import { mainRoutes } from './MainRouter';
 
 const drawerWidth = 240;
 

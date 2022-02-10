@@ -1,7 +1,7 @@
 import { Tab, Tabs } from '@mui/material';
 import { matchPath, resolvePath, useLocation, useResolvedPath } from 'react-router';
 import { Link } from 'react-router-dom';
-import { RouteInfo } from './App';
+import { RouteInfo } from './MainRouter';
 
 type TabsNavProps = {
   routes: RouteInfo[];

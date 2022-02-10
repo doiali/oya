@@ -7,7 +7,7 @@ import { Activity } from './apiService';
 import {
   Outlet, useLocation, useNavigate, useOutletContext, useParams, useResolvedPath,
 } from 'react-router';
-import { activityPanelRoutes } from './App';
+import { activityPanelRoutes } from './MainRouter';
 import TabsNav from './TabsNav';
 
 export type ActivityContext = {

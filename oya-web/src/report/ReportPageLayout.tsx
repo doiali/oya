@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { Outlet } from 'react-router';
-import { reportRoutes } from '../App';
+import { reportRoutes } from '../MainRouter';
 import TabsNav from '../TabsNav';
 import { useReport } from './ReportProvider';
 
