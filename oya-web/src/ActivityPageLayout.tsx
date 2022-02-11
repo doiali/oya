@@ -26,17 +26,20 @@ const getSelectedActivity = (id: string, am: ActivityMappings) => {
   return am[selectedActivityId];
 };
 
-export default function ActivityPageLayout() {
+export default function ActivityPageLayout({ base = false }: { base?: boolean; }) {
   const { pathname: resolvedPath } = useResolvedPath('');
-  const { id: nodeId = '' } = useParams();
+  const { id: nodeIdParams = '' } = useParams();
+  const nodeId = base ? '' : nodeIdParams;
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const report = useReport();
   const { activityMappings: am } = useActivities();
-  const selectedActivity = useMemo(() => getSelectedActivity(nodeId, am), [nodeId, am]);
+  const selectedActivity = useMemo(() => (
+    getSelectedActivity(nodeId, am)
+  ), [nodeId, am]);
 
   const handleSelect = useCallback((newId: string) => {
-    if (!nodeId) {
+    if (base || !nodeId) {
       navigate(newId);
     } else if (nodeId) {
       navigate(
@@ -44,7 +47,7 @@ export default function ActivityPageLayout() {
         (newId ? newId + pathname.slice(resolvedPath.length) : ''),
       );
     }
-  }, [resolvedPath, nodeId, pathname, navigate]);
+  }, [resolvedPath, nodeId, pathname, navigate, base]);
 
   const context = useMemo<ActivityContext>(() => ({
     report,
@@ -62,7 +65,7 @@ export default function ActivityPageLayout() {
       </Box>
       <Box sx={{ flexGrow: 1 }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <TabsNav routes={activityPanelRoutes} disabled={!nodeId} />
+          <TabsNav routes={activityPanelRoutes} disabled={base || !nodeId} />
         </Box>
         <Box sx={{ py: 2 }}>
           <Outlet context={context} />

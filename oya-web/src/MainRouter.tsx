@@ -26,7 +26,7 @@ const ReportsRouter = () => useRoutes([
 ]);
 
 const ActivityPanelRouter = () => useRoutes([
-  { path: '/', element: <ActivityPageLayout /> },
+  { path: '/', element: <ActivityPageLayout base /> },
   { path: '/:id', element: <ActivityPageLayout />, children: activityPanelRoutes },
 ]);
 
