@@ -2,7 +2,7 @@ import { Autocomplete, Box, Button, emphasize, Paper, Stack, TextField, Typograp
 import { memo, useMemo, useState } from 'react';
 import { Activity, Interval } from './apiService';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { DateTimePicker } from '@mui/lab';
+import { DatePicker } from '@mui/lab';
 import AdapterJalali from '@date-io/date-fns-jalali';
 import useActivities from './useActivities';
 import useIntervals from './useIntervals';
@@ -47,24 +47,20 @@ export default memo(function IntervalsFilter({
       <LocalizationProvider dateAdapter={AdapterJalali}>
         <Stack direction="column" spacing={1}>
           <Stack direction='row' spacing={2}>
-            <DateTimePicker
+            <DatePicker
               disableMaskedInput
               value={state.start}
               label="start"
-              ampm={false}
-              ampmInClock={false}
               onChange={(newValue) => onChange('start', newValue)}
               renderInput={(params) => <TextField fullWidth {...params} />}
             />
-            <DateTimePicker
+            <DatePicker
               disableMaskedInput
               value={state.end}
-              ampm={false}
-              ampmInClock={false}
               onChange={(newValue) => onChange('end', newValue)}
               label="end"
               renderInput={(params) => <TextField fullWidth {...params} />}
-              minDateTime={state.start}
+              minDate={state.start}
             />
           </Stack>
           {activities && (
@@ -114,8 +110,10 @@ const getInitState = (intervals: Interval[], loaded = false) => {
   else min = new Date(0);
   const start = new Date(min);
   start.setDate(start.getDate() - 2);
+  start.setHours(0, 0, 0, 0);
   const end = new Date();
-  end.setDate(end.getDate() + 2);
+  end.setDate(end.getDate() + 3);
+  end.setHours(0, 0, 0, 0);
   return { start, end, selectedActivities: [] as Activity[] };
 };
 
@@ -123,11 +121,11 @@ export function useIntervalsFilter() {
   const { intervals, loaded } = useIntervals({
     onLoad: (intervals) => { setState(getInitState(intervals, true)); },
   });
-  const [state, setState] = useState(() => getInitState(intervals));
+  const [state, setState] = useState(() => getInitState(intervals, loaded));
   const { activityMappings } = useActivities();
 
   const onReset = () => {
-    setState(getInitState(intervals));
+    setState(getInitState(intervals, loaded));
   };
 
   const onChange: IntervalsFilterProps['onChange'] = (name, value) => {

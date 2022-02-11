@@ -50,13 +50,15 @@ export default memo(function IntervalsList({ intervals }: IntervalsListProps) {
     );
   };
 
-  const pagination = (rows > rowsPerPage) && (
+  const pagination = (
     <Stack
       spacing={1} direction="row"
       sx={{ alignItems: 'center', justifyContent: 'space-between' }}
     >
       <span>total rows: {rows}</span>
-      <Pagination count={totalPages} page={page} onChange={(_, x) => setPage(x)} />
+      {(rows > rowsPerPage) && (
+        <Pagination count={totalPages} page={page} onChange={(_, x) => setPage(x)} />
+      )}
     </Stack>
   );
 
