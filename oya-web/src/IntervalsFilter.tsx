@@ -1,9 +1,7 @@
 import { Autocomplete, Box, Button, emphasize, Paper, Stack, TextField, Typography, useTheme } from '@mui/material';
 import { memo, useMemo, useState } from 'react';
 import { Activity, Interval } from './apiService';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { DatePicker } from '@mui/lab';
-import AdapterJalali from '@date-io/date-fns-jalali';
 import useActivities from './useActivities';
 import useIntervals from './useIntervals';
 
@@ -44,51 +42,49 @@ export default memo(function IntervalsFilter({
           }
         </Box>
       </Box>
-      <LocalizationProvider dateAdapter={AdapterJalali}>
-        <Stack direction="column" spacing={1}>
-          <Stack direction='row' spacing={2}>
-            <DatePicker
-              disableMaskedInput
-              value={state.start}
-              label="start"
-              onChange={(newValue) => onChange('start', newValue)}
-              renderInput={(params) => <TextField fullWidth {...params} />}
-            />
-            <DatePicker
-              disableMaskedInput
-              value={state.end}
-              onChange={(newValue) => onChange('end', newValue)}
-              label="end"
-              renderInput={(params) => <TextField fullWidth {...params} />}
-              minDate={state.start}
-            />
-          </Stack>
-          {activities && (
-            <Autocomplete
-              fullWidth
-              multiple
-              isOptionEqualToValue={(o, v) => o.id === v.id}
-              options={activities}
-              getOptionLabel={(option) => option.name}
-              value={state.selectedActivities}
-              onChange={(_, newVal) => onChange('selectedActivities', newVal)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  margin="dense"
-                  variant="outlined"
-                  label="activities"
-                />
-              )}
-            />
-          )}
-          <div>
-            <Button onClick={handleReset}>
-              reset filters
-            </Button>
-          </div>
+      <Stack direction="column" spacing={1}>
+        <Stack direction='row' spacing={2}>
+          <DatePicker
+            disableMaskedInput
+            value={state.start}
+            label="start"
+            onChange={(newValue) => onChange('start', newValue)}
+            renderInput={(params) => <TextField fullWidth {...params} />}
+          />
+          <DatePicker
+            disableMaskedInput
+            value={state.end}
+            onChange={(newValue) => onChange('end', newValue)}
+            label="end"
+            renderInput={(params) => <TextField fullWidth {...params} />}
+            minDate={state.start}
+          />
         </Stack>
-      </LocalizationProvider>
+        {activities && (
+          <Autocomplete
+            fullWidth
+            multiple
+            isOptionEqualToValue={(o, v) => o.id === v.id}
+            options={activities}
+            getOptionLabel={(option) => option.name}
+            value={state.selectedActivities}
+            onChange={(_, newVal) => onChange('selectedActivities', newVal)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                margin="dense"
+                variant="outlined"
+                label="activities"
+              />
+            )}
+          />
+        )}
+        <div>
+          <Button onClick={handleReset}>
+            reset filters
+          </Button>
+        </div>
+      </Stack>
     </Paper>
   );
 });
