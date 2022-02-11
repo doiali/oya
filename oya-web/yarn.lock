@@ -2951,6 +2951,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@date-io/date-fns@npm:^2.13.1":
+  version: 2.13.1
+  resolution: "@date-io/date-fns@npm:2.13.1"
+  dependencies:
+    "@date-io/core": ^2.13.1
+  peerDependencies:
+    date-fns: ^2.0.0
+  peerDependenciesMeta:
+    date-fns:
+      optional: true
+  checksum: 753e37e30537be02adf83583be102d30d5b00d09d8639f8ac26f5ee167d5a52ae156fb0b190466c66ce78680e74a46fb9ae890d12a8f4338c771207d21a0f3c3
+  languageName: node
+  linkType: hard
+
 "@date-io/dayjs@npm:^2.11.0":
   version: 2.11.0
   resolution: "@date-io/dayjs@npm:2.11.0"
@@ -2962,6 +2976,20 @@ __metadata:
     dayjs:
       optional: true
   checksum: 298f5355c3c0e0a60581e8daa1a3208b50741b5af7b59319ecbaaf69369f1faa51bfa711a030297d0b37b4b13444dbe909fc8773d0104bbead789ecce2433b89
+  languageName: node
+  linkType: hard
+
+"@date-io/jalaali@npm:^2.13.1":
+  version: 2.13.1
+  resolution: "@date-io/jalaali@npm:2.13.1"
+  dependencies:
+    "@date-io/moment": ^2.13.1
+  peerDependencies:
+    moment-jalaali: ^0.7.4 || ^0.8.0 || ^0.9.0
+  peerDependenciesMeta:
+    moment-jalaali:
+      optional: true
+  checksum: 1035c5875bcf7261e4715e607ca2df528180b85786fe52c0223f923517717781f37487996c5a4596f2a1df1d0628048e439864e949d7b314f78480e61bcd2da5
   languageName: node
   linkType: hard
 
@@ -2990,6 +3018,20 @@ __metadata:
     moment:
       optional: true
   checksum: db0d3e79ba485ca9c6804ded95ab5d6c84900774c75d9f4e37fced67161737fa2bfd460b15ce969ef8336dbea2cc4119cf938e5d1df55a1aea27cb4297d5270c
+  languageName: node
+  linkType: hard
+
+"@date-io/moment@npm:^2.13.1":
+  version: 2.13.1
+  resolution: "@date-io/moment@npm:2.13.1"
+  dependencies:
+    "@date-io/core": ^2.13.1
+  peerDependencies:
+    moment: ^2.24.0
+  peerDependenciesMeta:
+    moment:
+      optional: true
+  checksum: 815d8fe6c600f0b77844cd591de7517c6d1feaf5d9331657ccc0dc5d096954e276d41e7947881eefbf796fb5da333ddb708f3c8851197d49968b1077e2cdeed3
   languageName: node
   linkType: hard
 
@@ -7165,6 +7207,13 @@ __metadata:
   version: 2.28.0-0
   resolution: "date-fns-jalali@npm:2.28.0-0"
   checksum: 2354bd82d66ed16261527b294e32c604d70d283813f390f0e87cd821d310e445f1fc320c06280f48162a97cce504034d1dd1d66d137258aea70e13cf7bd88b67
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^2.28.0":
+  version: 2.28.0
+  resolution: "date-fns@npm:2.28.0"
+  checksum: a0516b2e4f99b8bffc6cc5193349f185f195398385bdcaf07f17c2c4a24473c99d933eb0018be4142a86a6d46cb0b06be6440ad874f15e795acbedd6fd727a1f
   languageName: node
   linkType: hard
 
@@ -11629,7 +11678,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "oya-web@workspace:."
   dependencies:
+    "@date-io/core": ^2.13.1
+    "@date-io/date-fns": ^2.13.1
     "@date-io/date-fns-jalali": ^2.13.1
+    "@date-io/jalaali": ^2.13.1
     "@emotion/react": ^11.7.1
     "@emotion/styled": ^11.6.0
     "@mui/icons-material": ^5.3.1
@@ -11650,6 +11702,7 @@ __metadata:
     "@types/react-redux": ^7.1.22
     "@types/react-vis": ^1.11.10
     axios: ^0.25.0
+    date-fns: ^2.28.0
     date-fns-jalali: ^2.28.0-0
     dequal: ^2.0.2
     lscache: ^1.3.0
