@@ -8,6 +8,7 @@ import TimeRe from './report/TimeRe';
 import ActivityPageLayout from './ActivityPageLayout';
 import TreemapNivo from './report/TreemapNivo';
 import SunburstNivo from './report/SunburstNivo';
+import Calender from './report/Calender';
 
 export interface RouteInfo {
   path: string;
@@ -41,6 +42,7 @@ export const mainRoutes: RouteInfo[] = [
 export const activityPanelRoutes: RouteInfo[] = [
   { path: '', label: 'overview', element: <ActivityPanelHome /> },
   { path: 'times', label: 'time chart', element: <TimeRe /> },
+  { path: 'calender', label: 'calender', element: <Calender /> },
   { path: '*', element: '404 not found', hideLink: true },
 ];
 
