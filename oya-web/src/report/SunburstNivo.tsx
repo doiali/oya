@@ -5,11 +5,12 @@ import { generateTreeDataNivo, TreeDataNivo } from './chartUtils';
 import { useEffect, useMemo, useState } from 'react';
 import TooltipNivo from './TooltipNivo';
 import { getDeltaStringOfRange as ts } from '../utils';
+import { Link } from 'react-router-dom';
 
 const CenteredMetric = ({
   centerX, centerY, data,
 }: SunburstCustomLayerProps<TreeDataNivo> & { data: TreeDataNivo; }) => {
-  const { activity, report, path } = data;
+  const { activity, report, path, nodeId } = data;
   const theme = useTheme();
   if (!activity || !report) return null;
   const renderRow = (name: string, value: string | number) => (
@@ -17,22 +18,26 @@ const CenteredMetric = ({
       {name}: <tspan style={{ fontWeight: 'bold' }}>{value}</tspan>
     </tspan>
   );
+  const dy = 22;
   return (
     <text
       x={centerX}
-      y={centerY - 75}
+      y={centerY - 85}
       textAnchor="middle"
       dominantBaseline="central"
       fill={theme.palette.text.primary}
     >
       <tspan x={centerX} dy={0} style={{ fontSize: 32, fontWeight: 'bold' }}>{activity.name}</tspan>
-      <tspan x={centerX} dy={22}> </tspan>
+      <tspan x={centerX} dy={dy}> </tspan>
       {renderRow('days', `${report.days} of ${report.allDays}`)}
       {renderRow('total time', ts(report.time))}
       {renderRow('avg per all days', ts(report.avgPerAllDays))}
       {renderRow('avg per days', ts(report.avgPerDays))}
       {renderRow('occurance', report.occurance.toString())}
-      <tspan x={centerX} dy={22}>{path.map(a => a.name).join(' > ') ?? ''}</tspan>
+      <tspan x={centerX} dy={dy}>{path.map(a => a.name).join(' > ') ?? ''}</tspan>
+      <Link to={`/activities/${nodeId}/times`}>
+        <tspan x={centerX} dy={dy}>view chart</tspan>
+      </Link>
     </text>
   );
 };
@@ -84,8 +89,7 @@ export default function SunburstNivo() {
           (props) => <Legends {...props} />,
         ]}
         onClick={(datum) => {
-          if (datum.data.children?.length)
-            setData(datum.data);
+          setData(datum.data);
         }}
         onMouseMove={(props, e) => {
           if (e.clientY > window.innerHeight / 2 && isTop) setIsTop(false);

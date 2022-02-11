@@ -1,12 +1,14 @@
-import { Box, Stack, Tab, Tabs } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import { useCallback, useMemo } from 'react';
 import useActivities, { ActivityMappings } from './useActivities';
 import ActivitiesTreeView from './ActivitiesTreeView';
 import { ReportContext, useReport } from './report/ReportProvider';
 import { Activity } from './apiService';
-import { matchPath, Outlet, useLocation, useNavigate, useOutletContext, useParams, useResolvedPath } from 'react-router';
-import { Link } from 'react-router-dom';
-import { activityPanelRoutes } from './App';
+import {
+  Outlet, useLocation, useNavigate, useOutletContext, useParams, useResolvedPath,
+} from 'react-router';
+import { activityPanelRoutes } from './MainRouter';
+import TabsNav from './TabsNav';
 
 export type ActivityContext = {
   activity?: Activity,
@@ -44,12 +46,6 @@ export default function ActivityPageLayout() {
     }
   }, [resolvedPath, nodeId, pathname, navigate]);
 
-  let value: false | string = false;
-  activityPanelRoutes.forEach((r) => {
-    const m = matchPath(resolvedPath + '/' + r.path, pathname);
-    if (m) { value = r.path; }
-  });
-
   const context = useMemo<ActivityContext>(() => ({
     report,
     activity: selectedActivity,
@@ -66,18 +62,7 @@ export default function ActivityPageLayout() {
       </Box>
       <Box sx={{ flexGrow: 1 }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={nodeId ? value : false}>
-            {activityPanelRoutes.map(r => (
-              <Tab
-                disabled={!nodeId}
-                value={r.path}
-                key={r.path}
-                component={Link}
-                to={r.path}
-                label={r.label}
-              />
-            ))}
-          </Tabs>
+          <TabsNav routes={activityPanelRoutes} disabled={!nodeId} />
         </Box>
         <Box sx={{ py: 2 }}>
           <Outlet context={context} />
