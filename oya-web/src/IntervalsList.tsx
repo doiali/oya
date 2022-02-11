@@ -6,10 +6,11 @@ import IntervalItem from './IntervalItem';
 
 type IntervalsListProps = {
   intervals: Interval[],
+  highLights?: number[],
 };
 
 const rowsPerPage = 40;
-export default memo(function IntervalsList({ intervals }: IntervalsListProps) {
+export default memo(function IntervalsList({ intervals, highLights }: IntervalsListProps) {
   const [page, setPage] = useState(1);
   const rows = intervals.length;
   const totalPages = Math.ceil(rows / rowsPerPage) || 1;
@@ -42,7 +43,11 @@ export default memo(function IntervalsList({ intervals }: IntervalsListProps) {
                     <Chip color="secondary" dir="rtl" label={format(new Date(interval.end), 'eeee d MMMM y')} />
                   </Divider>
                 )}
-                <IntervalItem index={rows - (page - 1) * rowsPerPage - i} interval={interval} />
+                <IntervalItem
+                  index={rows - (page - 1) * rowsPerPage - i}
+                  interval={interval}
+                  highLights={highLights}
+                />
               </React.Fragment>
             );
           })}

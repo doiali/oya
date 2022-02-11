@@ -1,7 +1,8 @@
 import { Box, Tooltip } from '@mui/material';
 import AdapterJalali from '@date-io/date-fns-jalali';
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { useActivityContext } from '../ActivityPageLayout';
+import IntervalsList from '../IntervalsList';
 
 const utils = new AdapterJalali();
 const colors = [
@@ -44,9 +45,10 @@ const getWeeks = (start: Date) => {
 };
 
 export default function Calender() {
-  const { activity, report: { dda } } = useActivityContext();
+  const { activity, report: { dda, intervals } } = useActivityContext();
   const start = getStart();
   const weeks = getWeeks(start);
+  const [date, setDate] = useState<Date | null>(null);
 
   const getValue = (day: Date) => {
     if (!activity) return 0;
@@ -86,6 +88,7 @@ export default function Calender() {
                   >
                     <rect
                       // data-date={d.toISOString()}
+                      onClick={() => setDate(d)}
                       fill={getColor(getValue(d))}
                       width={11}
                       height={11}
@@ -111,6 +114,17 @@ export default function Calender() {
           </g>
         </g>
       </svg>
+      <Box>
+        {date && (
+          <IntervalsList
+            intervals={intervals.filter(i => (
+              utils.isWithinRange(new Date(i.start), [date, utils.addDays(date, 1)]) ||
+              utils.isWithinRange(new Date(i.end), [date, utils.addDays(date, 1)])
+            ))}
+            highLights={activity ? [activity.id] : undefined}
+          />
+        )}
+      </Box>
     </Box>
   );
 }
