@@ -6,15 +6,14 @@ save your daily activities
 ## run backend
 ---
 you should have python3.10 and postgreSQL installed.  
-edit .env file and enter your postgreSQL username and password  
-you should have a database called oya. you can change the database name in app/database.py.  
+create a `.env` file like `.env.example` and enter your postgreSQL username and password and database name
 
 open your terminal and go to oya-back.  
 then create a virtual environment:  
 ```
 py -m venv venv
 ```
-activate the virtual environment using  
+activate the virtual environment using (windows):  
 ```
 .\venv\Scripts\Activate
 ```
@@ -22,6 +21,12 @@ install the requirements:
 ```
 py -m pip install -r requirements.txt
 ```
+
+if you already have data in database and want to update to the latest version. you can migrate using:  
+```
+alembic upgrade head
+```
+
 now you can run the server using:
 ```
 uvicorn app.main:app --reload
