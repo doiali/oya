@@ -6,12 +6,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from . import crud, models, schemas
-from .database import SessionLocal, engine
+from . import crud, models, schemas, auth
+from .database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+app.include_router(auth.router)
 
 origins = [
     "https://localhost:3000",
@@ -27,16 +28,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 @app.get("/activities/", tags=["Activities"], response_model=List[schemas.Activity])
 def read_activities(db: Session = Depends(get_db)):
