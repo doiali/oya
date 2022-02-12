@@ -28,6 +28,7 @@ class User(Base):
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     username = sa.Column(sa.String, unique=True, nullable=False)
     password = sa.Column(sa.String, nullable=False)
+    superuser = sa.Column(sa.Boolean, nullable=True)
 
 
 class Activity(Base):
@@ -70,7 +71,7 @@ def upgrade():
     bind = op.get_bind()
     session = orm.Session(bind=bind)
     password = pwd_context.hash("admin")
-    admin_user = User(username="admin", password=password)
+    admin_user = User(username="admin", password=password, superuser= True)
     session.add(admin_user)
     session.flush()
     id = admin_user.id
