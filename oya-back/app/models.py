@@ -30,6 +30,9 @@ class User(Base):
 
     intervals = relationship("Interval", back_populates="user")
     activities = relationship("Activity", back_populates="user")
+    
+    def __repr__(self):
+        return f"<User {self.id} - {self.username}>"
 
 
 class Association(Base):
