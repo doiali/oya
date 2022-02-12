@@ -1,10 +1,19 @@
 ### now
+- [ ] use issues and project management of github
 #### back
 - [ ] add authentication and login flow
-- [ ] activity description and alias names
+  - [x] add docs Authorization
+  - [x] add user manipulation apis
+  - [x] add createsuperuser util
+  - [ ] add normal login flow
+  - [ ] all apis need authentication
+- [ ] restructure backend
 - [ ] better error handling
+- [ ] handle metadata.create_all
+- [ ] activity description and alias names
 
 #### front
+- [ ] implement login flow
 - [ ] add activity overview component
 - [ ] add date range selection for overview reports
 - [ ] date provider context
@@ -16,9 +25,10 @@
 - [ ] a dashboard page for report
 - [ ] UX improvements
 - [ ] UI and design improvement
-- [-] add calender chart to activity view
-- [-] show intervals of the day if select a day in bar or calender time chart
-- [-] add highlighting effect to intervals list
+- [ ] implement user management
+- [x] add calender chart to activity view
+- [x] show intervals of the day if select a day in bar or calender time chart
+- [x] add highlighting effect to intervals list
 - del intervals pagination should be implemented using router
 - del new intervals view component
 
