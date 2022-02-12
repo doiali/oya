@@ -18,6 +18,20 @@ from .database import Base
 from typing import Set, ForwardRef, List
 
 
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    username = Column(String, nullable=False, unique=True)
+    password = Column(String, nullable=False)
+    email = Column(String, nullable=True, unique=True)
+    firstname = Column(String, nullable=True)
+    lastname = Column(String, nullable=True)
+    superuser = Column(Boolean, nullable=True)
+
+    intervals = relationship("Interval", back_populates="user")
+    activities = relationship("Activity", back_populates="user")
+
+
 class Association(Base):
     __tablename__ = "association"
     child_id = Column(Integer, ForeignKey("activities.id"), primary_key=True)
@@ -25,15 +39,15 @@ class Association(Base):
     order = Column(Integer)
 
 
-Activity = ForwardRef("Activity")
-
-
 class Activity(Base):
     __tablename__ = "activities"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     name = Column(String, unique=True)
     is_suspended = Column(Boolean, default=False, nullable=False)
+
+    user = relationship(User, back_populates="activities")
     parents = relationship(
         "Activity",
         secondary="association",
@@ -63,7 +77,7 @@ class Activity(Base):
     def allParents(self):
         x = set()
 
-        def recur(act: Activity):
+        def recur(act):
             for parent in act.parents:
                 if parent in x:
                     continue
@@ -77,7 +91,7 @@ class Activity(Base):
     def allChildren(self):
         x = set()
 
-        def recur(act: Activity):
+        def recur(act):
             for child in act.children:
                 if child in x:
                     continue
@@ -129,11 +143,13 @@ class Interval(Base):
     )
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     start: datetime.datetime = Column(DateTime(timezone=True), index=True)
     end: datetime.datetime = Column(DateTime(timezone=True), index=True)
     note = Column(Text)
 
     entries = relationship("Entry", back_populates="interval", cascade="all")
+    user = relationship(User, back_populates="intervals")
 
     def __repr__(self):
         return f"<interval {self.start} to {self.end}: {self.entries}>"
