@@ -9,6 +9,7 @@ import { ThemeProvider } from './theme';
 import { AlertServiceContainer } from './AlertService';
 import MainRouter from './MainRouter';
 import { LocalizationProvider } from '@mui/lab';
+import AuthProvider from './AuthProvider';
 
 class MyAdapter extends AdapterJalali {
   constructor(args: any) {
@@ -23,9 +24,11 @@ export default function App() {
       <ThemeProvider>
         <BrowserRouter>
           <LocalizationProvider dateAdapter={MyAdapter}>
-            <CssBaseline />
-            <AlertServiceContainer />
-            <MainRouter />
+            <AuthProvider>
+              <CssBaseline />
+              <AlertServiceContainer />
+              <MainRouter />
+            </AuthProvider>
           </LocalizationProvider>
         </BrowserRouter>
       </ThemeProvider>

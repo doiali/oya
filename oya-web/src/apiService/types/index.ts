@@ -44,3 +44,15 @@ export type Interval = IntervalBase & {
   id: number,
   entries: Entry[],
 };
+
+export type UserBase = {
+  username: string,
+  firstname?: string,
+  lastname?: string,
+  email?: string,
+  superuser?: boolean,
+};
+
+export type User = UserBase & {
+  id: number;
+};

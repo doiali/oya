@@ -9,6 +9,7 @@ import ActivityPageLayout from './ActivityPageLayout';
 import TreemapNivo from './report/TreemapNivo';
 import SunburstNivo from './report/SunburstNivo';
 import Calender from './report/Calender';
+import LoginPage, { LoginPageLayout } from './LoginPage';
 
 export interface RouteInfo {
   path: string;
@@ -20,6 +21,11 @@ export interface RouteInfo {
 
 const MainRouter = () => useRoutes([
   { element: <Layout />, children: mainRoutes },
+  {
+    path: '/login', element: <LoginPageLayout />, children: [
+      { path: '', element: <LoginPage /> },
+    ],
+  },
 ]);
 
 const ReportsRouter = () => useRoutes([

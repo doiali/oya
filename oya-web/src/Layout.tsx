@@ -2,7 +2,6 @@ import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -17,6 +16,7 @@ import ListItemLink from './ListItemLink';
 import { Home } from '@mui/icons-material';
 import ThemeModeSwitch from './ThemeModeSwitch';
 import { mainRoutes } from './MainRouter';
+import ProtectedView from './ProtectedView';
 
 const drawerWidth = 240;
 
@@ -84,7 +84,6 @@ export default function Layout() {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
           <IconButton
@@ -136,7 +135,9 @@ export default function Layout() {
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
-        <Outlet />
+        <ProtectedView>
+          <Outlet />
+        </ProtectedView>
       </Main>
     </Box>
   );
