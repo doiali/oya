@@ -53,6 +53,11 @@ export type UserBase = {
   superuser?: boolean,
 };
 
+export type Token = {
+  access_token: string,
+  token_type: string,
+};
+
 export type User = UserBase & {
   id: number;
 };
