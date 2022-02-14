@@ -17,6 +17,8 @@ import { Home } from '@mui/icons-material';
 import ThemeModeSwitch from './ThemeModeSwitch';
 import { mainRoutes } from './MainRouter';
 import ProtectedView from './ProtectedView';
+import { ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { useAuth } from './AuthProvider';
 
 const drawerWidth = 240;
 
@@ -69,6 +71,16 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
   justifyContent: 'flex-end',
 }));
+
+const LogoutButton = () => {
+  const { logout: handleLogout } = useAuth();
+  return (
+    <ListItem button onClick={handleLogout}>
+      <ListItemIcon><Home /></ListItemIcon>
+      <ListItemText primary="Log out" />
+    </ListItem>
+  );
+};
 
 export default function Layout() {
   const theme = useTheme();
@@ -130,6 +142,10 @@ export default function Layout() {
               icon={<Home />}
             />
           ))}
+        </List>
+        <Divider />
+        <List>
+          <LogoutButton />
         </List>
         <Divider />
       </Drawer>
