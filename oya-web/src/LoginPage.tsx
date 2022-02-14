@@ -2,17 +2,22 @@ import { LockOutlined } from '@mui/icons-material';
 import { Box, AppBar, Toolbar, Typography, Container, Button, FormControlLabel, Checkbox, TextField, Avatar } from '@mui/material';
 import React, { FC, useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
+import AlertService from './AlertService';
 import { getToken } from './apiService';
 import { useAuth } from './AuthProvider';
 import { DrawerHeader } from './Layout';
 import ThemeModeSwitch from './ThemeModeSwitch';
 
 export default function LoginPage() {
+  const { login } = useAuth();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    getToken(data).then(res => console.log(res), e => console.log(e));
+    getToken(data).then(({ data }) => {
+      if (data.token_type === 'bearer')
+        login('Bearer ' + data.access_token);
+    }, () => AlertService.error('error in login'));
   };
 
   return (
