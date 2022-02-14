@@ -1,17 +1,24 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import select
+from .auth import User as userSchema
 import datetime
 from . import models, schemas
 from .models import Interval, Activity, Entry
 from copy import deepcopy
 
+e403 = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN, detail="you don't have permission"
+)
 
-def get_activities(db: Session, skip: int = 0, limit: int = 10000):
+
+def get_activities(*, user: userSchema, db: Session, skip: int = 0, limit: int = 10000):
     stmt = (
         select(models.Activity)
         .options(
             joinedload(models.Activity.parents), joinedload(models.Activity.children)
         )
+        .where(models.Activity.user_id == user.id)
         .order_by(models.Activity.id.desc())
         .offset(skip)
         .limit(limit)
@@ -20,13 +27,17 @@ def get_activities(db: Session, skip: int = 0, limit: int = 10000):
     return activities
 
 
-def get_activity(db: Session, activity_id: int):
+def get_activity(*, user: userSchema, db: Session, activity_id: int):
     activity = db.get(models.Activity, activity_id)
+    if activity.user_id != user.id:
+        raise e403
     return activity
 
 
-def create_activity(db: Session, activity: schemas.ActivityCreate):
-    db_activity = models.Activity(name=activity.name, is_suspended=activity.is_suspended)
+def create_activity(*, user: userSchema, db: Session, activity: schemas.ActivityCreate):
+    db_activity = models.Activity(
+        name=activity.name, is_suspended=activity.is_suspended, user_id=user.id
+    )
     db.add(db_activity)
     db.flush()
     if activity.parentIds:
@@ -46,8 +57,12 @@ def create_activity(db: Session, activity: schemas.ActivityCreate):
     return db_activity
 
 
-def update_activity(db: Session, activity: schemas.ActivityUpdate, activity_id: int):
-    db_activity = get_activity(db=db, activity_id=activity_id)
+def update_activity(
+    *, user: userSchema, db: Session, activity: schemas.ActivityUpdate, activity_id: int
+):
+    db_activity = db.get(Activity, activity_id)
+    if db_activity.user_id != user.id:
+        raise e403
     if db_activity:
         if activity.parentIds is not None:
             db_activity.parents[:] = (
@@ -71,18 +86,21 @@ def update_activity(db: Session, activity: schemas.ActivityUpdate, activity_id: 
         return db_activity
 
 
-def delete_activity(db: Session, activity_id: int):
-    db_activity = get_activity(db=db, activity_id=activity_id)
+def delete_activity(*, user: userSchema, db: Session, activity_id: int):
+    db_activity = db.get(Activity, activity_id)
     if db_activity:
+        if db_activity.user_id != user.id:
+            raise e403
         db.delete(db_activity)
         db.commit()
         return db_activity
 
 
-def get_intervals(db: Session, skip: int = 0, limit: int = 10000):
+def get_intervals(*, user: userSchema, db: Session, skip: int = 0, limit: int = 10000):
     stmt = (
         select(models.Interval)
         .options(joinedload(models.Interval.entries))
+        .where(models.Interval.user_id == user.id)
         .order_by(models.Interval.end.desc())
         .offset(skip)
         .limit(limit)
@@ -91,7 +109,7 @@ def get_intervals(db: Session, skip: int = 0, limit: int = 10000):
     return intervals
 
 
-def get_daily_report(db: Session, date: datetime.date):
+def get_daily_report(*, user: userSchema, db: Session, date: datetime.date):
     stmt = (
         select(Interval)
         .options(
@@ -99,6 +117,7 @@ def get_daily_report(db: Session, date: datetime.date):
             .joinedload(Entry.activity)
             .joinedload(Activity.parents)
         )
+        .where(Interval.user_id == user.id)
         .where(
             Interval.start.between(date, date + datetime.timedelta(days=1))
             | Interval.end.between(date, date + datetime.timedelta(days=1))
@@ -147,11 +166,12 @@ def get_daily_report(db: Session, date: datetime.date):
     # print(report)
 
 
-def create_interval(db: Session, interval: schemas.IntervalCreate):
+def create_interval(*, user: userSchema, db: Session, interval: schemas.IntervalCreate):
     db_interval = models.Interval(
         start=interval.start,
         end=interval.end,
         note=interval.note,
+        user_id=user.id,
     )
     for e in interval.entries:
         db_interval.entries.append(models.Entry(**e.dict()))
@@ -161,8 +181,12 @@ def create_interval(db: Session, interval: schemas.IntervalCreate):
     return db_interval
 
 
-def update_interval(db: Session, interval: schemas.IntervalCreate, interval_id):
+def update_interval(
+    *, user: userSchema, db: Session, interval: schemas.IntervalCreate, interval_id
+):
     db_interval = db.get(models.Interval, interval_id)
+    if db_interval.user_id != user.id:
+        raise e403
     if not db_interval:
         return
     if interval.note is not None:
@@ -191,10 +215,12 @@ def update_interval(db: Session, interval: schemas.IntervalCreate, interval_id):
     return db_interval
 
 
-def delete_interval(db: Session, interval_id):
+def delete_interval(*, user: userSchema, db: Session, interval_id):
     db_interval = (
         db.query(models.Interval).filter(models.Interval.id == interval_id).first()
     )
+    if db_interval.user_id != user.id:
+        raise e403
     if not db_interval:
         raise ReferenceError("interval not exist")
     db.delete(db_interval)

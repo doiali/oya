@@ -134,7 +134,7 @@ def create_token(db: Session, username: str, password: str):
 
 async def get_current_super_user(current_user: User = Depends(get_current_user)):
     if not current_user.superuser:
-        raise HTTPException(status_code=403, detail="you don't have permission")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="you don't have permission")
     return current_user
 
 

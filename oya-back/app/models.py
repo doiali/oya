@@ -12,10 +12,14 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship, validates
 from dateutil import parser
 import datetime
-
+from fastapi import HTTPException, status
 from sqlalchemy.sql.schema import CheckConstraint
 from .database import Base
 from typing import Set, ForwardRef, List
+
+e403 = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN, detail="you don't have permission"
+)
 
 
 class User(Base):
@@ -30,7 +34,7 @@ class User(Base):
 
     intervals = relationship("Interval", back_populates="user")
     activities = relationship("Activity", back_populates="user")
-    
+
     def __repr__(self):
         return f"<User {self.id} - {self.username}>"
 
@@ -122,12 +126,16 @@ class Activity(Base):
     def validate_parents(self, key, parent):
         if parent.id in self.allChildIds:
             raise ValueError("you are creating a loop")
+        if parent.user_id != self.user_id:
+            raise e403
         return parent
 
     @validates("children")
     def validate_children(self, key, child):
         if child.id in self.allParentIds:
             raise ValueError("you are creating a loop")
+        if child.user_id != self.user_id:
+            raise e403
         return child
 
     entries = relationship("Entry", back_populates="activity", cascade="all")
