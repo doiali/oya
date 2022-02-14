@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 
 interface ListItemLinkProps {
-  icon?: React.ReactElement;
+  icon?: React.ReactNode;
   primary: string;
   to: string;
 }

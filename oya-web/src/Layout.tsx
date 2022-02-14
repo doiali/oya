@@ -13,7 +13,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Outlet } from 'react-router-dom';
 import ListItemLink from './ListItemLink';
-import { Home } from '@mui/icons-material';
+import { Home, Logout } from '@mui/icons-material';
 import ThemeModeSwitch from './ThemeModeSwitch';
 import { mainRoutes } from './MainRouter';
 import ProtectedView from './ProtectedView';
@@ -76,7 +76,7 @@ const LogoutButton = () => {
   const { logout: handleLogout } = useAuth();
   return (
     <ListItem button onClick={handleLogout}>
-      <ListItemIcon><Home /></ListItemIcon>
+      <ListItemIcon><Logout /></ListItemIcon>
       <ListItemText primary="Log out" />
     </ListItem>
   );
@@ -139,7 +139,7 @@ export default function Layout() {
               key={r.path}
               to={r.to ?? r.path}
               primary={r.label ?? ''}
-              icon={<Home />}
+              icon={r.icon ?? <Home />}
             />
           ))}
         </List>
