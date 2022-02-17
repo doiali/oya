@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, emphasize, Paper, Stack, TextField, Typography, useTheme } from '@mui/material';
+import { Autocomplete, Box, Button, Paper, Stack, TextField, Typography } from '@mui/material';
 import { memo, useMemo, useState } from 'react';
 import { Activity, Interval } from './apiService';
 import { DatePicker } from '@mui/lab';
@@ -28,9 +28,8 @@ export default memo(function IntervalsFilter({
   state, results: { sum }, onChange, onReset: handleReset,
 }: IntervalsFilterProps) {
   const { activities } = useActivities();
-  const theme = useTheme();
   return (
-    <Paper sx={{ p: 2, mb: 2, backgroundColor: emphasize(theme.palette.background.paper, 0.1) }}>
+    <Paper sx={{ p: 2, mb: 3, backgroundImage: 'none' }}>
       <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h5">
           Filter Intervals

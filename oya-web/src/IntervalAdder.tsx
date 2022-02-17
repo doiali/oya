@@ -1,5 +1,5 @@
 
-import { alpha, Button, Paper, Typography, useTheme } from '@mui/material';
+import { Button, Paper, Typography } from '@mui/material';
 import React, { memo, useState } from 'react';
 import { IntervalCreate, Entry } from './apiService/types';
 import { addInterval } from './apiService';
@@ -16,9 +16,8 @@ const now = (plus = 0) => {
 
 export default memo(function IntervalAdder() {
   const intervalFormProps = useIntervalCreate();
-  const theme = useTheme();
   return (
-    <Paper component="section" sx={{ mb: 2, py: 3, backgroundColor: alpha(theme.palette.secondary.main, 0.1) }}>
+    <Paper component="section" sx={{ mb: 3, py: 3, backgroundImage: 'none' }}>
       <Typography pl={2} variant='h5'>
         Create Interval
       </Typography>

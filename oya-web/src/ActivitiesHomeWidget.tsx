@@ -1,5 +1,8 @@
 import { Edit, Search } from '@mui/icons-material';
-import { IconButton, Stack, Divider, TextField, InputAdornment, Collapse, useTheme, emphasize, Typography, Button } from '@mui/material';
+import {
+  IconButton, Stack, Divider,
+  TextField, InputAdornment, Collapse, Typography, Button, Paper,
+} from '@mui/material';
 import { Box } from '@mui/system';
 import { Activity } from './apiService';
 import { memo, useState } from 'react';
@@ -16,14 +19,13 @@ const ActivitiesHomeWidget = memo(function ActivitiesWidget() {
   const { activities } = useActivities();
   const [searchVal, setSearchVal] = useState('');
   const [more, setMore] = useState(false);
-  const theme = useTheme();
   const searchIndex = activities.map((a) => getActivityParentsNames(a));
   const filteredActivities: Activity[] = activities.filter((a, i) => {
     return searchIndex[i].includes(searchVal.toLowerCase());
   });
   const rows = filteredActivities.length;
   return (
-    <Box sx={{ p: 2, backgroundColor: emphasize(theme.palette.background.paper, 0.05) }} component="section">
+    <Paper sx={{ p: 2 }} component="section">
       <Typography variant='h5'>
         Create Activity
       </Typography>
@@ -59,7 +61,7 @@ const ActivitiesHomeWidget = memo(function ActivitiesWidget() {
           </Button>
         )}
       </Stack>
-    </Box>
+    </Paper>
   );
 });
 

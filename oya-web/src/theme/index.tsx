@@ -30,15 +30,47 @@ const baseTheme: ThemeOptions = {
         LinkComponent: LinkBehavior,
       },
     },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+        },
+        rounded: {
+          borderRadius: 8,
+        },
+      },
+    },
   },
 };
 
-const getTheme = (ThemeOptions: ThemeOptions = {}) => createTheme(deepMerge(baseTheme, ThemeOptions));
+const getTheme = (ThemeOptions: ThemeOptions = {}) => (
+  createTheme(deepMerge({}, baseTheme, ThemeOptions))
+);
 
-export const themes = {
-  light: getTheme({ palette: { mode: 'light' } }),
-  dark: getTheme({ palette: { mode: 'dark' } }),
-} as const;
+const dark = getTheme({
+  palette: {
+    mode: 'dark',
+    background: {
+      default: 'rgb(11,15,25)',
+      paper: 'rgb(17,24,39)',
+    },
+    primary: {
+      main: '#7582eb',
+      contrastText: '#000000',
+    },
+  },
+});
+
+const light = getTheme({
+  palette: {
+    mode: 'light',
+    background: {
+      default: 'rgb(247,249,242)',
+    },
+  },
+});
+
+export const themes = { light, dark } as const;
 
 export type ThemeName = keyof typeof themes;
 

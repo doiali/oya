@@ -20,13 +20,13 @@ export function HomePageOld() {
   const { filteredIntervals, ...intervalsFilterProps } = useIntervalsFilter();
 
   return (
-    <Grid spacing={2} container>
-      <Grid item xs={12} md={7}>
+    <Grid spacing={3} container>
+      <Grid item xs={12} md={8}>
         <IntervalAdder />
         <IntervalsFilter {...intervalsFilterProps} />
         <IntervalsList intervals={filteredIntervals} />
       </Grid>
-      <Grid item xs={12} md={5}>
+      <Grid item xs={12} md={4}>
         <ActivitiesHomeWidget />
       </Grid>
     </Grid>

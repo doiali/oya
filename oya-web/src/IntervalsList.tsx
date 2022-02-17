@@ -1,6 +1,6 @@
 import { Interval } from './apiService/types';
 import { format } from 'date-fns-jalali';
-import { Stack, Divider, Chip, Box, Typography, Pagination } from '@mui/material';
+import { Stack, Divider, Chip, Typography, Pagination, Paper } from '@mui/material';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import IntervalItem from './IntervalItem';
 
@@ -68,13 +68,13 @@ export default memo(function IntervalsList({ intervals, highLights }: IntervalsL
   );
 
   return (
-    <Box component="section" ref={ref}>
+    <Paper sx={{ p: 2 }} component="section" ref={ref}>
       <Typography mb={2} variant="h5">
         Intervals List
       </Typography>
       {pagination}
       {renderList()}
       {(rows > 10) && pagination}
-    </Box>
+    </Paper>
   );
 });

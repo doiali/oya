@@ -1,5 +1,5 @@
 import { ResponsiveSunburst, SunburstCustomLayerProps } from '@nivo/sunburst';
-import { Box, Button, useTheme } from '@mui/material';
+import { Box, Button, useTheme, Link as MuiLink } from '@mui/material';
 import { useReportContext } from './ReportProvider';
 import { generateTreeDataNivo, TreeDataNivo } from './chartUtils';
 import { useEffect, useMemo, useState } from 'react';
@@ -35,9 +35,9 @@ const CenteredMetric = ({
       {renderRow('avg per days', ts(report.avgPerDays))}
       {renderRow('occurance', report.occurance.toString())}
       <tspan x={centerX} dy={dy}>{path.map(a => a.name).join(' > ') ?? ''}</tspan>
-      <Link to={`/activities/${nodeId}/times`}>
-        <tspan x={centerX} dy={dy}>view chart</tspan>
-      </Link>
+      <MuiLink component={Link} to={`/activities/${nodeId}/times`}>
+        <tspan fill={theme.palette.primary.main} x={centerX} dy={dy}>view chart</tspan>
+      </MuiLink>
     </text>
   );
 };

@@ -20,13 +20,13 @@ import ProtectedView from './ProtectedView';
 import { ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { useAuth } from './AuthProvider';
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
   open?: boolean;
 }>(({ theme, open }) => ({
   flexGrow: 1,
-  padding: theme.spacing(3),
+  padding: theme.spacing(6, 3),
   transition: theme.transitions.create('margin', {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
