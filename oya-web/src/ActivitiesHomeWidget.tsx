@@ -25,7 +25,7 @@ const ActivitiesHomeWidget = memo(function ActivitiesWidget() {
   });
   const rows = filteredActivities.length;
   return (
-    <Stack spacing={3}>
+    <Stack sx={{ width: '100%' }} spacing={3}>
       <Card component="section">
         <CardHeader title="Create Activity" />
         <Divider />

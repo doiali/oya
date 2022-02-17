@@ -45,9 +45,9 @@ export default memo(function IntervalItem(
       <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <Stack direction="row" sx={{ alignItems: 'center', flexWrap: 'wrap' }} spacing={1}>
           <Typography color="secondary">{index}. {' '}</Typography>
-          <Chip dir="rtl" variant="outlined" label={format(start, 'MM/dd-HH:mm eeee')} />
+          <Chip dir="rtl" variant="outlined" label={format(start, 'MM/dd-HH:mm')} />
           <span>{' '}-{' '}</span>
-          <Chip dir="rtl" variant="outlined" label={format(end, 'MM/dd-HH:mm eeee')} />
+          <Chip dir="rtl" variant="outlined" label={format(end, 'MM/dd-HH:mm')} />
           <span>{' '}:{' '}</span>
           {interval.entries.map(({ activity_id }, i) => (
             <Chip

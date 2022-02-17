@@ -8,7 +8,7 @@ export default function HomePage() {
   const { filteredIntervals, ...intervalsFilterProps } = useIntervalsFilter();
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="xl">
       <IntervalAdder />
       <IntervalsFilter {...intervalsFilterProps} />
       <IntervalsList intervals={filteredIntervals} />
@@ -20,15 +20,17 @@ export function HomePageOld() {
   const { filteredIntervals, ...intervalsFilterProps } = useIntervalsFilter();
 
   return (
-    <Grid spacing={3} container>
-      <Grid item xs={12} md={8}>
-        <IntervalAdder />
-        <IntervalsFilter {...intervalsFilterProps} />
-        <IntervalsList intervals={filteredIntervals} />
+    <Container maxWidth="xl">
+      <Grid spacing={3} container>
+        <Grid item xs={12} xl={8}>
+          <IntervalAdder />
+          <IntervalsFilter {...intervalsFilterProps} />
+          <IntervalsList intervals={filteredIntervals} />
+        </Grid>
+        <Grid item xl={4} sx={{ display: { xs: 'none', xl: 'flex' } }}>
+          <ActivitiesHomeWidget />
+        </Grid>
       </Grid>
-      <Grid item xs={12} md={4}>
-        <ActivitiesHomeWidget />
-      </Grid>
-    </Grid>
+    </Container>
   );
 }
