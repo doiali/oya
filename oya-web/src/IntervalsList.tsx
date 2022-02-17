@@ -1,6 +1,6 @@
 import { Interval } from './apiService/types';
 import { format } from 'date-fns-jalali';
-import { Stack, Divider, Chip, Typography, Pagination, Paper } from '@mui/material';
+import { Stack, Divider, Chip, Pagination, Card, CardHeader, CardContent } from '@mui/material';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import IntervalItem from './IntervalItem';
 
@@ -9,7 +9,7 @@ type IntervalsListProps = {
   highLights?: number[],
 };
 
-const rowsPerPage = 40;
+const rowsPerPage = 30;
 export default memo(function IntervalsList({ intervals, highLights }: IntervalsListProps) {
   const [page, setPage] = useState(1);
   const rows = intervals.length;
@@ -28,7 +28,7 @@ export default memo(function IntervalsList({ intervals, highLights }: IntervalsL
   const renderList = () => {
     let prevEnd = new Date('2050-1-1');
     return (
-      <Stack spacing={1}>
+      <Stack spacing={1} sx={{ mb: 1 }}>
         {intervals
           .slice((page - 1) * rowsPerPage, page * rowsPerPage)
           .map((interval, i) => {
@@ -68,13 +68,14 @@ export default memo(function IntervalsList({ intervals, highLights }: IntervalsL
   );
 
   return (
-    <Paper sx={{ p: 2 }} component="section" ref={ref}>
-      <Typography mb={2} variant="h5">
-        Intervals List
-      </Typography>
-      {pagination}
-      {renderList()}
-      {(rows > 10) && pagination}
-    </Paper>
+    <Card component="section" ref={ref}>
+      <CardHeader title="Intervals List" />
+      <Divider />
+      <CardContent>
+        {pagination}
+        {renderList()}
+        {(rows > 10) && pagination}
+      </CardContent>
+    </Card>
   );
 });

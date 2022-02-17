@@ -1,6 +1,6 @@
 import { Interval } from './apiService/types';
 import { format } from 'date-fns-jalali';
-import { Stack, IconButton, Chip, Collapse, Typography } from '@mui/material';
+import { Stack, IconButton, Chip, Collapse, Typography, Box } from '@mui/material';
 import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { deleteInterval } from './apiService';
 import AlertService from './AlertService';
@@ -78,10 +78,12 @@ export default memo(function IntervalItem(
         </Collapse>
       )}
       {isEditing && (
-        <IntervalEditor
-          interval={interval}
-          onClose={() => setIsEditing(false)}
-        />
+        <Box py={2}>
+          <IntervalEditor
+            interval={interval}
+            onClose={() => setIsEditing(false)}
+          />
+        </Box>
       )}
     </Stack>
   );

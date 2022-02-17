@@ -1,4 +1,7 @@
-import { Autocomplete, Box, Button, Paper, Stack, TextField, Typography } from '@mui/material';
+import {
+  Autocomplete, Box, Button, Card, CardContent, CardHeader, Divider,
+  Stack, TextField,
+} from '@mui/material';
 import { memo, useMemo, useState } from 'react';
 import { Activity, Interval } from './apiService';
 import { DatePicker } from '@mui/lab';
@@ -29,19 +32,24 @@ export default memo(function IntervalsFilter({
 }: IntervalsFilterProps) {
   const { activities } = useActivities();
   return (
-    <Paper sx={{ p: 2, mb: 3, backgroundImage: 'none' }}>
-      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography variant="h5">
-          Filter Intervals
-        </Typography>
-        <Box>
-          <b>sum:</b> {sum >= 1440 && Math.floor(sum / 1440).toString() + ' days and '} {
-            Math.floor((sum % 1440) / 60).toString().padStart(2, '0') +
-            ':' + Math.floor(sum % 60).toString().padStart(2, '0')
-          }
-        </Box>
-      </Box>
-      <Stack direction="column" spacing={1}>
+    <Card sx={{ mb: 3 }}>
+      <CardHeader
+        title={(
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span>
+              Filter Intervals
+            </span>
+            <Box fontSize="1rem">
+              <b>sum:</b> {sum >= 1440 && Math.floor(sum / 1440).toString() + ' days and '} {
+                Math.floor((sum % 1440) / 60).toString().padStart(2, '0') +
+                ':' + Math.floor(sum % 60).toString().padStart(2, '0')
+              }
+            </Box>
+          </Box>
+        )}
+      />
+      <Divider />
+      <CardContent component={Stack} direction="column" spacing={1}>
         <Stack direction='row' spacing={2}>
           <DatePicker
             disableMaskedInput
@@ -83,8 +91,8 @@ export default memo(function IntervalsFilter({
             reset filters
           </Button>
         </div>
-      </Stack>
-    </Paper>
+      </CardContent>
+    </Card>
   );
 });
 

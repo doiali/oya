@@ -54,80 +54,78 @@ export default memo(function IntervalForm({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Box p={2}>
-        <Stack direction="column" spacing={2}>
-          <Stack direction='row' spacing={2}>
-            <DateTimePicker
-              disableMaskedInput
-              value={state.start}
-              label="start"
-              ampm={false}
-              ampmInClock={false}
-              onChange={(newValue) => onChange('start', newValue)}
-              renderInput={(params) => <TextField fullWidth {...params} />}
-            />
-            <DateTimePicker
-              disableMaskedInput
-              value={state.end}
-              ampm={false}
-              ampmInClock={false}
-              onChange={(newValue) => onChange('end', newValue)}
-              label="end"
-              renderInput={(params) => <TextField fullWidth {...params} />}
-              minDateTime={new Date(state.start.getTime() + 1)}
-            />
-          </Stack>
-          <span>
-            Interval duration: <b>{getDeltaStringOfRange(intervalDuration)}</b>
-            {' '} - {' '}
-            Entries total time: <b>{getDeltaStringOfRange(entriesTotalTime)}</b>
-            {' '} - {' '}
-            entries cover <b>{Math.round(entriesTotalTime / intervalDuration * 100)} %</b> of total time
-          </span>
-          {activities && (
-            <Autocomplete
-              multiple
-              options={activities.map(a => a.id)}
-              getOptionLabel={(o) => activityMappings[o]?.name ?? 'unkown activity'}
-              value={state.selectedEntries.map(e => e.activity_id)}
-              onChange={handleAutoCompleteChange}
-              renderInput={(params) => (
-                <>
-                  <input hidden required={state.selectedEntries.length === 0} />
-                  <TextField
-                    {...params}
-                    InputLabelProps={{
-                      required: true,
-                    }}
-                    required={state.selectedEntries.length === 0}
-                    variant="outlined"
-                    label="Activities"
-                  />
-                </>
-              )}
-            />
-          )}
-          <Stack direction="column" spacing={1} divider={<Divider flexItem />}>
-            {state.selectedEntries.map(e => (
-              <IntervalEntryEditor
-                key={e.activity_id}
-                intervalDuration={intervalDuration}
-                entry={e}
-                onChange={handleEntryChange}
-                onDelete={handleEntryDelete}
-              />
-            ))}
-          </Stack>
-          <MarkdownBox
-            name="notes"
-            label="notes"
-            value={state.note}
-            onChange={(e) => onChange('note', e.target.value)}
+    <Box component="form" onSubmit={handleSubmit}>
+      <Stack direction="column" spacing={2}>
+        <Stack direction='row' spacing={2}>
+          <DateTimePicker
+            disableMaskedInput
+            value={state.start}
+            label="start"
+            ampm={false}
+            ampmInClock={false}
+            onChange={(newValue) => onChange('start', newValue)}
+            renderInput={(params) => <TextField fullWidth {...params} />}
           />
-          {children}
+          <DateTimePicker
+            disableMaskedInput
+            value={state.end}
+            ampm={false}
+            ampmInClock={false}
+            onChange={(newValue) => onChange('end', newValue)}
+            label="end"
+            renderInput={(params) => <TextField fullWidth {...params} />}
+            minDateTime={new Date(state.start.getTime() + 1)}
+          />
         </Stack>
-      </Box>
-    </form>
+        <span>
+          Interval duration: <b>{getDeltaStringOfRange(intervalDuration)}</b>
+          {' '} - {' '}
+          Entries total time: <b>{getDeltaStringOfRange(entriesTotalTime)}</b>
+          {' '} - {' '}
+          entries cover <b>{Math.round(entriesTotalTime / intervalDuration * 100)} %</b> of total time
+        </span>
+        {activities && (
+          <Autocomplete
+            multiple
+            options={activities.map(a => a.id)}
+            getOptionLabel={(o) => activityMappings[o]?.name ?? 'unkown activity'}
+            value={state.selectedEntries.map(e => e.activity_id)}
+            onChange={handleAutoCompleteChange}
+            renderInput={(params) => (
+              <>
+                <input hidden required={state.selectedEntries.length === 0} />
+                <TextField
+                  {...params}
+                  InputLabelProps={{
+                    required: true,
+                  }}
+                  required={state.selectedEntries.length === 0}
+                  variant="outlined"
+                  label="Activities"
+                />
+              </>
+            )}
+          />
+        )}
+        <Stack direction="column" spacing={1} divider={<Divider flexItem />}>
+          {state.selectedEntries.map(e => (
+            <IntervalEntryEditor
+              key={e.activity_id}
+              intervalDuration={intervalDuration}
+              entry={e}
+              onChange={handleEntryChange}
+              onDelete={handleEntryDelete}
+            />
+          ))}
+        </Stack>
+        <MarkdownBox
+          name="notes"
+          label="notes"
+          value={state.note}
+          onChange={(e) => onChange('note', e.target.value)}
+        />
+        {children}
+      </Stack>
+    </Box>
   );
 });

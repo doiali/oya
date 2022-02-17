@@ -1,5 +1,5 @@
 
-import { Button, Paper, Typography } from '@mui/material';
+import { Button, Card, CardContent, CardHeader, Divider } from '@mui/material';
 import React, { memo, useState } from 'react';
 import { IntervalCreate, Entry } from './apiService/types';
 import { addInterval } from './apiService';
@@ -17,16 +17,17 @@ const now = (plus = 0) => {
 export default memo(function IntervalAdder() {
   const intervalFormProps = useIntervalCreate();
   return (
-    <Paper component="section" sx={{ mb: 3, py: 3, backgroundImage: 'none' }}>
-      <Typography pl={2} variant='h5'>
-        Create Interval
-      </Typography>
-      <IntervalForm {...intervalFormProps}>
-        <Button disabled={intervalFormProps.state.loading} size="large" type="submit" variant="contained">
-          add interval
-        </Button>
-      </IntervalForm>
-    </Paper>
+    <Card sx={{ mb: 3 }}>
+      <CardHeader title="Create Interval" />
+      <Divider />
+      <CardContent>
+        <IntervalForm {...intervalFormProps}>
+          <Button disabled={intervalFormProps.state.loading} size="large" type="submit" variant="contained">
+            add interval
+          </Button>
+        </IntervalForm>
+      </CardContent>
+    </Card>
   );
 });
 

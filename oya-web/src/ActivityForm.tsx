@@ -15,10 +15,10 @@ export default memo(function ActivityForm(
 ) {
   const { activities, activityMappings } = useActivities();
   return (
-    <Box mb={2} component="form" onSubmit={handleSubmit}>
+    <Box component="form" onSubmit={handleSubmit}>
       <TextField
         fullWidth
-        margin="dense"
+        sx={{ mb: 0.5 }}
         required
         variant="outlined"
         label="Activity Name"
@@ -36,8 +36,8 @@ export default memo(function ActivityForm(
           onChange={(_, newVal) => onChange(l, newVal)}
           renderInput={(params) => (
             <TextField
-              {...params}
               margin="dense"
+              {...params}
               variant="outlined"
               label={l === 'parentIds' ? 'parent activities' : 'child activities'}
             />
