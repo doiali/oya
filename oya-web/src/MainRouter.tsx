@@ -4,22 +4,30 @@ import Layout from './Layout';
 import HomePage, { HomePageOld } from './HomePage';
 import ReportPageLayout from './report/ReportPageLayout';
 import { ActivityPanelHome } from './ActivityPanel';
+import { Assessment, BrunchDining, Cottage, Home as HomeIcon } from '@mui/icons-material';
 import TimeRe from './report/TimeRe';
 import ActivityPageLayout from './ActivityPageLayout';
 import TreemapNivo from './report/TreemapNivo';
 import SunburstNivo from './report/SunburstNivo';
 import Calender from './report/Calender';
+import LoginPage, { LoginPageLayout } from './LoginPage';
 
 export interface RouteInfo {
   path: string;
   label?: string,
   to?: string;
   hideLink?: boolean;
+  icon?: React.ReactNode;
   element?: React.ReactNode;
 }
 
 const MainRouter = () => useRoutes([
   { element: <Layout />, children: mainRoutes },
+  {
+    path: '/login', element: <LoginPageLayout />, children: [
+      { path: '', element: <LoginPage /> },
+    ],
+  },
 ]);
 
 const ReportsRouter = () => useRoutes([
@@ -32,10 +40,13 @@ const ActivityPanelRouter = () => useRoutes([
 ]);
 
 export const mainRoutes: RouteInfo[] = [
-  { path: '', label: 'home', element: <HomePage /> },
-  { path: 'reports/*', to: 'reports', label: 'reports', element: <ReportsRouter /> },
-  { path: 'activities/*', to: 'activities', label: 'activities', element: <ActivityPanelRouter /> },
-  { path: 'home-old', label: 'home-old', element: <HomePageOld /> },
+  { path: '', label: 'home', icon: <HomeIcon />, element: <HomePage /> },
+  { path: 'reports/*', to: 'reports', label: 'reports', icon: <Assessment />, element: <ReportsRouter /> },
+  {
+    path: 'activities/*', to: 'activities', label: 'activities',
+    icon: <BrunchDining />, element: <ActivityPanelRouter />,
+  },
+  { path: 'home-old', label: 'home-old', icon: <Cottage />, element: <HomePageOld /> },
   { path: '*', element: '404 not found', hideLink: true },
 ];
 

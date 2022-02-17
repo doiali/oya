@@ -2,7 +2,6 @@ import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -14,9 +13,12 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Outlet } from 'react-router-dom';
 import ListItemLink from './ListItemLink';
-import { Home } from '@mui/icons-material';
+import { Home, Logout } from '@mui/icons-material';
 import ThemeModeSwitch from './ThemeModeSwitch';
 import { mainRoutes } from './MainRouter';
+import ProtectedView from './ProtectedView';
+import { ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { useAuth } from './AuthProvider';
 
 const drawerWidth = 240;
 
@@ -70,6 +72,16 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
+const LogoutButton = () => {
+  const { logout: handleLogout } = useAuth();
+  return (
+    <ListItem button onClick={handleLogout}>
+      <ListItemIcon><Logout /></ListItemIcon>
+      <ListItemText primary="Log out" />
+    </ListItem>
+  );
+};
+
 export default function Layout() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
@@ -84,7 +96,6 @@ export default function Layout() {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
           <IconButton
@@ -128,15 +139,21 @@ export default function Layout() {
               key={r.path}
               to={r.to ?? r.path}
               primary={r.label ?? ''}
-              icon={<Home />}
+              icon={r.icon ?? <Home />}
             />
           ))}
+        </List>
+        <Divider />
+        <List>
+          <LogoutButton />
         </List>
         <Divider />
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
-        <Outlet />
+        <ProtectedView>
+          <Outlet />
+        </ProtectedView>
       </Main>
     </Box>
   );

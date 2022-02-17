@@ -44,3 +44,20 @@ export type Interval = IntervalBase & {
   id: number,
   entries: Entry[],
 };
+
+export type UserBase = {
+  username: string,
+  firstname?: string,
+  lastname?: string,
+  email?: string,
+  superuser?: boolean,
+};
+
+export type Token = {
+  access_token: string,
+  token_type: string,
+};
+
+export type User = UserBase & {
+  id: number;
+};

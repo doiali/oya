@@ -10,14 +10,14 @@ Interval = ForwardRef("Interval")
 
 class ActivityCreate(BaseModel):
     name: str
-    is_suspended: bool
+    is_suspended: Optional[bool] = False
     parentIds: Optional[List[int]]
     childIds: Optional[List[int]]
 
 
 class ActivityUpdate(BaseModel):
     name: Optional[str]
-    is_suspended: bool
+    is_suspended: Optional[bool] = False
     parentIds: Optional[List[int]]
     childIds: Optional[List[int]]
 

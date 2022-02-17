@@ -12,10 +12,31 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship, validates
 from dateutil import parser
 import datetime
-
+from fastapi import HTTPException, status
 from sqlalchemy.sql.schema import CheckConstraint
 from .database import Base
 from typing import Set, ForwardRef, List
+
+e403 = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN, detail="you don't have permission"
+)
+
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    username = Column(String, nullable=False, unique=True)
+    password = Column(String, nullable=False)
+    email = Column(String, nullable=True, unique=True)
+    firstname = Column(String, nullable=True)
+    lastname = Column(String, nullable=True)
+    superuser = Column(Boolean, nullable=True)
+
+    intervals = relationship("Interval", back_populates="user")
+    activities = relationship("Activity", back_populates="user")
+
+    def __repr__(self):
+        return f"<User {self.id} - {self.username}>"
 
 
 class Association(Base):
@@ -25,15 +46,15 @@ class Association(Base):
     order = Column(Integer)
 
 
-Activity = ForwardRef("Activity")
-
-
 class Activity(Base):
     __tablename__ = "activities"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     name = Column(String, unique=True)
     is_suspended = Column(Boolean, default=False, nullable=False)
+
+    user = relationship(User, back_populates="activities")
     parents = relationship(
         "Activity",
         secondary="association",
@@ -63,7 +84,7 @@ class Activity(Base):
     def allParents(self):
         x = set()
 
-        def recur(act: Activity):
+        def recur(act):
             for parent in act.parents:
                 if parent in x:
                     continue
@@ -77,7 +98,7 @@ class Activity(Base):
     def allChildren(self):
         x = set()
 
-        def recur(act: Activity):
+        def recur(act):
             for child in act.children:
                 if child in x:
                     continue
@@ -105,12 +126,16 @@ class Activity(Base):
     def validate_parents(self, key, parent):
         if parent.id in self.allChildIds:
             raise ValueError("you are creating a loop")
+        if parent.user_id != self.user_id:
+            raise e403
         return parent
 
     @validates("children")
     def validate_children(self, key, child):
         if child.id in self.allParentIds:
             raise ValueError("you are creating a loop")
+        if child.user_id != self.user_id:
+            raise e403
         return child
 
     entries = relationship("Entry", back_populates="activity", cascade="all")
@@ -129,11 +154,13 @@ class Interval(Base):
     )
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     start: datetime.datetime = Column(DateTime(timezone=True), index=True)
     end: datetime.datetime = Column(DateTime(timezone=True), index=True)
     note = Column(Text)
 
     entries = relationship("Entry", back_populates="interval", cascade="all")
+    user = relationship(User, back_populates="intervals")
 
     def __repr__(self):
         return f"<interval {self.start} to {self.end}: {self.entries}>"
