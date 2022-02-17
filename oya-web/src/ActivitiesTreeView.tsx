@@ -5,7 +5,10 @@ import React, { memo, useState } from 'react';
 import { Activity } from './apiService';
 import useActivities from './useActivities';
 import { ActivityAdderDialog } from './ActivityAdder';
-import ActivityFilter, { ActivityFilterProps, ActivityFilters, filterActivities } from './ActivityFilter';
+import ActivityFilter, {
+  ActivityFilterProps, ActivityFilters, filterActivities,
+} from './ActivityFilter';
+import SimpleBar from 'simplebar-react';
 
 const getAllTreeNodeIds = (activities: Activity[]) => {
   const ids: string[] = [];
@@ -82,7 +85,7 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
         </Button>
         <ActivityAdderDialog />
       </Stack>
-      <Box sx={{ maxHeight: 500, overflowY: 'auto' }}>
+      <Box component={SimpleBar} sx={{ maxHeight: 500, overflowY: 'auto' }}>
         <TreeView
           expanded={expanded}
           selected={selected}
