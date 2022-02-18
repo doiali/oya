@@ -1,4 +1,4 @@
-import { Box, Button, Drawer } from '@mui/material';
+import { Box, Button, Drawer, IconButton, useMediaQuery, useTheme } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import useActivities, { ActivityMappings } from './useActivities';
 import ActivitiesTreeView from './ActivitiesTreeView';
@@ -9,6 +9,8 @@ import {
 } from 'react-router';
 import { activityPanelRoutes } from './MainRouter';
 import TabsNav from './TabsNav';
+import { breakpoint } from './Layout';
+import { Close } from '@mui/icons-material';
 
 export type ActivityContext = {
   activity?: Activity,
@@ -26,6 +28,8 @@ const getSelectedActivity = (id: string, am: ActivityMappings) => {
   return am[selectedActivityId];
 };
 
+const innerDrawerWidth = 400;
+
 export default function ActivityPageLayout({ base = false }: { base?: boolean; }) {
   const { pathname: resolvedPath } = useResolvedPath('');
   const { id: nodeIdParams = '' } = useParams();
@@ -34,6 +38,8 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
   const navigate = useNavigate();
   const report = useReport();
   const { activityMappings: am } = useActivities();
+  const theme = useTheme();
+  const isWide = useMediaQuery(theme.breakpoints.up(breakpoint));
   const selectedActivity = useMemo(() => (
     getSelectedActivity(nodeId, am)
   ), [nodeId, am]);
@@ -61,15 +67,18 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
     <Box sx={{ display: 'flex', height: '100%' }}>
       <Drawer
         sx={theme => ({
-          width: 400,
+          width: innerDrawerWidth,
+          maxWidth: '100%',
           '& .MuiDrawer-paper': {
-            width: 400,
+            maxWidth: '100%',
+            width: innerDrawerWidth,
             position: 'relative',
             zIndex: theme.zIndex.appBar - 1,
           },
         })}
         open={open}
-        variant="persistent"
+        variant={isWide ? 'persistent' : 'temporary'}
+        onClose={() => setOpen(false)}
       >
         <Box
           sx={theme => ({
@@ -81,6 +90,11 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
             py: 6,
           })}
         >
+          <Box mb={2} mt={-4} display={{ xs: 'block', [breakpoint]: 'none' }}>
+            <IconButton onClick={() => setOpen(false)}>
+              <Close />
+            </IconButton>
+          </Box>
           <ActivitiesTreeView
             selected={nodeId}
             onNodeSelect={handleSelect}
@@ -90,12 +104,12 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
       <Box
         sx={theme => ({
           flexGrow: 1, px: { xs: 2, md: 3 }, py: 6,
-          [theme.breakpoints.up('lg')]: {
+          [theme.breakpoints.up(breakpoint)]: {
             transition: theme.transitions.create('margin', {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.leavingScreen,
             }),
-            marginLeft: `-${400}px`,
+            marginLeft: `-${innerDrawerWidth}px`,
             ...(open && {
               transition: theme.transitions.create('margin', {
                 easing: theme.transitions.easing.easeOut,

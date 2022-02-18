@@ -21,7 +21,7 @@ import { ListItem, ListItemIcon, ListItemText, useMediaQuery } from '@mui/materi
 import { useAuth } from './AuthProvider';
 
 const drawerWidth = 280;
-const breakpoint = 'lg';
+export const breakpoint = 'lg';
 export const toolbarHeight = 64;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{

@@ -10,7 +10,6 @@ export const ActivityPanelHome = () => {
   return activity ? (
     <Stack spacing={2}>
       <Widget
-        sx={{ minWidth: 500 }}
         title={(
           <>Update Activity <span style={{ fontSize: '0.7em' }}>id: {activity.id}</span></>
         )}
