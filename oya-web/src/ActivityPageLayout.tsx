@@ -65,7 +65,7 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
           '& .MuiDrawer-paper': {
             width: 400,
             position: 'relative',
-            zIndex: theme.zIndex.appBar,
+            zIndex: theme.zIndex.appBar - 1,
           },
         })}
         open={open}
@@ -77,7 +77,8 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
             backgroundColor: theme.palette.background.paper,
             top: 0,
             height: '100%',
-            p: 2,
+            px: { xs: 2, md: 3 },
+            py: 6,
           })}
         >
           <ActivitiesTreeView
@@ -88,7 +89,7 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
       </Drawer>
       <Box
         sx={theme => ({
-          flexGrow: 1, p: 3, py: 6,
+          flexGrow: 1, px: { xs: 2, md: 3 }, py: 6,
           [theme.breakpoints.up('lg')]: {
             transition: theme.transitions.create('margin', {
               easing: theme.transitions.easing.sharp,
@@ -105,7 +106,7 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
           },
         })}
       >
-        <Box>
+        <Box mb={2}>
           <Button onClick={() => setOpen(p => !p)} variant='contained'>
             {open ? 'Hide activities' : 'Show activities'}
           </Button>
@@ -113,7 +114,7 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabsNav routes={activityPanelRoutes} disabled={base || !nodeId} />
         </Box>
-        <Box sx={{ py: 2 }}>
+        <Box sx={{ py: 6 }}>
           <Outlet context={context} />
         </Box>
       </Box>

@@ -90,7 +90,7 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
         sx={theme => ({
           maxHeight: 600, overflowY: 'auto',
           backgroundColor: theme.palette.background.default,
-          my: 2, py: 2, borderRadius: theme.spacing(0.5),
+          my: 2, py: 2, px: 1, borderRadius: theme.spacing(0.5),
         })}
       >
         <TreeView
@@ -117,9 +117,12 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
 
 const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
   [`& .${treeItemClasses.group}`]: {
-    marginLeft: 15,
-    paddingLeft: 5,
+    marginLeft: 12,
+    paddingLeft: 8,
     borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`,
+  },
+  [`& .${treeItemClasses.content}`]: {
+    padding: theme.spacing(0.5),
   },
 }));
 
