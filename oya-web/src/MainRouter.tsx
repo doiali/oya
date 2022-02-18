@@ -7,9 +7,9 @@ import { ActivityPanelHome } from './ActivityPanel';
 import { Assessment, BrunchDining, Home as HomeIcon } from '@mui/icons-material';
 import TimeRe from './report/TimeRe';
 import ActivityPageLayout from './ActivityPageLayout';
-import TreemapNivo from './report/TreemapNivo';
+// import TreemapNivo from './report/TreemapNivo';
 import SunburstNivo from './report/SunburstNivo';
-import Calender from './report/Calender';
+// import Calender from './report/Calender';
 import LoginPage, { LoginPageLayout } from './LoginPage';
 
 export interface RouteInfo {
@@ -53,13 +53,13 @@ export const mainRoutes: RouteInfo[] = [
 export const activityPanelRoutes: RouteInfo[] = [
   { path: '', label: 'overview', element: <ActivityPanelHome /> },
   { path: 'times', label: 'time chart', element: <TimeRe /> },
-  { path: 'calender', label: 'calender', element: <Calender /> },
+  // { path: 'calender', label: 'calender', element: <Calender /> },
   { path: '*', element: '404 not found', hideLink: true },
 ];
 
 export const reportRoutes: RouteInfo[] = [
   { path: '', label: 'overview', element: <SunburstNivo /> },
-  { path: 'nivo-tree', label: 'tree map', element: <TreemapNivo /> },
+  // { path: 'nivo-tree', label: 'tree map', element: <TreemapNivo /> },
   { path: '*', element: '404 not found', hideLink: true },
 ];
 
