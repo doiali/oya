@@ -1,5 +1,5 @@
 import { DateTimePicker } from '@mui/lab';
-import { Box, Autocomplete, Divider, Stack, TextField } from '@mui/material';
+import { Box, Autocomplete, Divider, Stack, TextField, Grid } from '@mui/material';
 import React, { memo } from 'react';
 import { Entry } from './apiService/types';
 import MarkdownBox from './MarkdownBox';
@@ -56,27 +56,22 @@ export default memo(function IntervalForm({
   return (
     <Box component="form" onSubmit={handleSubmit}>
       <Stack direction="column" spacing={2}>
-        <Stack direction='row' spacing={2}>
-          <DateTimePicker
-            disableMaskedInput
-            value={state.start}
-            label="start"
-            ampm={false}
-            ampmInClock={false}
-            onChange={(newValue) => onChange('start', newValue)}
-            renderInput={(params) => <TextField fullWidth {...params} />}
-          />
-          <DateTimePicker
-            disableMaskedInput
-            value={state.end}
-            ampm={false}
-            ampmInClock={false}
-            onChange={(newValue) => onChange('end', newValue)}
-            label="end"
-            renderInput={(params) => <TextField fullWidth {...params} />}
-            minDateTime={new Date(state.start.getTime() + 1)}
-          />
-        </Stack>
+        <Grid container spacing={2}>
+          {(['start', 'end'] as const).map((type) => (
+            <Grid key={type} item xs={12} md={6}>
+              <DateTimePicker
+                disableMaskedInput
+                value={state[type]}
+                label={type}
+                ampm={false}
+                ampmInClock={false}
+                onChange={(newValue) => onChange(type, newValue)}
+                renderInput={(params) => <TextField fullWidth {...params} />}
+                minDateTime={type === 'end' ? new Date(state.start.getTime() + 1) : undefined}
+              />
+            </Grid>
+          ))}
+        </Grid>
         <span>
           Interval duration: <b>{getDeltaStringOfRange(intervalDuration)}</b>
           {' '} - {' '}

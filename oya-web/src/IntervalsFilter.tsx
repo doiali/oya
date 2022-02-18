@@ -1,5 +1,6 @@
 import {
   Autocomplete, Box, Button, Card, CardContent, CardHeader, Divider,
+  Grid,
   Stack, TextField,
 } from '@mui/material';
 import { memo, useMemo, useState } from 'react';
@@ -35,10 +36,16 @@ export default memo(function IntervalsFilter({
     <Card sx={{ mb: 3 }}>
       <CardHeader
         title={(
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span>
+          <Box
+            sx={theme => ({
+              [theme.breakpoints.up('md')]: {
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              },
+            })}
+          >
+            <Box>
               Filter Intervals
-            </span>
+            </Box>
             <Box fontSize="1rem">
               <b>sum:</b> {sum >= 1440 && Math.floor(sum / 1440).toString() + ' days and '} {
                 Math.floor((sum % 1440) / 60).toString().padStart(2, '0') +
@@ -50,23 +57,20 @@ export default memo(function IntervalsFilter({
       />
       <Divider />
       <CardContent component={Stack} direction="column" spacing={1}>
-        <Stack direction='row' spacing={2}>
-          <DatePicker
-            disableMaskedInput
-            value={state.start}
-            label="start"
-            onChange={(newValue) => onChange('start', newValue)}
-            renderInput={(params) => <TextField fullWidth {...params} />}
-          />
-          <DatePicker
-            disableMaskedInput
-            value={state.end}
-            onChange={(newValue) => onChange('end', newValue)}
-            label="end"
-            renderInput={(params) => <TextField fullWidth {...params} />}
-            minDate={state.start}
-          />
-        </Stack>
+        <Grid container spacing={2}>
+          {(['start', 'end'] as const).map((type) => (
+            <Grid key={type} item xs={12} md={6}>
+              <DatePicker
+                disableMaskedInput
+                value={state[type]}
+                onChange={(newValue) => onChange(type, newValue)}
+                label={type}
+                renderInput={(params) => <TextField fullWidth {...params} />}
+                minDate={type === 'end' ? state.start : undefined}
+              />
+            </Grid>
+          ))}
+        </Grid>
         {activities && (
           <Autocomplete
             fullWidth
