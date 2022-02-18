@@ -21,13 +21,14 @@ import { ListItem, ListItemIcon, ListItemText, useMediaQuery } from '@mui/materi
 import { useAuth } from './AuthProvider';
 
 const drawerWidth = 280;
+const breakpoint = 'lg';
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
   open?: boolean;
 }>(({ theme, open }) => ({
   flexGrow: 1,
   padding: theme.spacing(6, 3),
-  [theme.breakpoints.up('md')]: {
+  [theme.breakpoints.up(breakpoint)]: {
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -50,7 +51,7 @@ interface AppBarProps extends MuiAppBarProps {
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })<AppBarProps>(({ theme, open }) => ({
-  [theme.breakpoints.up('md')]: {
+  [theme.breakpoints.up(breakpoint)]: {
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -88,7 +89,7 @@ const LogoutButton = () => {
 export default function Layout() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
-  const isWide = useMediaQuery(theme.breakpoints.up('md'));
+  const isWide = useMediaQuery(theme.breakpoints.up(breakpoint));
 
   const handleDrawerOpen = () => {
     setOpen(true);
