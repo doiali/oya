@@ -85,7 +85,14 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
         </Button>
         <ActivityAdderDialog />
       </Stack>
-      <Box component={SimpleBar} sx={{ maxHeight: 500, overflowY: 'auto' }}>
+      <Box
+        component={SimpleBar}
+        sx={theme => ({
+          maxHeight: 600, overflowY: 'auto',
+          backgroundColor: theme.palette.background.default,
+          my: 2, py: 2, borderRadius: theme.spacing(0.5),
+        })}
+      >
         <TreeView
           expanded={expanded}
           selected={selected}

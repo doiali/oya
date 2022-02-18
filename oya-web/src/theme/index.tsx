@@ -18,7 +18,7 @@ const LinkBehavior = React.forwardRef<
   return <RouterLink ref={ref} to={href} {...other} />;
 });
 
-const baseTheme: ThemeOptions = {
+const baseTheme: ThemeOptions = ({
   components: {
     MuiLink: {
       defaultProps: {
@@ -30,6 +30,22 @@ const baseTheme: ThemeOptions = {
         LinkComponent: LinkBehavior,
       },
     },
+    MuiCssBaseline: {
+      styleOverrides: {
+        'body, #root, html': {
+          display: 'flex',
+          flex: '1 1 auto',
+          flexDirection: 'column',
+          width: '100%',
+        },
+        'body, html': {
+          minHeight: '100%',
+        },
+        '#root': {
+          height: '100%',
+        },
+      },
+    },
     MuiPaper: {
       styleOverrides: {
         root: {
@@ -38,7 +54,7 @@ const baseTheme: ThemeOptions = {
       },
     },
   },
-};
+});
 
 const getTheme = (ThemeOptions: ThemeOptions = {}) => (
   createTheme(deepMerge({}, baseTheme, ThemeOptions))

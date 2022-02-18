@@ -1,4 +1,4 @@
-import { Box, Button, Collapse } from '@mui/material';
+import { Box, Button, Drawer } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import useActivities, { ActivityMappings } from './useActivities';
 import ActivitiesTreeView from './ActivitiesTreeView';
@@ -58,12 +58,26 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
   }), [report, selectedActivity, handleSelect]);
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <Collapse in={open} orientation='horizontal'>
+    <Box sx={{ display: 'flex', height: '100%' }}>
+      <Drawer
+        sx={theme => ({
+          width: 400,
+          '& .MuiDrawer-paper': {
+            width: 400,
+            position: 'relative',
+            zIndex: theme.zIndex.appBar,
+          },
+        })}
+        open={open}
+        variant="persistent"
+      >
         <Box
           sx={theme => ({
-            minWidth: 400,
+            position: 'relative',
             backgroundColor: theme.palette.background.paper,
+            top: 0,
+            height: '100%',
+            p: 2,
           })}
         >
           <ActivitiesTreeView
@@ -71,8 +85,26 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
             onNodeSelect={handleSelect}
           />
         </Box>
-      </Collapse>
-      <Box sx={{ flexGrow: 1, p: 3, py: 6 }}>
+      </Drawer>
+      <Box
+        sx={theme => ({
+          flexGrow: 1, p: 3, py: 6,
+          [theme.breakpoints.up('lg')]: {
+            transition: theme.transitions.create('margin', {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.leavingScreen,
+            }),
+            marginLeft: `-${400}px`,
+            ...(open && {
+              transition: theme.transitions.create('margin', {
+                easing: theme.transitions.easing.easeOut,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+              marginLeft: 0,
+            }),
+          },
+        })}
+      >
         <Box>
           <Button onClick={() => setOpen(p => !p)} variant='contained'>
             {open ? 'Hide activities' : 'Show activities'}

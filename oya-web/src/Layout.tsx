@@ -28,6 +28,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
   open?: boolean;
 }>(({ theme, open }) => ({
   flexGrow: 1,
+  overflow: 'hidden',
   paddingTop: toolbarHeight,
   [theme.breakpoints.up(breakpoint)]: {
     transition: theme.transitions.create('margin', {
@@ -101,7 +102,7 @@ export default function Layout() {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', flex: '1 1 auto' }}>
       <AppBar position="fixed" open={open}>
         <Toolbar sx={{ height: toolbarHeight }}>
           <IconButton
