@@ -22,12 +22,13 @@ import { useAuth } from './AuthProvider';
 
 const drawerWidth = 280;
 const breakpoint = 'lg';
+export const toolbarHeight = 64;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
   open?: boolean;
 }>(({ theme, open }) => ({
   flexGrow: 1,
-  padding: theme.spacing(6, 3),
+  paddingTop: toolbarHeight,
   [theme.breakpoints.up(breakpoint)]: {
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
@@ -72,7 +73,7 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
   alignItems: 'center',
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
+  height: toolbarHeight,
   justifyContent: 'flex-end',
 }));
 
@@ -102,7 +103,7 @@ export default function Layout() {
   return (
     <Box sx={{ display: 'flex' }}>
       <AppBar position="fixed" open={open}>
-        <Toolbar>
+        <Toolbar sx={{ height: toolbarHeight }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -156,7 +157,6 @@ export default function Layout() {
         <Divider />
       </Drawer>
       <Main open={open}>
-        <DrawerHeader />
         <ProtectedView>
           <Outlet />
         </ProtectedView>

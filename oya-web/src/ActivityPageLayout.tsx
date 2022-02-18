@@ -1,5 +1,5 @@
-import { Box, Stack } from '@mui/material';
-import { useCallback, useMemo } from 'react';
+import { Box, Button, Collapse } from '@mui/material';
+import { useCallback, useMemo, useState } from 'react';
 import useActivities, { ActivityMappings } from './useActivities';
 import ActivitiesTreeView from './ActivitiesTreeView';
 import { ReportContext, useReport } from './report/ReportProvider';
@@ -38,6 +38,8 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
     getSelectedActivity(nodeId, am)
   ), [nodeId, am]);
 
+  const [open, setOpen] = useState(true);
+
   const handleSelect = useCallback((newId: string) => {
     if (base || !nodeId) {
       navigate(newId);
@@ -56,14 +58,26 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
   }), [report, selectedActivity, handleSelect]);
 
   return (
-    <Stack spacing={2} direction="row">
-      <Box sx={{ minWidth: 400 }}>
-        <ActivitiesTreeView
-          selected={nodeId}
-          onNodeSelect={handleSelect}
-        />
-      </Box>
-      <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ display: 'flex' }}>
+      <Collapse in={open} orientation='horizontal'>
+        <Box
+          sx={theme => ({
+            minWidth: 400,
+            backgroundColor: theme.palette.background.paper,
+          })}
+        >
+          <ActivitiesTreeView
+            selected={nodeId}
+            onNodeSelect={handleSelect}
+          />
+        </Box>
+      </Collapse>
+      <Box sx={{ flexGrow: 1, p: 3, py: 6 }}>
+        <Box>
+          <Button onClick={() => setOpen(p => !p)} variant='contained'>
+            {open ? 'Hide activities' : 'Show activities'}
+          </Button>
+        </Box>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabsNav routes={activityPanelRoutes} disabled={base || !nodeId} />
         </Box>
@@ -71,6 +85,6 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
           <Outlet context={context} />
         </Box>
       </Box>
-    </Stack>
+    </Box>
   );
 }

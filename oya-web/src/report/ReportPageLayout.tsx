@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import { Outlet } from 'react-router';
 import { reportRoutes } from '../MainRouter';
 import TabsNav from '../TabsNav';
@@ -8,13 +8,13 @@ export default function ReportPageLayout() {
   const report = useReport();
 
   return (
-    <Box>
+    <Container maxWidth="xl" sx={{ py: 6 }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <TabsNav routes={reportRoutes} />
       </Box>
       <Box sx={{ py: 2 }}>
         <Outlet context={{ report }} />
       </Box>
-    </Box>
+    </Container>
   );
 }
