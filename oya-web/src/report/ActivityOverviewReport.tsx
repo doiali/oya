@@ -1,8 +1,9 @@
-import { Grid, Paper, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
 import React from 'react';
 import { Activity } from '../apiService';
 import { useReportContext } from './ReportProvider';
 import { getDeltaStringOfRange as ts } from '../utils';
+import Widget from '../Widget';
 
 type ActivityOverviewReportProps = {
   activity: Activity,
@@ -24,15 +25,14 @@ export function GridOverviewReport() {
 export default function ActivityOverviewReport({ activity }: ActivityOverviewReportProps) {
   const { atrm } = useReportContext();
   const renderRow = (name: string, value: string | number) => (
-    <Typography textAlign="center" key={name}>
+    <Typography key={name}>
       {name}: <b>{value}</b>
     </Typography>
   );
   const r = atrm[activity.id];
   if (!r) return null;
   return (
-    <Paper sx={{ p: 2, height: '100%', flexShrink: 0 }}>
-      <Typography gutterBottom variant='h5' textAlign="center">{activity.name}</Typography>
+    <Widget title={'Overview report: ' + activity.name}>
       <Stack>
         {renderRow('days', `${r.days} of ${r.allDays}`)}
         {renderRow('total time', ts(r.time))}
@@ -40,6 +40,6 @@ export default function ActivityOverviewReport({ activity }: ActivityOverviewRep
         {renderRow('avg per days', ts(r.avgPerDays))}
         {renderRow('occurance', r.occurance.toString())}
       </Stack>
-    </Paper>
+    </Widget>
   );
 }

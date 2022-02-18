@@ -1,5 +1,5 @@
 
-import { Button, Card, CardContent, CardHeader, Divider } from '@mui/material';
+import { Button } from '@mui/material';
 import React, { memo, useState } from 'react';
 import { IntervalCreate, Entry } from './apiService/types';
 import { addInterval } from './apiService';
@@ -7,6 +7,7 @@ import { mutate } from 'swr';
 import AlertService from './AlertService';
 import IntervalForm, { IntervalFormProps } from './IntervalForm';
 import useIntervals from './useIntervals';
+import Widget from './Widget';
 
 const now = (plus = 0) => {
   const x = new Date();
@@ -17,17 +18,13 @@ const now = (plus = 0) => {
 export default memo(function IntervalAdder() {
   const intervalFormProps = useIntervalCreate();
   return (
-    <Card sx={{ mb: 3 }}>
-      <CardHeader title="Create Interval" />
-      <Divider />
-      <CardContent>
-        <IntervalForm {...intervalFormProps}>
-          <Button disabled={intervalFormProps.state.loading} size="large" type="submit" variant="contained">
-            add interval
-          </Button>
-        </IntervalForm>
-      </CardContent>
-    </Card>
+    <Widget sx={{ mb: 3 }} title="Create Interval">
+      <IntervalForm {...intervalFormProps}>
+        <Button disabled={intervalFormProps.state.loading} size="large" type="submit" variant="contained">
+          add interval
+        </Button>
+      </IntervalForm>
+    </Widget>
   );
 });
 

@@ -1,8 +1,9 @@
 import { Interval } from './apiService/types';
 import { format } from 'date-fns-jalali';
-import { Stack, Divider, Chip, Pagination, Card, CardHeader, CardContent } from '@mui/material';
+import { Stack, Divider, Chip, Pagination, Box } from '@mui/material';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import IntervalItem from './IntervalItem';
+import Widget from './Widget';
 
 type IntervalsListProps = {
   intervals: Interval[],
@@ -56,26 +57,25 @@ export default memo(function IntervalsList({ intervals, highLights }: IntervalsL
   };
 
   const pagination = (
-    <Stack
-      spacing={1} direction="row"
-      sx={{ alignItems: 'center', justifyContent: 'space-between' }}
+    <Box
+      sx={theme => ({
+        [theme.breakpoints.up('lg')]: {
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        },
+      })}
     >
-      <span>total rows: {rows}</span>
+      <Box mb={{ xs: 2, lg: 0 }}>total rows: {rows}</Box>
       {(rows > rowsPerPage) && (
         <Pagination count={totalPages} page={page} onChange={(_, x) => setPage(x)} />
       )}
-    </Stack>
+    </Box>
   );
 
   return (
-    <Card component="section" ref={ref}>
-      <CardHeader title="Intervals List" />
-      <Divider />
-      <CardContent>
-        {pagination}
-        {renderList()}
-        {(rows > 10) && pagination}
-      </CardContent>
-    </Card>
+    <Widget title="Intervals List" ref={ref}>
+      {pagination}
+      {renderList()}
+      {(rows > 10) && pagination}
+    </Widget>
   );
 });

@@ -1,5 +1,5 @@
 import {
-  Autocomplete, Box, Button, Card, CardContent, CardHeader, Divider,
+  Autocomplete, Box, Button,
   Grid,
   Stack, TextField,
 } from '@mui/material';
@@ -8,6 +8,7 @@ import { Activity, Interval } from './apiService';
 import { DatePicker } from '@mui/lab';
 import useActivities from './useActivities';
 import useIntervals from './useIntervals';
+import Widget from './Widget';
 
 type IntervalsFilterProps = {
   // intervals: Interval[],
@@ -33,30 +34,29 @@ export default memo(function IntervalsFilter({
 }: IntervalsFilterProps) {
   const { activities } = useActivities();
   return (
-    <Card sx={{ mb: 3 }}>
-      <CardHeader
-        title={(
-          <Box
-            sx={theme => ({
-              [theme.breakpoints.up('md')]: {
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              },
-            })}
-          >
-            <Box>
-              Filter Intervals
-            </Box>
-            <Box fontSize="1rem">
-              <b>sum:</b> {sum >= 1440 && Math.floor(sum / 1440).toString() + ' days and '} {
-                Math.floor((sum % 1440) / 60).toString().padStart(2, '0') +
-                ':' + Math.floor(sum % 60).toString().padStart(2, '0')
-              }
-            </Box>
+    <Widget
+      sx={{ mb: 3 }}
+      title={(
+        <Box
+          sx={theme => ({
+            [theme.breakpoints.up('md')]: {
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            },
+          })}
+        >
+          <Box>
+            Filter Intervals
           </Box>
-        )}
-      />
-      <Divider />
-      <CardContent component={Stack} direction="column" spacing={1}>
+          <Box fontSize="1rem">
+            <b>sum:</b> {sum >= 1440 && Math.floor(sum / 1440).toString() + ' days and '} {
+              Math.floor((sum % 1440) / 60).toString().padStart(2, '0') +
+              ':' + Math.floor(sum % 60).toString().padStart(2, '0')
+            }
+          </Box>
+        </Box>
+      )}
+    >
+      <Stack direction="column" spacing={1}>
         <Grid container spacing={2}>
           {(['start', 'end'] as const).map((type) => (
             <Grid key={type} item xs={12} md={6}>
@@ -95,8 +95,8 @@ export default memo(function IntervalsFilter({
             reset filters
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </Stack>
+    </Widget>
   );
 });
 

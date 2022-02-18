@@ -1,27 +1,25 @@
-import { Card, CardContent, CardHeader, Divider, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import ActivityEditor from './ActivityEditor';
 import ActivityOverviewReport from './report/ActivityOverviewReport';
 import React from 'react';
 import { useActivityContext } from './ActivityPageLayout';
+import Widget from './Widget';
 
 export const ActivityPanelHome = () => {
   const { activity, onClose } = useActivityContext();
   return activity ? (
     <Stack spacing={2}>
-      <Card elevation={2} sx={{ minWidth: 500 }}>
-        <CardHeader
-          title={(
-            <>Update Activity <span style={{ fontSize: '0.7em' }}>id: {activity.id}</span></>
-          )}
+      <Widget
+        sx={{ minWidth: 500 }}
+        title={(
+          <>Update Activity <span style={{ fontSize: '0.7em' }}>id: {activity.id}</span></>
+        )}
+      >
+        <ActivityEditor
+          activity={activity}
+          onClose={() => onClose?.()}
         />
-        <Divider />
-        <CardContent>
-          <ActivityEditor
-            activity={activity}
-            onClose={() => onClose?.()}
-          />
-        </CardContent>
-      </Card>
+      </Widget>
       <ActivityOverviewReport activity={activity} />
     </Stack>
   ) : null;

@@ -1,7 +1,7 @@
 import { Edit, Search } from '@mui/icons-material';
 import {
   IconButton, Stack, Divider,
-  TextField, InputAdornment, Collapse, Button, Card, CardHeader, CardContent,
+  TextField, InputAdornment, Collapse, Button,
 } from '@mui/material';
 import { Box } from '@mui/system';
 import { Activity } from './apiService';
@@ -9,6 +9,7 @@ import { memo, useState } from 'react';
 import ActivityAdder from './ActivityAdder';
 import ActivityEditor from './ActivityEditor';
 import useActivities from './useActivities';
+import Widget from './Widget';
 
 export function getActivityParentsNames(a: Activity): string {
   return a.name.toLowerCase() + ' ' + a.allParents.map((p) => p.name).join(' ');
@@ -26,49 +27,39 @@ const ActivitiesHomeWidget = memo(function ActivitiesWidget() {
   const rows = filteredActivities.length;
   return (
     <Stack sx={{ width: '100%' }} spacing={3}>
-      <Card component="section">
-        <CardHeader title="Create Activity" />
-        <Divider />
-        <CardContent>
-          <ActivityAdder />
-        </CardContent>
-      </Card>
-
-      <Card component="section">
-        <CardHeader title="Activities List" />
-        <Divider />
-        <CardContent>
-          <TextField
-            sx={{ mb: 3 }}
-            variant='outlined'
-            label='search'
-            fullWidth
-            value={searchVal}
-            onChange={(e) => setSearchVal(e.target.value)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position='end'>
-                  <Search />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Stack spacing={1} divider={<Divider orientation="horizontal" flexItem />}>
-            {filteredActivities.slice(0, more ? undefined : maxRows).map((a) => (
-              <ActivitySingle
-                key={a.id}
-                activity={a}
-              />
-            ))}
-            {rows > maxRows && (
-              <Button onClick={() => setMore(p => !p)}>
-                {more ? 'show less' : 'show more'}
-              </Button>
-            )}
-          </Stack>
-        </CardContent>
-      </Card>
-
+      <Widget title="Create Activity">
+        <ActivityAdder />
+      </Widget>
+      <Widget title="Activities List">
+        <TextField
+          sx={{ mb: 3 }}
+          variant='outlined'
+          label='search'
+          fullWidth
+          value={searchVal}
+          onChange={(e) => setSearchVal(e.target.value)}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position='end'>
+                <Search />
+              </InputAdornment>
+            ),
+          }}
+        />
+        <Stack spacing={1} divider={<Divider orientation="horizontal" flexItem />}>
+          {filteredActivities.slice(0, more ? undefined : maxRows).map((a) => (
+            <ActivitySingle
+              key={a.id}
+              activity={a}
+            />
+          ))}
+          {rows > maxRows && (
+            <Button onClick={() => setMore(p => !p)}>
+              {more ? 'show less' : 'show more'}
+            </Button>
+          )}
+        </Stack>
+      </Widget>
     </Stack>
   );
 });
