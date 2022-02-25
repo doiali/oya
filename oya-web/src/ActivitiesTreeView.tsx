@@ -10,6 +10,16 @@ import ActivityFilter, {
 } from './ActivityFilter';
 import SimpleBar from 'simplebar-react';
 
+const StyledSimpleBar = styled(SimpleBar)(({ theme }) => ({
+  maxHeight: 600,
+  overflowY: 'auto',
+  backgroundColor: theme.palette.background.default,
+  marginTop: theme.spacing(2),
+  marginBottom: theme.spacing(2),
+  padding: theme.spacing(2, 1),
+  borderRadius: theme.spacing(0.5),
+}));
+
 const getAllTreeNodeIds = (activities: Activity[]) => {
   const ids: string[] = [];
   const getTreeIds = (activity: Activity, rendererId = '') => {
@@ -85,14 +95,7 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
         </Button>
         <ActivityAdderDialog />
       </Stack>
-      <Box
-        component={SimpleBar}
-        sx={theme => ({
-          maxHeight: 600, overflowY: 'auto',
-          backgroundColor: theme.palette.background.default,
-          my: 2, py: 2, px: 1, borderRadius: theme.spacing(0.5),
-        })}
-      >
+      <StyledSimpleBar>
         <TreeView
           expanded={expanded}
           selected={selected}
@@ -110,7 +113,7 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
             />
           ))}
         </TreeView>
-      </Box>
+      </StyledSimpleBar>
     </Box>
   );
 });
