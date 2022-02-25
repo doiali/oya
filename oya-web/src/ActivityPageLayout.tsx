@@ -1,5 +1,5 @@
 import { Box, Button, Drawer, IconButton, useMediaQuery, useTheme } from '@mui/material';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useActivities, { ActivityMappings } from './useActivities';
 import ActivitiesTreeView from './ActivitiesTreeView';
 import { ReportContext, useReport } from './report/ReportProvider';
@@ -45,6 +45,10 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
   ), [nodeId, am]);
 
   const [open, setOpen] = useState(true);
+
+  useEffect(() => {
+    setOpen(isWide);
+  }, [isWide]);
 
   const handleSelect = useCallback((newId: string) => {
     if (base || !nodeId) {
@@ -104,6 +108,7 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
       <Box
         sx={theme => ({
           flexGrow: 1, px: { xs: 2, md: 3 }, py: 6,
+          width: '100%',
           [theme.breakpoints.up(breakpoint)]: {
             transition: theme.transitions.create('margin', {
               easing: theme.transitions.easing.sharp,
@@ -111,6 +116,7 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
             }),
             marginLeft: `-${innerDrawerWidth}px`,
             ...(open && {
+              width: `calc(100% - ${innerDrawerWidth}px)`,
               transition: theme.transitions.create('margin', {
                 easing: theme.transitions.easing.easeOut,
                 duration: theme.transitions.duration.enteringScreen,

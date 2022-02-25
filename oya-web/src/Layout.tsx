@@ -90,8 +90,12 @@ const LogoutButton = () => {
 
 export default function Layout() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
   const isWide = useMediaQuery(theme.breakpoints.up(breakpoint));
+  const [open, setOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    setOpen(isWide);
+  }, [isWide]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -99,6 +103,11 @@ export default function Layout() {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleListClick = () => {
+    if (!isWide)
+      setOpen(false);
   };
 
   return (
@@ -141,21 +150,26 @@ export default function Layout() {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List>
-          {mainRoutes.filter(r => r.path !== '*' && !r.hideLink).map(r => (
-            <ListItemLink
-              key={r.path}
-              to={r.to ?? r.path}
-              primary={r.label ?? ''}
-              icon={r.icon ?? <Home />}
-            />
-          ))}
-        </List>
-        <Divider />
-        <List>
-          <LogoutButton />
-        </List>
-        <Divider />
+        <Box
+          onClick={handleListClick}
+          onKeyDown={handleListClick}
+        >
+          <List>
+            {mainRoutes.filter(r => r.path !== '*' && !r.hideLink).map(r => (
+              <ListItemLink
+                key={r.path}
+                to={r.to ?? r.path}
+                primary={r.label ?? ''}
+                icon={r.icon ?? <Home />}
+              />
+            ))}
+          </List>
+          <Divider />
+          <List>
+            <LogoutButton />
+          </List>
+          <Divider />
+        </Box>
       </Drawer>
       <Main open={open}>
         <ProtectedView>
