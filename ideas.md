@@ -7,6 +7,7 @@
   - [x] add normal login flow
   - [x] all apis need authentication
   - [ ] limit access tokens of each user
+  - [ ] handle activity name uniqe and entry create of user
   - [ ] logout api
 - [ ] restructure backend
 - [ ] better error handling

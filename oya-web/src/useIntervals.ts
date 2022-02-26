@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
 import useSWR from 'swr';
 import { getIntervals, Interval } from './apiService';
+import { useTrigger } from './utils';
 
 const intervalsFetcher = () => getIntervals().then(res => res.data);
 
@@ -11,14 +11,6 @@ type useIntervalsProps = {
 export default function useIntervals({ onLoad }: useIntervalsProps = {}) {
   const { data } = useSWR('/intervals/', intervalsFetcher);
   const loaded = Boolean(data);
-  const prevLoaded = useRef(loaded);
-  useEffect(() => {
-    if (loaded && data) {
-      if (!prevLoaded.current) {
-        prevLoaded.current = loaded;
-        onLoad?.(data);
-      }
-    }
-  }, [data, loaded, onLoad]);
+  useTrigger(loaded, () => (data && onLoad?.(data)));
   return { intervals: data ?? [], loaded };
 }
