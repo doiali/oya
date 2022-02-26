@@ -7,8 +7,8 @@ import { useReportContext } from './ReportProvider';
 import { generateDataRe } from './chartUtils';
 
 export default function BarTotalRechart() {
-  const { ATRM: atrm, activities } = useReportContext();
-  const data = generateDataRe(atrm, activities);
+  const { tATRM, activities } = useReportContext();
+  const data = generateDataRe(tATRM, activities);
   return (
     <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>
       <ResponsiveContainer width="100%" height="100%">

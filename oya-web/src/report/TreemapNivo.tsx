@@ -4,8 +4,8 @@ import { ResponsiveTreeMap } from '@nivo/treemap';
 import { generateTreeDataNivo } from './chartUtils';
 
 export default function TreemapNivo() {
-  const { ATRM: atrm, activities } = useReportContext();
-  const data = generateTreeDataNivo(atrm, activities);
+  const { tATRM, activities } = useReportContext();
+  const data = generateTreeDataNivo(tATRM, activities);
   return (
     <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>
       <ResponsiveTreeMap

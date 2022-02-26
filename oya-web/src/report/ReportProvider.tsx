@@ -58,15 +58,17 @@ const defaultValue: ReportContext = {
 const ReportContext = createContext<ReportContext>(defaultValue);
 
 const getInitState = (meta: IntervalsMeta | undefined) => {
-  let start = new Date(0);
-  if (meta?.min)
-    start = new Date(meta.min);
-  start.setHours(0, 0, 0, 0);
   let end = new Date();
   if (meta?.max)
     end = new Date(meta.max);
   end.setDate(end.getDate() + 1);
   end.setHours(0, 0, 0, 0);
+  let start = new Date(0);
+  if (meta?.min)
+    start = new Date(meta.min);
+  start.setHours(0, 0, 0, 0);
+  // const start = new Date(end);
+  // start.setDate(start.getDate() - 30);
   return { start, end };
 };
 
