@@ -59,6 +59,13 @@ class Entry(BaseModel):
         orm_mode = True
 
 
+class IntervalsMeta(BaseModel):
+    min: datetime.datetime
+    max: datetime.datetime
+    count: int
+    intervals_sum: datetime.timedelta
+
+
 class IntervalBase(BaseModel):
     start: datetime.datetime
     end: datetime.datetime

@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 from dateutil import parser
 
@@ -16,10 +17,9 @@ app = FastAPI()
 app.include_router(router)
 
 origins = [
-    "https://localhost:3000",
     "http://localhost:3000",
-    "https://localhost:3001",
     "http://localhost:3001",
+    "http://localhost:3022",
 ]
 
 app.add_middleware(
@@ -85,6 +85,22 @@ def update_activity(
         raise HTTPException(status_code=400, detail=f"{e.orig}")
 
 
+@app.get(
+    "/intervals/metadata",
+    tags=["Intervals"],
+    response_model=List[schemas.IntervalsMeta],
+)
+def get_intervals_metadata(
+    from_date: datetime.date | datetime.datetime = None,
+    to_date: datetime.date | datetime.datetime = None,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    return crud.get_intervals_meta(
+        db=db, user=user, from_date=from_date, to_date=to_date
+    )
+
+
 @app.get("/intervals/", tags=["Intervals"], response_model=List[schemas.Interval])
 def get_intervals(
     skip: int = 0,
@@ -120,7 +136,9 @@ def update_interval(
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    return crud.update_interval(db=db, interval_id=interval_id, interval=interval, user=user)
+    return crud.update_interval(
+        db=db, interval_id=interval_id, interval=interval, user=user
+    )
 
 
 @app.delete("/intervals/{interval_id}", tags=["Intervals"], status_code=204)
