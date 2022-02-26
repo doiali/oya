@@ -135,13 +135,6 @@ def get_intervals_data(
     return { "meta": meta, "data": intervals}
 
 
-@app.get("/daily_report/", tags=["Reports"], response_model=schemas.DailyReport)
-def get_daily_report(
-    date: str, db: Session = Depends(get_db), user=Depends(get_current_user)
-):
-    return crud.get_daily_report(db=db, date=parser.parse(date).date(), user=user)
-
-
 @app.post("/intervals/", tags=["Intervals"], response_model=schemas.Interval)
 def create_interval(
     interval: schemas.IntervalCreate,
@@ -173,3 +166,10 @@ def delete_interval(
         crud.delete_interval(db=db, interval_id=interval_id, user=user)
     except ReferenceError:
         raise HTTPException(status_code=400, detail="interval not found")
+
+
+@app.get("/daily_report/", tags=["Reports"], response_model=schemas.DailyReport)
+def get_daily_report(
+    date: str, db: Session = Depends(get_db), user=Depends(get_current_user)
+):
+    return crud.get_daily_report(db=db, date=parser.parse(date).date(), user=user)
