@@ -142,8 +142,7 @@ export function useIntervalsFilter() {
     if (!loaded) return true;
     if (
       isNaN(state.end.getTime()) || isNaN(state.start.getTime()) ||
-      (new Date(i.start) <= state.end && new Date(i.start) >= state.start) ||
-      (new Date(i.end) <= state.end && new Date(i.end) >= state.start)
+      (new Date(i.start) <= state.end && new Date(i.end) >= state.start)
     ) {
       if (state.selectedActivities.length === 0) return true;
       if (
