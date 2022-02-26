@@ -2,7 +2,7 @@ import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import { alpha, TextField, TextFieldProps, Typography, useTheme } from '@mui/material';
+import { TextField, TextFieldProps, Typography } from '@mui/material';
 import { marked } from 'marked';
 
 interface TabPanelProps {
@@ -32,7 +32,6 @@ function TabPanel(props: TabPanelProps) {
 
 export default function MarkdownBox(props: TextFieldProps) {
   const [value, setValue] = React.useState(0);
-  const theme = useTheme();
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -42,7 +41,12 @@ export default function MarkdownBox(props: TextFieldProps) {
     : null;
 
   return (
-    <Box sx={{ width: '100%', p: 2, backgroundColor: alpha(theme.palette.primary.light, 0.1) }}>
+    <Box
+      sx={{
+        width: '100%', p: 2,
+        border: theme => `1px solid ${theme.palette.divider}`,
+      }}
+    >
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label="Write" />

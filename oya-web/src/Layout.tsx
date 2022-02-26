@@ -17,29 +17,33 @@ import { Home, Logout } from '@mui/icons-material';
 import ThemeModeSwitch from './ThemeModeSwitch';
 import { mainRoutes } from './MainRouter';
 import ProtectedView from './ProtectedView';
-import { ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { ListItem, ListItemIcon, ListItemText, useMediaQuery } from '@mui/material';
 import { useAuth } from './AuthProvider';
 
-const drawerWidth = 240;
+const drawerWidth = 280;
+export const breakpoint = 'lg';
+export const toolbarHeight = 64;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
   open?: boolean;
 }>(({ theme, open }) => ({
   flexGrow: 1,
-  padding: theme.spacing(3),
-  transition: theme.transitions.create('margin', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  marginLeft: `-${drawerWidth}px`,
-  ...(open && {
+  overflow: 'hidden',
+  paddingTop: toolbarHeight,
+  [theme.breakpoints.up(breakpoint)]: {
     transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: 0,
-  }),
-  maxWidth: open ? `calc(100% - ${drawerWidth}px)` : '100%',
+    marginLeft: `-${drawerWidth}px`,
+    ...(open && {
+      transition: theme.transitions.create('margin', {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+      marginLeft: 0,
+    }),
+  },
 }));
 
 interface AppBarProps extends MuiAppBarProps {
@@ -49,18 +53,20 @@ interface AppBarProps extends MuiAppBarProps {
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })<AppBarProps>(({ theme, open }) => ({
-  transition: theme.transitions.create(['margin', 'width'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: `${drawerWidth}px`,
+  [theme.breakpoints.up(breakpoint)]: {
     transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
     }),
-  }),
+    ...(open && {
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: `${drawerWidth}px`,
+      transition: theme.transitions.create(['margin', 'width'], {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    }),
+  },
 }));
 
 export const DrawerHeader = styled('div')(({ theme }) => ({
@@ -68,7 +74,7 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
   alignItems: 'center',
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
+  height: toolbarHeight,
   justifyContent: 'flex-end',
 }));
 
@@ -84,7 +90,12 @@ const LogoutButton = () => {
 
 export default function Layout() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
+  const isWide = useMediaQuery(theme.breakpoints.up(breakpoint));
+  const [open, setOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    setOpen(isWide);
+  }, [isWide]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -94,10 +105,15 @@ export default function Layout() {
     setOpen(false);
   };
 
+  const handleListClick = () => {
+    if (!isWide)
+      setOpen(false);
+  };
+
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', flex: '1 1 auto' }}>
       <AppBar position="fixed" open={open}>
-        <Toolbar>
+        <Toolbar sx={{ height: toolbarHeight }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -123,9 +139,10 @@ export default function Layout() {
             boxSizing: 'border-box',
           },
         }}
-        variant="persistent"
+        variant={isWide ? 'persistent' : 'temporary'}
         anchor="left"
         open={open}
+        onClose={handleDrawerClose}
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
@@ -133,24 +150,28 @@ export default function Layout() {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List>
-          {mainRoutes.filter(r => r.path !== '*' && !r.hideLink).map(r => (
-            <ListItemLink
-              key={r.path}
-              to={r.to ?? r.path}
-              primary={r.label ?? ''}
-              icon={r.icon ?? <Home />}
-            />
-          ))}
-        </List>
-        <Divider />
-        <List>
-          <LogoutButton />
-        </List>
-        <Divider />
+        <Box
+          onClick={handleListClick}
+          onKeyDown={handleListClick}
+        >
+          <List>
+            {mainRoutes.filter(r => r.path !== '*' && !r.hideLink).map(r => (
+              <ListItemLink
+                key={r.path}
+                to={r.to ?? r.path}
+                primary={r.label ?? ''}
+                icon={r.icon ?? <Home />}
+              />
+            ))}
+          </List>
+          <Divider />
+          <List>
+            <LogoutButton />
+          </List>
+          <Divider />
+        </Box>
       </Drawer>
       <Main open={open}>
-        <DrawerHeader />
         <ProtectedView>
           <Outlet />
         </ProtectedView>

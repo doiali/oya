@@ -1,15 +1,16 @@
 import { Interval } from './apiService/types';
 import { format } from 'date-fns-jalali';
-import { Stack, Divider, Chip, Box, Typography, Pagination } from '@mui/material';
+import { Stack, Divider, Chip, Pagination, Box } from '@mui/material';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import IntervalItem from './IntervalItem';
+import Widget from './Widget';
 
 type IntervalsListProps = {
   intervals: Interval[],
   highLights?: number[],
 };
 
-const rowsPerPage = 40;
+const rowsPerPage = 30;
 export default memo(function IntervalsList({ intervals, highLights }: IntervalsListProps) {
   const [page, setPage] = useState(1);
   const rows = intervals.length;
@@ -28,7 +29,7 @@ export default memo(function IntervalsList({ intervals, highLights }: IntervalsL
   const renderList = () => {
     let prevEnd = new Date('2050-1-1');
     return (
-      <Stack spacing={1}>
+      <Stack spacing={1} sx={{ mb: 1 }}>
         {intervals
           .slice((page - 1) * rowsPerPage, page * rowsPerPage)
           .map((interval, i) => {
@@ -56,25 +57,25 @@ export default memo(function IntervalsList({ intervals, highLights }: IntervalsL
   };
 
   const pagination = (
-    <Stack
-      spacing={1} direction="row"
-      sx={{ alignItems: 'center', justifyContent: 'space-between' }}
+    <Box
+      sx={theme => ({
+        [theme.breakpoints.up('lg')]: {
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        },
+      })}
     >
-      <span>total rows: {rows}</span>
+      <Box mb={{ xs: 2, lg: 0 }}>total rows: {rows}</Box>
       {(rows > rowsPerPage) && (
         <Pagination count={totalPages} page={page} onChange={(_, x) => setPage(x)} />
       )}
-    </Stack>
+    </Box>
   );
 
   return (
-    <Box component="section" ref={ref}>
-      <Typography mb={2} variant="h5">
-        Intervals List
-      </Typography>
+    <Widget title="Intervals List" ref={ref}>
       {pagination}
       {renderList()}
       {(rows > 10) && pagination}
-    </Box>
+    </Widget>
   );
 });

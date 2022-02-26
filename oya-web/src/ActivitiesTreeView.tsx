@@ -5,7 +5,20 @@ import React, { memo, useState } from 'react';
 import { Activity } from './apiService';
 import useActivities from './useActivities';
 import { ActivityAdderDialog } from './ActivityAdder';
-import ActivityFilter, { ActivityFilterProps, ActivityFilters, filterActivities } from './ActivityFilter';
+import ActivityFilter, {
+  ActivityFilterProps, ActivityFilters, filterActivities,
+} from './ActivityFilter';
+import SimpleBar from 'simplebar-react';
+
+const StyledSimpleBar = styled(SimpleBar)(({ theme }) => ({
+  maxHeight: 600,
+  overflowY: 'auto',
+  backgroundColor: theme.palette.background.default,
+  marginTop: theme.spacing(2),
+  marginBottom: theme.spacing(2),
+  padding: theme.spacing(2, 1),
+  borderRadius: theme.spacing(0.5),
+}));
 
 const getAllTreeNodeIds = (activities: Activity[]) => {
   const ids: string[] = [];
@@ -82,7 +95,7 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
         </Button>
         <ActivityAdderDialog />
       </Stack>
-      <Box sx={{ maxHeight: 500, overflowY: 'auto' }}>
+      <StyledSimpleBar>
         <TreeView
           expanded={expanded}
           selected={selected}
@@ -100,16 +113,19 @@ const ActivitiesTreeView = memo(function ActivitiesTreeView({
             />
           ))}
         </TreeView>
-      </Box>
+      </StyledSimpleBar>
     </Box>
   );
 });
 
 const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
   [`& .${treeItemClasses.group}`]: {
-    marginLeft: 15,
-    paddingLeft: 5,
+    marginLeft: 12,
+    paddingLeft: 8,
     borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`,
+  },
+  [`& .${treeItemClasses.content}`]: {
+    padding: theme.spacing(0.5),
   },
 }));
 

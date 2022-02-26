@@ -1,11 +1,11 @@
 import { LockOutlined } from '@mui/icons-material';
-import { Box, AppBar, Toolbar, Typography, Container, Button, FormControlLabel, Checkbox, TextField, Avatar } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, Container, Button, FormControlLabel, Checkbox, TextField, Avatar, styled } from '@mui/material';
 import React, { FC, useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import AlertService from './AlertService';
 import { getToken } from './apiService';
 import { useAuth } from './AuthProvider';
-import { DrawerHeader } from './Layout';
+import { toolbarHeight } from './Layout';
 import ThemeModeSwitch from './ThemeModeSwitch';
 
 export default function LoginPage() {
@@ -94,6 +94,10 @@ const LoginController: FC = ({ children }) => {
   return <>{children}</>;
 };
 
+const Wrapper = styled('main')(() => ({
+  paddingTop: toolbarHeight,
+}));
+
 export function LoginPageLayout() {
   return (
     <>
@@ -106,12 +110,11 @@ export function LoginPageLayout() {
           <ThemeModeSwitch />
         </Toolbar>
       </AppBar>
-      <Box sx={{ p: 3 }}>
-        <DrawerHeader />
+      <Wrapper>
         <LoginController>
           <Outlet />
         </LoginController>
-      </Box>
+      </Wrapper>
     </>
   );
 }

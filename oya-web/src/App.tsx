@@ -10,6 +10,7 @@ import { AlertServiceContainer } from './AlertService';
 import MainRouter from './MainRouter';
 import { LocalizationProvider } from '@mui/lab';
 import AuthProvider from './AuthProvider';
+import 'simplebar/dist/simplebar.min.css';
 
 class MyAdapter extends AdapterJalali {
   constructor(args: any) {

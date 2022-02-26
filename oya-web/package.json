@@ -1,6 +1,6 @@
 {
   "name": "oya-web",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "private": true,
   "dependencies": {
     "@date-io/core": "^2.13.1",
@@ -37,6 +37,7 @@
     "react-scripts": "^5.0.0",
     "react-vis": "^1.11.7",
     "recharts": "^2.1.8",
+    "simplebar-react": "^2.3.6",
     "swr": "^1.2.0",
     "web-vitals": "^2.1.4"
   },

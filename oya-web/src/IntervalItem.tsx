@@ -1,6 +1,6 @@
 import { Interval } from './apiService/types';
 import { format } from 'date-fns-jalali';
-import { Stack, IconButton, Chip, Collapse, Typography } from '@mui/material';
+import { Stack, IconButton, Chip, Collapse, Typography, Box } from '@mui/material';
 import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { deleteInterval } from './apiService';
 import AlertService from './AlertService';
@@ -45,9 +45,9 @@ export default memo(function IntervalItem(
       <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <Stack direction="row" sx={{ alignItems: 'center', flexWrap: 'wrap' }} spacing={1}>
           <Typography color="secondary">{index}. {' '}</Typography>
-          <Chip dir="rtl" variant="outlined" label={format(start, 'MM/dd-HH:mm eeee')} />
+          <Chip dir="rtl" variant="outlined" label={format(start, 'MM/dd-HH:mm')} />
           <span>{' '}-{' '}</span>
-          <Chip dir="rtl" variant="outlined" label={format(end, 'MM/dd-HH:mm eeee')} />
+          <Chip dir="rtl" variant="outlined" label={format(end, 'MM/dd-HH:mm')} />
           <span>{' '}:{' '}</span>
           {interval.entries.map(({ activity_id }, i) => (
             <Chip
@@ -78,10 +78,12 @@ export default memo(function IntervalItem(
         </Collapse>
       )}
       {isEditing && (
-        <IntervalEditor
-          interval={interval}
-          onClose={() => setIsEditing(false)}
-        />
+        <Box py={2}>
+          <IntervalEditor
+            interval={interval}
+            onClose={() => setIsEditing(false)}
+          />
+        </Box>
       )}
     </Stack>
   );

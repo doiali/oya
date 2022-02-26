@@ -1,11 +1,12 @@
 import { ResponsiveSunburst, SunburstCustomLayerProps } from '@nivo/sunburst';
-import { Box, Button, useTheme } from '@mui/material';
+import { Box, Button, useTheme, Link as MuiLink } from '@mui/material';
 import { useReportContext } from './ReportProvider';
 import { generateTreeDataNivo, TreeDataNivo } from './chartUtils';
 import { useEffect, useMemo, useState } from 'react';
 import TooltipNivo from './TooltipNivo';
 import { getDeltaStringOfRange as ts } from '../utils';
 import { Link } from 'react-router-dom';
+import Widget from '../Widget';
 
 const CenteredMetric = ({
   centerX, centerY, data,
@@ -35,9 +36,9 @@ const CenteredMetric = ({
       {renderRow('avg per days', ts(report.avgPerDays))}
       {renderRow('occurance', report.occurance.toString())}
       <tspan x={centerX} dy={dy}>{path.map(a => a.name).join(' > ') ?? ''}</tspan>
-      <Link to={`/activities/${nodeId}/times`}>
-        <tspan x={centerX} dy={dy}>view chart</tspan>
-      </Link>
+      <MuiLink component={Link} to={`/activities/${nodeId}/times`}>
+        <tspan fill={theme.palette.primary.main} x={centerX} dy={dy}>view chart</tspan>
+      </MuiLink>
     </text>
   );
 };
@@ -78,59 +79,61 @@ export default function SunburstNivo() {
   const [isTop, setIsTop] = useState(false);
   const [isLeft, setIsLeft] = useState(true);
   return (
-    <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>
-      <Button disabled={originalData === data} onClick={() => setData(originalData)}>
-        reset
-      </Button>
-      <ResponsiveSunburst
-        layers={[
-          'arcs', 'arcLabels',
-          (props) => <CenteredMetric {...props} data={data} />,
-          (props) => <Legends {...props} />,
-        ]}
-        onClick={(datum) => {
-          setData(datum.data);
-        }}
-        onMouseMove={(props, e) => {
-          if (e.clientY > window.innerHeight / 2 && isTop) setIsTop(false);
-          if (e.clientY < window.innerHeight / 2 && !isTop) setIsTop(true);
-          if (e.clientX > window.innerWidth / 2 && isLeft) setIsLeft(false);
-          if (e.clientX < window.innerWidth / 2 && !isLeft) setIsLeft(true);
-        }}
-        tooltip={(props) => <TooltipNivo {...props} {...{ isTop, isLeft }} />}
-        data={data}
-        margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-        id="nodeId"
-        value="value"
-        cornerRadius={2}
-        borderColor={{
-          from: 'color', modifiers: [[
-            'darker',
-            1.5,
-          ]],
-        }}
-        colors={{ scheme: 'nivo' }}
-        childColor={{
-          from: 'color',
-          modifiers: [
-            [
-              'brighter',
-              0.2,
-            ],
-          ],
-        }}
-        enableArcLabels={true}
-        arcLabelsSkipAngle={10}
-        arcLabelsTextColor={{
-          from: 'color',
-          modifiers: [
-            [
+    <Widget title="Overall report">
+      <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>
+        <Button disabled={originalData === data} onClick={() => setData(originalData)}>
+          reset
+        </Button>
+        <ResponsiveSunburst
+          layers={[
+            'arcs', 'arcLabels',
+            (props) => <CenteredMetric {...props} data={data} />,
+            (props) => <Legends {...props} />,
+          ]}
+          onClick={(datum) => {
+            setData(datum.data);
+          }}
+          onMouseMove={(props, e) => {
+            if (e.clientY > window.innerHeight / 2 && isTop) setIsTop(false);
+            if (e.clientY < window.innerHeight / 2 && !isTop) setIsTop(true);
+            if (e.clientX > window.innerWidth / 2 && isLeft) setIsLeft(false);
+            if (e.clientX < window.innerWidth / 2 && !isLeft) setIsLeft(true);
+          }}
+          tooltip={(props) => <TooltipNivo {...props} {...{ isTop, isLeft }} />}
+          data={data}
+          margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
+          id="nodeId"
+          value="value"
+          cornerRadius={2}
+          borderColor={{
+            from: 'color', modifiers: [[
               'darker',
-              3,
+              1.5,
+            ]],
+          }}
+          colors={{ scheme: 'nivo' }}
+          childColor={{
+            from: 'color',
+            modifiers: [
+              [
+                'brighter',
+                0.2,
+              ],
             ],
-          ],
-        }}
-      />
-    </Box>
+          }}
+          enableArcLabels={true}
+          arcLabelsSkipAngle={10}
+          arcLabelsTextColor={{
+            from: 'color',
+            modifiers: [
+              [
+                'darker',
+                3,
+              ],
+            ],
+          }}
+        />
+      </Box>
+    </Widget>
   );
 }

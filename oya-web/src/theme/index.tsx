@@ -18,7 +18,7 @@ const LinkBehavior = React.forwardRef<
   return <RouterLink ref={ref} to={href} {...other} />;
 });
 
-const baseTheme: ThemeOptions = {
+const baseTheme: ThemeOptions = ({
   components: {
     MuiLink: {
       defaultProps: {
@@ -30,15 +30,60 @@ const baseTheme: ThemeOptions = {
         LinkComponent: LinkBehavior,
       },
     },
+    MuiCssBaseline: {
+      styleOverrides: {
+        'body, #root, html': {
+          display: 'flex',
+          flex: '1 1 auto',
+          flexDirection: 'column',
+          width: '100%',
+        },
+        'body, html': {
+          minHeight: '100%',
+        },
+        '#root': {
+          height: '100%',
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+        },
+      },
+    },
   },
-};
+});
 
-const getTheme = (ThemeOptions: ThemeOptions = {}) => createTheme(deepMerge(baseTheme, ThemeOptions));
+const getTheme = (ThemeOptions: ThemeOptions = {}) => (
+  createTheme(deepMerge({}, baseTheme, ThemeOptions))
+);
 
-export const themes = {
-  light: getTheme({ palette: { mode: 'light' } }),
-  dark: getTheme({ palette: { mode: 'dark' } }),
-} as const;
+const dark = getTheme({
+  palette: {
+    mode: 'dark',
+    background: {
+      default: 'rgb(11,15,25)',
+      paper: 'rgb(17,24,39)',
+    },
+    primary: {
+      main: '#7582eb',
+      contrastText: '#000000',
+    },
+  },
+});
+
+const light = getTheme({
+  palette: {
+    mode: 'light',
+    background: {
+      default: 'rgb(247,249,242)',
+    },
+  },
+});
+
+export const themes = { light, dark } as const;
 
 export type ThemeName = keyof typeof themes;
 

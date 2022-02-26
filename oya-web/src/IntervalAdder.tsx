@@ -1,5 +1,5 @@
 
-import { alpha, Button, Paper, Typography, useTheme } from '@mui/material';
+import { Button } from '@mui/material';
 import React, { memo, useState } from 'react';
 import { IntervalCreate, Entry } from './apiService/types';
 import { addInterval } from './apiService';
@@ -7,6 +7,7 @@ import { mutate } from 'swr';
 import AlertService from './AlertService';
 import IntervalForm, { IntervalFormProps } from './IntervalForm';
 import useIntervals from './useIntervals';
+import Widget from './Widget';
 
 const now = (plus = 0) => {
   const x = new Date();
@@ -16,18 +17,14 @@ const now = (plus = 0) => {
 
 export default memo(function IntervalAdder() {
   const intervalFormProps = useIntervalCreate();
-  const theme = useTheme();
   return (
-    <Paper component="section" sx={{ mb: 2, py: 3, backgroundColor: alpha(theme.palette.secondary.main, 0.1) }}>
-      <Typography pl={2} variant='h5'>
-        Create Interval
-      </Typography>
+    <Widget sx={{ mb: 3 }} title="Create Interval">
       <IntervalForm {...intervalFormProps}>
         <Button disabled={intervalFormProps.state.loading} size="large" type="submit" variant="contained">
           add interval
         </Button>
       </IntervalForm>
-    </Paper>
+    </Widget>
   );
 });
 
