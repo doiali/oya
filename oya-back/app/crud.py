@@ -138,8 +138,7 @@ def get_intervals_meta(
         stmt = stmt.where(Interval.end >= from_date)
     if to_date is not None:
         stmt = stmt.where(Interval.start <= to_date)
-    meta = db.execute(stmt).all()
-    print(meta)
+    meta = db.execute(stmt).first()
     return meta
 
 

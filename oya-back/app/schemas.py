@@ -84,6 +84,11 @@ class Interval(IntervalBase):
         orm_mode = True
 
 
+class IntervalsResponse(BaseModel):
+    meta: IntervalsMeta
+    data: List[Interval]
+
+
 class ReportSinge(BaseModel):
     duration: int
     occurance: int

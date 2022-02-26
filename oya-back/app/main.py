@@ -88,7 +88,7 @@ def update_activity(
 @app.get(
     "/intervals/metadata",
     tags=["Intervals"],
-    response_model=List[schemas.IntervalsMeta],
+    response_model=schemas.IntervalsMeta,
 )
 def get_intervals_metadata(
     from_date: datetime.date | datetime.datetime = None,
@@ -113,6 +113,26 @@ def get_intervals(
     return crud.get_intervals(
         db=db, skip=skip, limit=limit, user=user, from_date=from_date, to_date=to_date
     )
+
+
+@app.get(
+    "/intervals-new/", tags=["Intervals"], response_model=schemas.IntervalsResponse
+)
+def get_intervals_data(
+    skip: int = 0,
+    limit: int = 5000,
+    from_date: datetime.date | datetime.datetime = None,
+    to_date: datetime.date | datetime.datetime = None,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    intervals = crud.get_intervals(
+        db=db, skip=skip, limit=limit, user=user, from_date=from_date, to_date=to_date
+    )
+    meta = crud.get_intervals_meta(
+        db=db, user=user, from_date=from_date, to_date=to_date
+    )
+    return { "meta": meta, "data": intervals}
 
 
 @app.get("/daily_report/", tags=["Reports"], response_model=schemas.DailyReport)
