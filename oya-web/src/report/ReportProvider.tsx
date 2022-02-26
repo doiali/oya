@@ -11,20 +11,22 @@ import {
 } from './reportUtils';
 import useIntervals from '../useIntervals';
 import { useOutletContext } from 'react-router';
+
 export type ReportContext = {
-  atrm: ActivityTotalReportMap;
-  atra: ActivityTotalReport[];
-  ddm: DailyDataMap;
-  dda: DailyData[];
+  ATRM: ActivityTotalReportMap;
+  ATRA: ActivityTotalReport[];
+  DDM: DailyDataMap;
+  DDA: DailyData[];
   intervals: Interval[];
   activities: Activity[];
   activityMappings: ActivityMappings;
 };
+
 const defaultValue: ReportContext = {
-  atrm: {},
-  atra: [],
-  ddm: {},
-  dda: [],
+  ATRM: {},
+  ATRA: [],
+  DDM: {},
+  DDA: [],
   intervals: [],
   activities: [],
   activityMappings: {},
@@ -35,13 +37,13 @@ export function useReport() {
   const { intervals } = useIntervals();
   const { activityMappings, activities } = useActivities();
   const value = useMemo(() => {
-    const ddm = createDailyDataMap(intervals, activityMappings);
-    const dda = Object.values(ddm);
-    const atrm = createActivityTotalReportMap(dda);
-    const atra = Object.values(atrm).sort((a, b) => (
+    const DDM = createDailyDataMap(intervals, activityMappings);
+    const DDA = Object.values(DDM);
+    const ATRM = createActivityTotalReportMap(DDA);
+    const ATRA = Object.values(ATRM).sort((a, b) => (
       Number(b?.time) - Number(a?.time)
     )) as ActivityTotalReport[];
-    return { intervals, activityMappings, activities, ddm, dda, atrm, atra };
+    return { intervals, activityMappings, activities, DDM, DDA, ATRM, ATRA };
   }, [intervals, activities, activityMappings]);
   return value;
 }

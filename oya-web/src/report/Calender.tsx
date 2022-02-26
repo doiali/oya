@@ -45,7 +45,7 @@ const getWeeks = (start: Date) => {
 };
 
 export default function Calender() {
-  const { activity, report: { dda, intervals } } = useActivityContext();
+  const { activity, report: { DDA: dda, intervals } } = useActivityContext();
   const start = getStart();
   const weeks = getWeeks(start);
   const [date, setDate] = useState<Date | null>(null);

@@ -10,7 +10,7 @@ type ActivityOverviewReportProps = {
 };
 
 export function GridOverviewReport() {
-  const { atra } = useReportContext();
+  const { ATRA: atra } = useReportContext();
   return (
     <Grid container spacing={2}>
       {atra.map((r) => r && (
@@ -23,7 +23,7 @@ export function GridOverviewReport() {
 }
 
 export default function ActivityOverviewReport({ activity }: ActivityOverviewReportProps) {
-  const { atrm } = useReportContext();
+  const { ATRM: atrm } = useReportContext();
   const renderRow = (name: string, value: string | number) => (
     <Typography key={name}>
       {name}: <b>{value}</b>

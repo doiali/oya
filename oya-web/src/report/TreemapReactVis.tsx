@@ -4,7 +4,7 @@ import { useReportContext } from './ReportProvider';
 import { generateTreeDataReactVis } from './chartUtils';
 
 export default function TreemapReactVis() {
-  const { atrm, activities } = useReportContext();
+  const { ATRM: atrm, activities } = useReportContext();
   const data = generateTreeDataReactVis(atrm, activities);
   return (
     <Box

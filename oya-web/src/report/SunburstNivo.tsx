@@ -70,7 +70,7 @@ const Legends = ({
 };
 
 export default function SunburstNivo() {
-  const { atrm, activities } = useReportContext();
+  const { ATRM: atrm, activities } = useReportContext();
   const originalData = useMemo(() => generateTreeDataNivo(atrm, activities), [atrm, activities]);
   const [data, setData] = useState(originalData);
   useEffect(() => {

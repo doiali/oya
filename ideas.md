@@ -34,7 +34,7 @@
 - [ ] a dashboard page for report
 
 - [ ] UX improvements
-- [ ] UI and design improvement
+- [x] UI and design improvement
 - [x] add calender chart to activity view
 - [x] show intervals of the day if select a day in bar or calender time chart
 - [x] add highlighting effect to intervals list

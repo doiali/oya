@@ -5,7 +5,7 @@ import { useReportContext } from './ReportProvider';
 import { generateTreeDataRe } from './chartUtils';
 
 export default function TreemapRechart() {
-  const { atrm, activities } = useReportContext();
+  const { ATRM: atrm, activities } = useReportContext();
   const data = generateTreeDataRe(atrm, activities);
   return (
     <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>

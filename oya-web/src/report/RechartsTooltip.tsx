@@ -14,7 +14,7 @@ type ActivityOverViewReportProps = {
 };
 
 export function ActivityOverViewReport({ activity, prefix }: ActivityOverViewReportProps) {
-  const { atrm } = useReportContext();
+  const { ATRM: atrm } = useReportContext();
   const renderRow = (name: string, value: string | number) => (
     <Typography textAlign="center" key={name}>
       {name}: <b>{value}</b>

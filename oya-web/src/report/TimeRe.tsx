@@ -7,7 +7,7 @@ import { useActivityContext } from '../ActivityPageLayout';
 import Widget from '../Widget';
 
 export default function TimeRe() {
-  const { activity, report: { dda } } = useActivityContext();
+  const { activity, report: { DDA: dda } } = useActivityContext();
   const data = dda.map(d => {
     return {
       name: format(d.date, 'MM/dd'),
