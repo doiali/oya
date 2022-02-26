@@ -34,7 +34,7 @@ export type ReportContextResults = {
   tDDA: DailyData[];
   state: ReportContextState;
   onChange<T extends keyof ReportContextState>(name: T, value: ReportContextState[T]): void;
-}
+};
 
 export type ReportContext = ReportContextBase & ReportContextResults;
 
@@ -76,14 +76,26 @@ export function useReport(): ReportContext {
   });
   const { activityMappings, activities } = useActivities();
   const [state, setState] = useState<ReportContextState>(() => getInitState(intervalsMeta));
-  const base = useMemo<ReportContext>(() => {
+
+  const base = useMemo<ReportContextBase>(() => {
+    const DDM = createDailyDataMap(intervals, activityMappings);
+    const DDA = Object.values(DDM);
+    const ATRM = createActivityTotalReportMap(DDA);
+    const ATRA = Object.values(ATRM).sort((a, b) => (
+      Number(b?.time) - Number(a?.time)
+    )) as ActivityTotalReport[];
+    return {
+      intervals, intervalsMeta, activityMappings, activities,
+      DDM, DDA, ATRM, ATRA,
+    };
+  }, [intervals, activities, activityMappings, intervalsMeta]);
+
+  const results = useMemo<ReportContextResults>(() => {
     const onChange: ReportContext['onChange'] = (name, value) => {
       setState((prev) => ({ ...prev, [name]: value }));
     };
-    const DDM = createDailyDataMap(intervals, activityMappings);
-    const DDA = Object.values(DDM);
-    const tDDA = DDA.filter(({ date }) => {
-      if (!intervalsMeta) return true;
+    const tDDA = base.DDA.filter(({ date }) => {
+      if (!base.intervalsMeta) return true;
       if (
         !state.end || !state.start ||
         isNaN(state.end.getTime()) || isNaN(state.start.getTime()) ||
@@ -93,21 +105,20 @@ export function useReport(): ReportContext {
       }
       return false;
     });
-    const ATRM = createActivityTotalReportMap(DDA);
-    const ATRA = Object.values(ATRM).sort((a, b) => (
-      Number(b?.time) - Number(a?.time)
-    )) as ActivityTotalReport[];
     const tATRM = createActivityTotalReportMap(tDDA);
     const tATRA = Object.values(tATRM).sort((a, b) => (
       Number(b?.time) - Number(a?.time)
     )) as ActivityTotalReport[];
     return {
-      intervals, intervalsMeta, activityMappings, activities,
-      DDM, DDA, ATRM, ATRA, tDDA, tATRM, tATRA,
+      tDDA, tATRM, tATRA,
       state, onChange,
     };
-  }, [intervals, activities, activityMappings, state, intervalsMeta]);
-  return base;
+  }, [base.intervalsMeta, base.DDA, state]);
+
+  const value = useMemo<ReportContext>(() => {
+    return { ...base, ...results };
+  }, [base, results]);
+  return value;
 }
 
 export default function ReportProvider({ children }: { children?: React.ReactNode; }) {
