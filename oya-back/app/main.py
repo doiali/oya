@@ -105,10 +105,14 @@ def get_intervals_metadata(
 def get_intervals(
     skip: int = 0,
     limit: int = 5000,
+    from_date: datetime.date | datetime.datetime = None,
+    to_date: datetime.date | datetime.datetime = None,
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    return crud.get_intervals(db=db, skip=skip, limit=limit, user=user)
+    return crud.get_intervals(
+        db=db, skip=skip, limit=limit, user=user, from_date=from_date, to_date=to_date
+    )
 
 
 @app.get("/daily_report/", tags=["Reports"], response_model=schemas.DailyReport)

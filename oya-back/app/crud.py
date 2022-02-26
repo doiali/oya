@@ -96,7 +96,15 @@ def delete_activity(*, user: userSchema, db: Session, activity_id: int):
         return db_activity
 
 
-def get_intervals(*, user: userSchema, db: Session, skip: int = 0, limit: int = 10000):
+def get_intervals(
+    *,
+    user: userSchema,
+    db: Session,
+    skip: int = 0,
+    limit: int = 10000,
+    from_date: datetime.datetime = None,
+    to_date: datetime.datetime = None,
+):
     stmt = (
         select(models.Interval)
         .options(joinedload(models.Interval.entries))
@@ -105,6 +113,10 @@ def get_intervals(*, user: userSchema, db: Session, skip: int = 0, limit: int = 
         .offset(skip)
         .limit(limit)
     )
+    if from_date is not None:
+        stmt = stmt.where(Interval.end >= from_date)
+    if to_date is not None:
+        stmt = stmt.where(Interval.start <= to_date)
     intervals = db.execute(stmt).scalars().unique().all()
     return intervals
 
