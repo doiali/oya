@@ -9,8 +9,8 @@ type useIntervalsProps = {
 };
 
 export default function useIntervals({ onLoad }: useIntervalsProps = {}) {
-  const { data } = useSWR('/intervals/', intervalsFetcher);
+  const { data: { data, meta } = {} } = useSWR('/intervals/', intervalsFetcher);
   const loaded = Boolean(data);
   useTrigger(loaded, () => (data && onLoad?.(data)));
-  return { intervals: data ?? [], loaded };
+  return { intervals: data ?? [], meta, loaded };
 }

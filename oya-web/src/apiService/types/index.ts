@@ -45,6 +45,18 @@ export type Interval = IntervalBase & {
   entries: Entry[],
 };
 
+export type IntervalsMeta = {
+  min: Date,
+  max: Date,
+  count: number,
+  intervals_sum: number,
+};
+
+export type IntervalsReponse = {
+  meta: IntervalsMeta,
+  data: Interval[],
+};
+
 export type UserBase = {
   username: string,
   firstname?: string,

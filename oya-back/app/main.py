@@ -101,7 +101,7 @@ def get_intervals_metadata(
     )
 
 
-@app.get("/intervals/", tags=["Intervals"], response_model=List[schemas.Interval])
+@app.get("/intervals-old/", tags=["Intervals"], response_model=List[schemas.Interval])
 def get_intervals(
     skip: int = 0,
     limit: int = 5000,
@@ -116,7 +116,7 @@ def get_intervals(
 
 
 @app.get(
-    "/intervals-new/", tags=["Intervals"], response_model=schemas.IntervalsResponse
+    "/intervals/", tags=["Intervals"], response_model=schemas.IntervalsResponse
 )
 def get_intervals_data(
     skip: int = 0,
