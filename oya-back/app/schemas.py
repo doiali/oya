@@ -60,10 +60,10 @@ class Entry(BaseModel):
 
 
 class IntervalsMeta(BaseModel):
-    min: datetime.datetime
-    max: datetime.datetime
-    count: int
-    intervals_sum: datetime.timedelta
+    min: datetime.datetime | None
+    max: datetime.datetime | None
+    count: int | None
+    intervals_sum: datetime.timedelta | None
 
 
 class IntervalBase(BaseModel):

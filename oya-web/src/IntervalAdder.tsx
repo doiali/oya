@@ -29,13 +29,13 @@ export default memo(function IntervalAdder() {
 });
 
 function useIntervalCreate() {
-  const { intervals } = useIntervals({
-    onLoad: (intervals) => setState(p => ({
-      ...p, start: intervals[0]?.end ? new Date(intervals[0]?.end) : now(-1),
+  const { meta } = useIntervals({
+    onLoad: ({ meta }) => setState(p => ({
+      ...p, start: meta.max ? new Date(meta.max) : now(-1),
     })),
   });
   const [state, setState] = useState({
-    start: intervals[0]?.end ? new Date(intervals[0]?.end) : now(-1),
+    start: meta?.max ? new Date(meta.max) : now(-1),
     end: now(),
     note: '' as string,
     selectedEntries: [] as Entry[],

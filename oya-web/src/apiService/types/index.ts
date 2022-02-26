@@ -46,10 +46,10 @@ export type Interval = IntervalBase & {
 };
 
 export type IntervalsMeta = {
-  min: Date,
-  max: Date,
-  count: number,
-  intervals_sum: number,
+  min: string | null,
+  max: string | null,
+  count?: number,
+  intervals_sum?: number,
 };
 
 export type IntervalsReponse = {
