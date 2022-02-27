@@ -12,9 +12,21 @@ import {
 import useIntervals from '../useIntervals';
 import { useOutletContext } from 'react-router';
 
+export const rangeOptions = [
+  { value: 'lastWeek', label: 'last week', days: 7 },
+  { value: 'lastMonth', label: 'last month', days: 30 },
+  { value: 'lastYear', label: 'last year', days: 365 },
+  { value: 'allTime', label: 'all time' },
+  { value: 'custom', label: 'custom' },
+] as const;
+
+export type RangeOption = typeof rangeOptions[number];
+export type RangeOptionKey = RangeOption['value'];
+
 export type ReportContextState = {
   start: Date | null;
   end: Date | null;
+  period: RangeOption;
 };
 
 export type ReportContextBase = {
@@ -26,6 +38,7 @@ export type ReportContextBase = {
   ATRA: ActivityTotalReport[];
   DDM: DailyDataMap;
   DDA: DailyData[];
+  onChange<T extends keyof ReportContextState>(name: T, value: ReportContextState[T]): void;
 };
 
 export type ReportContextResults = {
@@ -33,7 +46,6 @@ export type ReportContextResults = {
   tATRA: ActivityTotalReport[];
   tDDA: DailyData[];
   state: ReportContextState;
-  onChange<T extends keyof ReportContextState>(name: T, value: ReportContextState[T]): void;
 };
 
 export type ReportContext = ReportContextBase & ReportContextResults;
@@ -52,24 +64,35 @@ const defaultValue: ReportContext = {
   state: {
     start: null,
     end: null,
+    period: { value: 'lastMonth', label: 'last month', days: 30 },
   },
   onChange: () => 0,
 };
 const ReportContext = createContext<ReportContext>(defaultValue);
 
-const getInitState = (meta: IntervalsMeta | undefined) => {
+const getRangeFromRangeOption = (period: RangeOption, meta?: IntervalsMeta) => {
   let end = new Date();
   if (meta?.max)
     end = new Date(meta.max);
   end.setDate(end.getDate() + 1);
   end.setHours(0, 0, 0, 0);
   let start = new Date(0);
-  if (meta?.min)
-    start = new Date(meta.min);
+  if (meta?.min) {
+    if (period.value === 'allTime' || period.value === 'custom')
+      start = new Date(meta.min);
+    else {
+      start = new Date();
+      start.setDate(start.getDate() - period.days);
+    }
+  }
   start.setHours(0, 0, 0, 0);
-  // const start = new Date(end);
-  // start.setDate(start.getDate() - 30);
   return { start, end };
+};
+
+const getInitState = (meta: IntervalsMeta | undefined): ReportContextState => {
+  const defaultOption: RangeOption = { value: 'lastMonth', label: 'last month', days: 30 };
+  const dates = getRangeFromRangeOption(defaultOption, meta);
+  return { ...dates, period: defaultOption };
 };
 
 export function useReport(): ReportContext {
@@ -80,6 +103,25 @@ export function useReport(): ReportContext {
   const [state, setState] = useState<ReportContextState>(() => getInitState(intervalsMeta));
 
   const base = useMemo<ReportContextBase>(() => {
+    const onChange: ReportContext['onChange'] = (name, value) => {
+      if (name === 'period') {
+        const val = value as RangeOption;
+        setState((prev) => ({
+          ...prev,
+          ...(val.value !== 'custom'
+            ? getRangeFromRangeOption(val, intervalsMeta)
+            : {}
+          ),
+          period: val,
+        }));
+      } else if (name === 'start' || name === 'end') {
+        setState((prev) => ({
+          ...prev,
+          period: { value: 'custom', label: 'custom' },
+          [name]: value,
+        }));
+      }
+    };
     const DDM = createDailyDataMap(intervals, activityMappings);
     const DDA = Object.values(DDM);
     const ATRM = createActivityTotalReportMap(DDA);
@@ -88,14 +130,11 @@ export function useReport(): ReportContext {
     )) as ActivityTotalReport[];
     return {
       intervals, intervalsMeta, activityMappings, activities,
-      DDM, DDA, ATRM, ATRA,
+      DDM, DDA, ATRM, ATRA, onChange,
     };
   }, [intervals, activities, activityMappings, intervalsMeta]);
 
   const results = useMemo<ReportContextResults>(() => {
-    const onChange: ReportContext['onChange'] = (name, value) => {
-      setState((prev) => ({ ...prev, [name]: value }));
-    };
     const tDDA = base.DDA.filter(({ date }) => {
       if (!base.intervalsMeta) return true;
       if (
@@ -113,7 +152,7 @@ export function useReport(): ReportContext {
     )) as ActivityTotalReport[];
     return {
       tDDA, tATRM, tATRA,
-      state, onChange,
+      state,
     };
   }, [base.intervalsMeta, base.DDA, state]);
 
