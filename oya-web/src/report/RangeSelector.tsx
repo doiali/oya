@@ -26,7 +26,6 @@ export default memo(function RangeSelectorForm({
           {(['start', 'end'] as const).map((type) => (
             <Grid key={type} item>
               <DatePicker
-                disabled={state.period.value !== 'custom'}
                 disableMaskedInput
                 value={state[type]}
                 onChange={(newValue) => onChange(type, newValue)}

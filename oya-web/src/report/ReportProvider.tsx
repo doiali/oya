@@ -13,7 +13,7 @@ import useIntervals from '../useIntervals';
 import { useOutletContext } from 'react-router';
 
 export const rangeOptions = [
-  { value: 'today', label: 'Today', days: 0 },
+  { value: 'today', label: 'Today', days: 1 },
   { value: 'lastWeek', label: 'Last week', days: 7 },
   { value: 'lastMonth', label: 'Last month', days: 30 },
   { value: 'lastYear', label: 'Last year', days: 365 },
@@ -75,14 +75,13 @@ const getRangeFromRangeOption = (period: RangeOption, meta?: IntervalsMeta) => {
   let end = new Date();
   if (meta?.max)
     end = new Date(meta.max);
-  end.setDate(end.getDate());
   end.setHours(0, 0, 0, 0);
   let start = new Date(end);
   if (meta?.min) {
     if (period.value === 'allTime' || period.value === 'custom')
       start = new Date(meta.min);
     else {
-      start.setDate(start.getDate() - period.days);
+      start.setDate(start.getDate() - period.days + 1);
     }
   }
   start.setHours(0, 0, 0, 0);
