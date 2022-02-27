@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import {
-  Brush, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Bar, ComposedChart,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Bar, ComposedChart,
 } from 'recharts';
 import { format } from 'date-fns-jalali';
 import { useActivityContext } from '../ActivityPageLayout';
@@ -20,7 +20,7 @@ export default function TimeRe() {
     <Widget
       title={activity?.name ?? 'Total Time'}
     >
-      <Box sx={{ width: '100%', height: 600, maxWidth: 1700 }}>
+      <Box sx={{ width: '100%', height: 400, maxWidth: 1700 }}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             width={500}
@@ -38,7 +38,6 @@ export default function TimeRe() {
             <YAxis />
             <Tooltip />
             <Bar fill="#8884d8" dataKey="value" />
-            <Brush />
           </ComposedChart>
         </ResponsiveContainer>
       </Box>
