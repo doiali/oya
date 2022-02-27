@@ -214,15 +214,15 @@
       0
     ],
     "no-multi-spaces": "warn",
-    "react/jsx-handler-names": [
-      1,
-      {
-        "eventHandlerPrefix": "handle",
-        "eventHandlerPropPrefix": "on",
-        "checkLocalVariables": true,
-        "checkInlineFunction": false
-      }
-    ],
+    // "react/jsx-handler-names": [
+    //   1,
+    //   {
+    //     "eventHandlerPrefix": "handle",
+    //     "eventHandlerPropPrefix": "on",
+    //     "checkLocalVariables": true,
+    //     "checkInlineFunction": false
+    //   }
+    // ],
     "react/jsx-tag-spacing": [
       1,
       {
