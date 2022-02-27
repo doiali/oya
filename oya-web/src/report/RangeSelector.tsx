@@ -38,6 +38,7 @@ export default memo(function RangeSelectorForm({
           ))}
         </Grid>
         <Select
+          sx={{ '& div[role="button"]': { minWidth: 150 } }}
           value={state.period.value}
           onChange={({ target: { value } }) => {
             const period = rangeOptions.find(o => o.value === value);

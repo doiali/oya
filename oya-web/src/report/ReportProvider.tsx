@@ -13,11 +13,12 @@ import useIntervals from '../useIntervals';
 import { useOutletContext } from 'react-router';
 
 export const rangeOptions = [
-  { value: 'lastWeek', label: 'last week', days: 7 },
-  { value: 'lastMonth', label: 'last month', days: 30 },
-  { value: 'lastYear', label: 'last year', days: 365 },
-  { value: 'allTime', label: 'all time' },
-  { value: 'custom', label: 'custom' },
+  { value: 'today', label: 'Today', days: 0 },
+  { value: 'lastWeek', label: 'Last week', days: 7 },
+  { value: 'lastMonth', label: 'Last month', days: 30 },
+  { value: 'lastYear', label: 'Last year', days: 365 },
+  { value: 'allTime', label: 'All time' },
+  { value: 'custom', label: 'Custom' },
 ] as const;
 
 export type RangeOption = typeof rangeOptions[number];
@@ -64,7 +65,7 @@ const defaultValue: ReportContext = {
   state: {
     start: null,
     end: null,
-    period: { value: 'lastMonth', label: 'last month', days: 30 },
+    period: { value: 'lastMonth', label: 'Last month', days: 30 },
   },
   onChange: () => 0,
 };
@@ -74,14 +75,13 @@ const getRangeFromRangeOption = (period: RangeOption, meta?: IntervalsMeta) => {
   let end = new Date();
   if (meta?.max)
     end = new Date(meta.max);
-  end.setDate(end.getDate() + 1);
+  end.setDate(end.getDate());
   end.setHours(0, 0, 0, 0);
-  let start = new Date(0);
+  let start = new Date(end);
   if (meta?.min) {
     if (period.value === 'allTime' || period.value === 'custom')
       start = new Date(meta.min);
     else {
-      start = new Date();
       start.setDate(start.getDate() - period.days);
     }
   }
@@ -90,7 +90,7 @@ const getRangeFromRangeOption = (period: RangeOption, meta?: IntervalsMeta) => {
 };
 
 const getInitState = (meta: IntervalsMeta | undefined): ReportContextState => {
-  const defaultOption: RangeOption = { value: 'lastMonth', label: 'last month', days: 30 };
+  const defaultOption: RangeOption = { value: 'lastMonth', label: 'Last month', days: 30 };
   const dates = getRangeFromRangeOption(defaultOption, meta);
   return { ...dates, period: defaultOption };
 };
@@ -117,7 +117,7 @@ export function useReport(): ReportContext {
       } else if (name === 'start' || name === 'end') {
         setState((prev) => ({
           ...prev,
-          period: { value: 'custom', label: 'custom' },
+          period: { value: 'custom', label: 'Custom' },
           [name]: value,
         }));
       }
