@@ -31,8 +31,8 @@ const renderCustomizedLabel = (props: PieLabelRenderProps) => {
 };
 
 export default function PieTotalRechart() {
-  const { atrm, activities } = useReportContext();
-  const data = generateDataRe(atrm, activities);
+  const { tATRM, activities } = useReportContext();
+  const data = generateDataRe(tATRM, activities);
   return (
     <Box sx={{ width: '100%', height: 700, maxWidth: 1700 }}>
       <ResponsiveContainer width="100%" height="100%">

@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 from dateutil import parser
 
@@ -16,10 +17,9 @@ app = FastAPI()
 app.include_router(router)
 
 origins = [
-    "https://localhost:3000",
     "http://localhost:3000",
-    "https://localhost:3001",
     "http://localhost:3001",
+    "http://localhost:3022",
 ]
 
 app.add_middleware(
@@ -85,21 +85,24 @@ def update_activity(
         raise HTTPException(status_code=400, detail=f"{e.orig}")
 
 
-@app.get("/intervals/", tags=["Intervals"], response_model=List[schemas.Interval])
-def get_intervals(
+@app.get(
+    "/intervals/", tags=["Intervals"], response_model=schemas.IntervalsResponse
+)
+def get_intervals_data(
     skip: int = 0,
     limit: int = 5000,
+    from_date: datetime.date | datetime.datetime = None,
+    to_date: datetime.date | datetime.datetime = None,
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    return crud.get_intervals(db=db, skip=skip, limit=limit, user=user)
-
-
-@app.get("/daily_report/", tags=["Reports"], response_model=schemas.DailyReport)
-def get_daily_report(
-    date: str, db: Session = Depends(get_db), user=Depends(get_current_user)
-):
-    return crud.get_daily_report(db=db, date=parser.parse(date).date(), user=user)
+    intervals = crud.get_intervals(
+        db=db, skip=skip, limit=limit, user=user, from_date=from_date, to_date=to_date
+    )
+    meta = crud.get_intervals_meta(
+        db=db, user=user, from_date=from_date, to_date=to_date
+    )
+    return { "meta": meta, "data": intervals}
 
 
 @app.post("/intervals/", tags=["Intervals"], response_model=schemas.Interval)
@@ -120,7 +123,9 @@ def update_interval(
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    return crud.update_interval(db=db, interval_id=interval_id, interval=interval, user=user)
+    return crud.update_interval(
+        db=db, interval_id=interval_id, interval=interval, user=user
+    )
 
 
 @app.delete("/intervals/{interval_id}", tags=["Intervals"], status_code=204)
@@ -131,3 +136,10 @@ def delete_interval(
         crud.delete_interval(db=db, interval_id=interval_id, user=user)
     except ReferenceError:
         raise HTTPException(status_code=400, detail="interval not found")
+
+
+@app.get("/daily_report/", tags=["Reports"], response_model=schemas.DailyReport)
+def get_daily_report(
+    date: str, db: Session = Depends(get_db), user=Depends(get_current_user)
+):
+    return crud.get_daily_report(db=db, date=parser.parse(date).date(), user=user)

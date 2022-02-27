@@ -10,10 +10,10 @@ type ActivityOverviewReportProps = {
 };
 
 export function GridOverviewReport() {
-  const { atra } = useReportContext();
+  const { tATRA } = useReportContext();
   return (
     <Grid container spacing={2}>
-      {atra.map((r) => r && (
+      {tATRA.map((r) => r && (
         <Grid key={r.activity.id} item xs={6} md={4} lg={3} xl={2}>
           <ActivityOverviewReport activity={r.activity} />
         </Grid>
@@ -23,13 +23,13 @@ export function GridOverviewReport() {
 }
 
 export default function ActivityOverviewReport({ activity }: ActivityOverviewReportProps) {
-  const { atrm } = useReportContext();
+  const { tATRM } = useReportContext();
   const renderRow = (name: string, value: string | number) => (
     <Typography key={name}>
       {name}: <b>{value}</b>
     </Typography>
   );
-  const r = atrm[activity.id];
+  const r = tATRM[activity.id];
   if (!r) return null;
   return (
     <Widget title={'Overview report: ' + activity.name}>

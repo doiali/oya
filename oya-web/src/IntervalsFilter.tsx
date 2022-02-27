@@ -4,7 +4,7 @@ import {
   Stack, TextField,
 } from '@mui/material';
 import { memo, useMemo, useState } from 'react';
-import { Activity, Interval } from './apiService';
+import { Activity, IntervalsMeta } from './apiService';
 import { DatePicker } from '@mui/lab';
 import useActivities from './useActivities';
 import useIntervals from './useIntervals';
@@ -110,29 +110,28 @@ export const isChildOf = (a: Activity | undefined, b: Activity | undefined): boo
   return b.allParentIds.includes(a.id);
 };
 
-const getInitState = (intervals: Interval[], loaded = false) => {
-  let min = new Date();
-  if (loaded)
-    intervals.forEach(i => { const s = new Date(i.start); if (s < min) min = s; });
-  else min = new Date(0);
-  const start = new Date(min);
-  start.setDate(start.getDate() - 2);
+const getInitState = (meta: IntervalsMeta | undefined) => {
+  let start = new Date(0);
+  if (meta?.min)
+    start = new Date(meta.min);
   start.setHours(0, 0, 0, 0);
-  const end = new Date();
-  end.setDate(end.getDate() + 3);
+  let end = new Date();
+  if (meta?.max)
+    end = new Date(meta.max);
+  end.setDate(end.getDate() + 1);
   end.setHours(0, 0, 0, 0);
   return { start, end, selectedActivities: [] as Activity[] };
 };
 
 export function useIntervalsFilter() {
-  const { intervals, loaded } = useIntervals({
-    onLoad: (intervals) => { setState(getInitState(intervals, true)); },
+  const { intervals, loaded, meta } = useIntervals({
+    onLoad: ({ meta }) => { setState(getInitState(meta)); },
   });
-  const [state, setState] = useState(() => getInitState(intervals, loaded));
+  const [state, setState] = useState(() => getInitState(meta));
   const { activityMappings } = useActivities();
 
   const onReset = () => {
-    setState(getInitState(intervals, loaded));
+    setState(getInitState(meta));
   };
 
   const onChange: IntervalsFilterProps['onChange'] = (name, value) => {
@@ -143,8 +142,7 @@ export function useIntervalsFilter() {
     if (!loaded) return true;
     if (
       isNaN(state.end.getTime()) || isNaN(state.start.getTime()) ||
-      (new Date(i.start) <= state.end && new Date(i.start) >= state.start) ||
-      (new Date(i.end) <= state.end && new Date(i.end) >= state.start)
+      (new Date(i.start) <= state.end && new Date(i.end) >= state.start)
     ) {
       if (state.selectedActivities.length === 0) return true;
       if (

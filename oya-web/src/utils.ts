@@ -1,5 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 
+import { useEffect, useRef } from 'react';
+
 /**
  * show the difference between two datetimes
  * @param start start date
@@ -38,4 +40,21 @@ export function getTimeDelta(start: string | Date, end: string | Date) {
   const e = typeof end === 'string' ? new Date(end) : end;
   const dm = Math.round((e.getTime() - s.getTime()) / 60000);
   return dm;
+}
+
+/**
+ * calls the callback only one time when the trigger becomes true for the first time,
+ * if the trigger is initially true, the callback is never called
+ * @param trigger a boolean value
+ */
+export function useTrigger<T = any>(trigger: boolean, callback: () => T) {
+  const done = useRef(trigger);
+  useEffect(() => {
+    if (trigger) {
+      if (!done.current) {
+        done.current = trigger;
+        callback();
+      }
+    }
+  }, [trigger, callback]);
 }

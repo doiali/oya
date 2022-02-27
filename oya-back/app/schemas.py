@@ -59,6 +59,13 @@ class Entry(BaseModel):
         orm_mode = True
 
 
+class IntervalsMeta(BaseModel):
+    min: datetime.datetime | None
+    max: datetime.datetime | None
+    count: int | None
+    intervals_sum: datetime.timedelta | None
+
+
 class IntervalBase(BaseModel):
     start: datetime.datetime
     end: datetime.datetime
@@ -75,6 +82,11 @@ class Interval(IntervalBase):
 
     class Config:
         orm_mode = True
+
+
+class IntervalsResponse(BaseModel):
+    meta: IntervalsMeta
+    data: List[Interval]
 
 
 class ReportSinge(BaseModel):

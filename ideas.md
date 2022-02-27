@@ -7,6 +7,7 @@
   - [x] add normal login flow
   - [x] all apis need authentication
   - [ ] limit access tokens of each user
+  - [ ] handle activity name uniqe and entry create of user
   - [ ] logout api
 - [ ] restructure backend
 - [ ] better error handling
@@ -34,7 +35,7 @@
 - [ ] a dashboard page for report
 
 - [ ] UX improvements
-- [ ] UI and design improvement
+- [x] UI and design improvement
 - [x] add calender chart to activity view
 - [x] show intervals of the day if select a day in bar or calender time chart
 - [x] add highlighting effect to intervals list

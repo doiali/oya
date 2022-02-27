@@ -1,5 +1,9 @@
 import axios from 'axios';
-import { ActivityRaw, ActivityUpdate, ActivityCreate, Interval, IntervalCreate, User, Token } from './types';
+import {
+  ActivityRaw, ActivityUpdate, ActivityCreate,
+  Interval, IntervalCreate, User, Token,
+  IntervalsReponse,
+} from './types';
 export * from './types';
 
 const session = axios.create();
@@ -27,7 +31,7 @@ export const deleteActivity = (id: number) => (
 );
 
 export const getIntervals = () => (
-  session.get<Interval[]>('/intervals/')
+  session.get<IntervalsReponse>('/intervals/')
 );
 
 export const addInterval = (data: IntervalCreate) => (

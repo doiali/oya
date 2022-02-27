@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import select
+from sqlalchemy import func, select
 from .auth import User as userSchema
 import datetime
 from . import models, schemas
@@ -96,7 +96,15 @@ def delete_activity(*, user: userSchema, db: Session, activity_id: int):
         return db_activity
 
 
-def get_intervals(*, user: userSchema, db: Session, skip: int = 0, limit: int = 10000):
+def get_intervals(
+    *,
+    user: userSchema,
+    db: Session,
+    skip: int = 0,
+    limit: int = 10000,
+    from_date: datetime.datetime = None,
+    to_date: datetime.datetime = None,
+):
     stmt = (
         select(models.Interval)
         .options(joinedload(models.Interval.entries))
@@ -105,8 +113,33 @@ def get_intervals(*, user: userSchema, db: Session, skip: int = 0, limit: int = 
         .offset(skip)
         .limit(limit)
     )
+    if from_date is not None:
+        stmt = stmt.where(Interval.end >= from_date)
+    if to_date is not None:
+        stmt = stmt.where(Interval.start <= to_date)
     intervals = db.execute(stmt).scalars().unique().all()
     return intervals
+
+
+def get_intervals_meta(
+    *,
+    user: userSchema,
+    db: Session,
+    from_date: datetime.datetime = None,
+    to_date: datetime.datetime = None,
+):
+    stmt = select(
+        func.min(Interval.start).label("min"),
+        func.max(Interval.end).label("max"),
+        func.count(Interval.id).label("count"),
+        func.sum(Interval.end - Interval.start).label("intervals_sum"),
+    ).where(Interval.user_id == user.id)
+    if from_date is not None:
+        stmt = stmt.where(Interval.end >= from_date)
+    if to_date is not None:
+        stmt = stmt.where(Interval.start <= to_date)
+    meta = db.execute(stmt).first()
+    return meta
 
 
 def get_daily_report(*, user: userSchema, db: Session, date: datetime.date):

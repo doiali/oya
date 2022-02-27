@@ -11,6 +11,7 @@ import { activityPanelRoutes } from './MainRouter';
 import TabsNav from './TabsNav';
 import { breakpoint } from './Layout';
 import { Close } from '@mui/icons-material';
+import RangeSelector from './report/RangeSelector';
 
 export type ActivityContext = {
   activity?: Activity,
@@ -126,10 +127,15 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
           },
         })}
       >
-        <Box mb={2}>
+        <Box mb={2} display="flex">
           <Button onClick={() => setOpen(p => !p)} variant='contained'>
             {open ? 'Hide activities' : 'Show activities'}
           </Button>
+          <RangeSelector
+            sx={{ pl: 2, flexGrow: 1 }}
+            state={report.state}
+            onChange={report.onChange}
+          />
         </Box>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabsNav routes={activityPanelRoutes} disabled={base || !nodeId} />

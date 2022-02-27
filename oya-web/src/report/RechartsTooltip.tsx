@@ -14,13 +14,13 @@ type ActivityOverViewReportProps = {
 };
 
 export function ActivityOverViewReport({ activity, prefix }: ActivityOverViewReportProps) {
-  const { atrm } = useReportContext();
+  const { tATRM } = useReportContext();
   const renderRow = (name: string, value: string | number) => (
     <Typography textAlign="center" key={name}>
       {name}: <b>{value}</b>
     </Typography>
   );
-  const r = atrm[activity.id];
+  const r = tATRM[activity.id];
   if (!r) return null;
   return (
     <Paper sx={{ p: 2, height: '100%', flexShrink: 0 }}>

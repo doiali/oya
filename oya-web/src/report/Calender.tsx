@@ -45,14 +45,14 @@ const getWeeks = (start: Date) => {
 };
 
 export default function Calender() {
-  const { activity, report: { dda, intervals } } = useActivityContext();
+  const { activity, report: { tDDA, intervals } } = useActivityContext();
   const start = getStart();
   const weeks = getWeeks(start);
   const [date, setDate] = useState<Date | null>(null);
 
   const getValue = (day: Date) => {
     if (!activity) return 0;
-    const dm = dda.find(dm => utils.isSameDay(dm.date, day));
+    const dm = tDDA.find(dm => utils.isSameDay(dm.date, day));
     const report = dm?.report[activity.id];
     return report?.time ?? 0;
   };

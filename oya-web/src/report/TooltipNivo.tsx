@@ -14,14 +14,14 @@ export default function TooltipNivo(
 ) {
   const { data, percentage, id, isTop } = props;
   const { activity, path } = data;
-  const { atrm } = useReportContext();
+  const { tATRM } = useReportContext();
   if (!activity) return <TooltipWrapper>{id}: {percentage}%</TooltipWrapper>;
   const renderRow = (name: string, value: string | number) => (
     <Typography variant='body2' textAlign="center" key={name}>
       {name}: <b>{value}</b>
     </Typography>
   );
-  const r = atrm[activity.id];
+  const r = tATRM[activity.id];
   if (!r) return <TooltipWrapper>{id}: {percentage}%</TooltipWrapper>;
 
   return (
