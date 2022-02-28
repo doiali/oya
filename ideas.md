@@ -13,6 +13,7 @@
 - [ ] better error handling
 - [ ] handle metadata.create_all
 - [ ] activity description and alias names
+- [x] intervals meta
 
 - [ ] throttling and limit requests
 - [ ] identify device and ip
@@ -23,20 +24,20 @@
   - [x] controll authentication
   - [x] login and logout action
   - [ ] remember me
-- [ ] add activity overview component
-- [ ] add date range selection for overview reports
-- [ ] date provider context
-- [ ] make homepage lighter
+- [ ] total overview report and meta data
+- [ ] add activity overview components
 - [ ] implement theme for charts
 - [ ] improve tooltips and chart interactions
 - [ ] chart linking and composition and decomposition
+- [ ] date provider context
+- [ ] make homepage lighter
 - [ ] show intervals in activity page
-- [ ] total overview report and meta data
-- [ ] a dashboard page for report
 
+- [ ] a dashboard page for report
 - [ ] UX improvements
+- [-] add calender chart to activity view
+- [x] add date range selection for overview reports
 - [x] UI and design improvement
-- [x] add calender chart to activity view
 - [x] show intervals of the day if select a day in bar or calender time chart
 - [x] add highlighting effect to intervals list
 
