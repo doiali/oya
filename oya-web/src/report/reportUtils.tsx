@@ -3,15 +3,15 @@ import { ActivityMappings } from '../useActivities';
 
 export type SanitizedInterval = {
   id: number,
-  l: number,
+  line: number,
   date: Date,
-  s: number,
-  e: number,
-  d: number,
-  p: number,
+  start: number, // ms
+  end: number, // ms
+  delta: number, // minutes
+  percent: number, // percent [0,1]
   entries: {
     activity_id: number,
-    time: number,
+    time: number, // minutes
   }[];
   note?: string,
 };
@@ -90,29 +90,29 @@ export const getRange = (start: Date, end: Date) => {
 };
 
 export const sanitizeInterval = (interval: Interval): SanitizedInterval[] => {
-  const [start, end] = [new Date(interval.start), new Date(interval.end)];
+  const [startOfInterval, endOfInterval] = [new Date(interval.start), new Date(interval.end)];
   const {
     startTime, startDate, endTime, days,
-  } = getRange(start, end);
+  } = getRange(startOfInterval, endOfInterval);
 
   return [...Array(days)].map((_, i) => {
-    let s = startTime;
-    let e = endTime;
+    let start = startTime;
+    let end = endTime;
     if (i > 0)
-      s = 0;
+      start = 0;
     if (i < days - 1)
-      e = 60000 * 60 * 24;
+      end = 60000 * 60 * 24;
     const date = new Date(startDate);
     date.setDate(date.getDate() + i);
-    const p = (e - s) / (getTimeDelta(end, start));
-    const d = (e - s) / 60000;
+    const percent = (end - start) / (getTimeDelta(endOfInterval, startOfInterval));
+    const delta = (end - start) / 60000;
     const entries = interval.entries.map(e => ({
       activity_id: e.activity_id,
-      time: e.time ? e.time * p / 60 : d,
+      time: e.time ? e.time * percent / 60 : delta,
     }));
     return {
-      s, e, d, p, date,
-      id: interval.id, l: i + 1, entries, note: interval.note,
+      start, end, delta, percent, date,
+      id: interval.id, line: i + 1, entries, note: interval.note,
     };
   });
 };
@@ -121,9 +121,9 @@ export const createDailyDataMap = (
   intervals: Interval[], am: ActivityMappings,
 ): DailyDataMap => {
   const dailyDataMap: DailyDataMap = {};
-  let minString = new Date().toISOString();
-  intervals.forEach(i => { if (i.start < minString) minString = i.start; });
-  const start = new Date(minString);
+  let minDate = new Date();
+  intervals.forEach(i => { if (new Date(i.start) < minDate) minDate = new Date(i.start); });
+  const start = new Date(minDate);
   const end = intervals[0]?.end ? new Date(intervals[0]?.end) : new Date();
   const { startDate, days } = getRange(start, end);
 
@@ -180,9 +180,8 @@ export const createDailyDataMap = (
 
 export const createActivityTotalReportMap = (dda: DailyData[]): ActivityTotalReportMap => {
   const atr: ActivityTotalReportMap = {};
-  const ddmValues = dda;
-  const allDays = ddmValues.length;
-  ddmValues.forEach(({ report }) => {
+  const allDays = dda.length;
+  dda.forEach(({ report }) => {
     Object.values(report).forEach((r) => {
       const id = r.activity.id;
       if (!atr[id]) {
