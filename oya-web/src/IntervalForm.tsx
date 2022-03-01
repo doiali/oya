@@ -24,7 +24,7 @@ export type IntervalFormProps = {
 export default memo(function IntervalForm({
   state, onChange, children, onSubmit: handleSubmit,
 }: IntervalFormProps) {
-  const { activities, activityMappings } = useActivities();
+  const { activities, activityMap } = useActivities();
   const intervalDuration = getTimeDelta(state.start, state.end);
   const entriesTotalTime = state.selectedEntries.reduce(
     (a, v) => a + (v.time ?? intervalDuration * 60), 0,
@@ -83,7 +83,7 @@ export default memo(function IntervalForm({
           <Autocomplete
             multiple
             options={activities.map(a => a.id)}
-            getOptionLabel={(o) => activityMappings[o]?.name ?? 'unkown activity'}
+            getOptionLabel={(o) => activityMap.get(o)?.name ?? 'unkown activity'}
             value={state.selectedEntries.map(e => e.activity_id)}
             onChange={handleAutoCompleteChange}
             renderInput={(params) => (

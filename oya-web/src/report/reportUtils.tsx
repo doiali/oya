@@ -1,5 +1,5 @@
 import { Interval, Activity } from '../apiService';
-import { ActivityMappings } from '../useActivities';
+import { ActivityMap } from '../useActivities';
 
 export type SanitizedInterval = {
   id: number,
@@ -118,7 +118,7 @@ export const sanitizeInterval = (interval: Interval): SanitizedInterval[] => {
 };
 
 export const createDailyDataMap = (
-  intervals: Interval[], am: ActivityMappings,
+  intervals: Interval[], am: ActivityMap,
 ): DailyDataMap => {
   const dailyDataMap: DailyDataMap = {};
   let minDate = new Date();
@@ -148,7 +148,7 @@ export const createDailyDataMap = (
       const dailyData = dailyDataMap[dateString];
       const { report } = dailyData;
       entries.forEach(e => {
-        const a = am[e.activity_id];
+        const a = am.get(e.activity_id);
         const t = e.time;
         a?.allParents.forEach(p => {
           const { id } = p;

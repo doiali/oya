@@ -128,7 +128,7 @@ export function useIntervalsFilter() {
     onLoad: ({ meta }) => { setState(getInitState(meta)); },
   });
   const [state, setState] = useState(() => getInitState(meta));
-  const { activityMappings } = useActivities();
+  const { activityMap } = useActivities();
 
   const onReset = () => {
     setState(getInitState(meta));
@@ -146,12 +146,12 @@ export function useIntervalsFilter() {
     ) {
       if (state.selectedActivities.length === 0) return true;
       if (
-        i.entries.map(e => activityMappings[e.activity_id])
+        i.entries.map(e => activityMap.get(e.activity_id))
           .some(a => state.selectedActivities.some(b => isChildOf(b, a)))
       ) return true;
     }
     return false;
-  }), [state, intervals, activityMappings, loaded]);
+  }), [state, intervals, activityMap, loaded]);
 
   const results = useMemo(() => ({
     sum: filteredIntervals.reduce((a, v) => (new Date(v.end).getTime() - new Date(v.start).getTime()) / 60000 + a, 0),

@@ -1,6 +1,6 @@
 import { Box, Button, Drawer, IconButton, useMediaQuery, useTheme } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import useActivities, { ActivityMappings } from './useActivities';
+import useActivities, { ActivityMap } from './useActivities';
 import ActivitiesTreeView from './ActivitiesTreeView';
 import { ReportContext, useReport } from './report/ReportProvider';
 import { Activity } from './apiService';
@@ -23,10 +23,10 @@ export function useActivityContext() {
   return useOutletContext<ActivityContext>();
 }
 
-const getSelectedActivity = (id: string, am: ActivityMappings) => {
+const getSelectedActivity = (id: string, am: ActivityMap) => {
   const selectedIds = id.split('-');
   const selectedActivityId = selectedIds[selectedIds.length - 1];
-  return am[selectedActivityId];
+  return am.get(Number(selectedActivityId));
 };
 
 const innerDrawerWidth = 400;
@@ -38,7 +38,7 @@ export default function ActivityPageLayout({ base = false }: { base?: boolean; }
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const report = useReport();
-  const { activityMappings: am } = useActivities();
+  const { activityMap: am } = useActivities();
   const theme = useTheme();
   const isWide = useMediaQuery(theme.breakpoints.up(breakpoint));
   const selectedActivity = useMemo(() => (

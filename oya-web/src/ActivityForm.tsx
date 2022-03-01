@@ -13,7 +13,7 @@ export type ActivityFormProps = {
 export default memo(function ActivityForm(
   { onSubmit: handleSubmit, onChange, data, children }: ActivityFormProps,
 ) {
-  const { activities, activityMappings } = useActivities();
+  const { activities, activityMap } = useActivities();
   return (
     <Box component="form" onSubmit={handleSubmit}>
       <TextField
@@ -31,7 +31,7 @@ export default memo(function ActivityForm(
           fullWidth
           multiple
           options={activities.map(a => a.id)}
-          getOptionLabel={(option) => activityMappings[option]?.name ?? 'unknown activity...'}
+          getOptionLabel={(option) => activityMap.get(option)?.name ?? 'unknown activity...'}
           value={data[l]}
           onChange={(_, newVal) => onChange(l, newVal)}
           renderInput={(params) => (

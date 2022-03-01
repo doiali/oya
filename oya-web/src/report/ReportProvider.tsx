@@ -1,6 +1,6 @@
 import React, { createContext, useMemo, useState } from 'react';
 import { Activity, Interval, IntervalsMeta } from '../apiService';
-import useActivities, { ActivityMappings } from '../useActivities';
+import useActivities, { ActivityMap } from '../useActivities';
 import {
   ActivityTotalReportMap,
   ActivityTotalReport,
@@ -33,7 +33,7 @@ export type ReportContextState = {
 export type ReportContextBase = {
   intervals: Interval[];
   activities: Activity[];
-  activityMappings: ActivityMappings;
+  activityMap: ActivityMap;
   intervalsMeta?: IntervalsMeta;
   ATRM: ActivityTotalReportMap;
   ATRA: ActivityTotalReport[];
@@ -61,7 +61,7 @@ const defaultValue: ReportContext = {
   tDDA: [],
   intervals: [],
   activities: [],
-  activityMappings: {},
+  activityMap: new Map(),
   state: {
     start: null,
     end: null,
@@ -98,7 +98,7 @@ export function useReport(): ReportContext {
   const { intervals, meta: intervalsMeta } = useIntervals({
     onLoad: ({ meta }) => { setState(getInitState(meta)); },
   });
-  const { activityMappings, activities } = useActivities();
+  const { activityMap, activities } = useActivities();
   const [state, setState] = useState<ReportContextState>(() => getInitState(intervalsMeta));
 
   const base = useMemo<ReportContextBase>(() => {
@@ -121,17 +121,17 @@ export function useReport(): ReportContext {
         }));
       }
     };
-    const DDM = createDailyDataMap(intervals, activityMappings);
+    const DDM = createDailyDataMap(intervals, activityMap);
     const DDA = Object.values(DDM);
     const ATRM = createActivityTotalReportMap(DDA);
     const ATRA = Object.values(ATRM).sort((a, b) => (
       Number(b?.time) - Number(a?.time)
     )) as ActivityTotalReport[];
     return {
-      intervals, intervalsMeta, activityMappings, activities,
+      intervals, intervalsMeta, activityMap, activities,
       DDM, DDA, ATRM, ATRA, onChange,
     };
-  }, [intervals, activities, activityMappings, intervalsMeta]);
+  }, [intervals, activities, activityMap, intervalsMeta]);
 
   const results = useMemo<ReportContextResults>(() => {
     const tDDA = base.DDA.filter(({ date }) => {

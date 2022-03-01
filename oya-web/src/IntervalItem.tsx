@@ -20,7 +20,7 @@ export type IntervalItemProps = {
 export default memo(function IntervalItem(
   { interval, index, highLights }: IntervalItemProps,
 ) {
-  const { activityMappings } = useActivities();
+  const { activityMap } = useActivities();
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [open, setOpen] = useState(false);
@@ -38,7 +38,7 @@ export default memo(function IntervalItem(
   const start = new Date(interval.start);
   const end = new Date(interval.end);
   const isSame = (id: number) => highLights?.includes(id);
-  const isDesc = (id: number) => highLights?.map(a => activityMappings[a]).some(a => a?.allChildIds.includes(id));
+  const isDesc = (id: number) => highLights?.map(a => activityMap.get(a)).some(a => a?.allChildIds.includes(id));
 
   return (
     <Stack spacing={1}>
@@ -52,8 +52,8 @@ export default memo(function IntervalItem(
           {interval.entries.map(({ activity_id }, i) => (
             <Chip
               color={isDesc(activity_id) ? (isSame(activity_id) ? 'success' : 'primary') : 'default'}
-              label={activityMappings[activity_id]?.name}
-              key={String(interval.id) + '-' + (activityMappings[activity_id]?.id ?? ('i' + i))}
+              label={activityMap.get(activity_id)?.name}
+              key={String(interval.id) + '-' + (activityMap.get(activity_id)?.id ?? ('i' + i))}
             />
           ))}
         </Stack>

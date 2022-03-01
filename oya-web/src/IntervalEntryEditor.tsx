@@ -14,11 +14,11 @@ type EntryEditorProps = {
 export default memo(function EntryEditor({
   entry, intervalDuration, onChange, onDelete,
 }: EntryEditorProps) {
-  const { activityMappings } = useActivities();
+  const { activityMap } = useActivities();
   return (
     <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
       <Box sx={{ minWidth: '25%' }}>
-        <Chip label={activityMappings[entry.activity_id]?.name} />
+        <Chip label={activityMap.get(entry.activity_id)?.name} />
         <span>{' '}:{' '}</span>
       </Box>
       <TextField
