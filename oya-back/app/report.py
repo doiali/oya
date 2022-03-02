@@ -40,10 +40,10 @@ def get_intervals2(
         select(
             Interval2.id.label("interval_id"),
             Entry2.activity_id.label("activity_id"),
-            # t_start.label("t_start"),
-            # t_end.label("t_end"),
-            literal(1).label("line"),
             baseIndex.label("index"),
+            literal(1).label("line"),
+            t_start.label("t_start"),
+            t_end.label("t_end"),
             period_start.label("period_start"),
             period_end.label("period_end"),
             Interval2.start.label("interval_start"),
@@ -53,19 +53,24 @@ def get_intervals2(
         .join(Interval2)
         .cte(recursive=True)
     )
+    period_end2 = case(
+        (cte1_a.c.period_start + tick * 2 > max, max),
+        else_=cte1_a.c.period_start + tick * 2,
+    )
+    t_end2 = case(
+        (cte1_a.c.interval_end > period_end2, period_end2),
+        else_=cte1_a.c.interval_end,
+    )
     cte1 = cte1_a.union_all(
         select(
             cte1_a.c.interval_id,
             cte1_a.c.activity_id,
-            # t_start.label("t_start"),
-            # t_end.label("t_end"),
-            (cte1_a.c.line + 1).label("line"),
             (cte1_a.c.index + 1).label("index"),
+            (cte1_a.c.line + 1).label("line"),
+            (cte1_a.c.period_start + tick).label("t_start"),
+            t_end2.label("t_end"),
             (cte1_a.c.period_start + tick).label("period_start"),
-            case(
-                (cte1_a.c.period_start + tick * 2 > max, max),
-                else_=cte1_a.c.period_start + tick * 2,
-            ).label("period_end"),
+            period_end2.label("period_end"),
             cte1_a.c.interval_start,
             cte1_a.c.interval_end,
         )
