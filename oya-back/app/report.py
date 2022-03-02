@@ -1,5 +1,14 @@
 from sqlalchemy.orm import Session, aliased
-from sqlalchemy import distinct, extract, func, select, case, literal
+from sqlalchemy import (
+    distinct,
+    extract,
+    func,
+    select,
+    case,
+    literal,
+    literal_column,
+    and_,
+)
 import datetime
 from .models import Interval, Activity, Entry, Association
 
@@ -9,7 +18,6 @@ def get_intervals2(
     db: Session,
     from_date: datetime.datetime = None,
     to_date: datetime.datetime = None,
-    period: datetime.timedelta = None,
     tick: datetime.timedelta = datetime.timedelta(days=1),
 ):
     stmt_meta = select(
@@ -19,7 +27,6 @@ def get_intervals2(
     meta = db.execute(stmt_meta).first()
     min = from_date if from_date is not None else meta.min
     max = to_date if to_date is not None else meta.max
-
 
     Interval2 = aliased(Interval)
     Entry2 = aliased(Entry)
@@ -37,7 +44,7 @@ def get_intervals2(
             Interval2.id.label("interval_id"),
             Entry2.activity_id.label("activity_id"),
             baseIndex.label("index"),
-            literal(1).label("line"),
+            literal(0).label("line"),
             t_start.label("t_start"),
             t_end.label("t_end"),
             period_start.label("period_start"),
@@ -104,39 +111,81 @@ def get_intervals2(
         .join(Links, onclause=cte2_alias.c.parent_id == Links.child_id)
     )
 
-    cte3 = (
+    sq = (
         select(cte2.c.level, cte2.c.parent_id, *cte1.c)
         .select_from(cte2)
         .join(cte1, onclause=cte2.c.activity_id == cte1.c.activity_id)
     ).cte()
 
-    stmt3 = select(cte3).order_by(
-        cte3.c.interval_id.desc(), cte3.c.activity_id, cte3.c.index.desc()
+    stmt1 = select(sq).order_by(
+        sq.c.interval_id.desc(), sq.c.activity_id, sq.c.index.desc()
     )
 
-    stmt = stmt3
+    common_columns = (
+        # sq.c.index,
+        # sq.c.parent_id.label("activity"),
+        func.sum(sq.c.t_time).label("time"),
+        func.sum(
+            case((sq.c.level == 0, sq.c.t_time), else_=datetime.timedelta(0))
+        ).label("time_pure"),
+        func.count("*").label("occurance_in_period"),
+        func.count(case((sq.c.line == 0, 1))).label("occurance"),
+        func.count(case((and_(sq.c.line == 0, sq.c.level == 0), 1))).label(
+            "occurance_pure"
+        ),
+        func.count(distinct(sq.c.index)).label("periods"),
+        func.ceil(extract("EPOCH", max - min) / extract("EPOCH", tick)).label(
+            "all_periods"
+        ),
+        func.count(distinct(sq.c.interval_id)).label("intervals_count"),
+        func.sum(sq.c.t_end - sq.c.t_start).label("intervals_total_time"),
+        func.sum(
+            case(
+                (sq.c.level == 0, sq.c.t_end - sq.c.t_start),
+                else_=datetime.timedelta(0),
+            )
+        ).label("intervals_total_time_pure"),
+        func.min(sq.c.period_start).label("period_start"),
+        func.max(sq.c.period_end).label("period_end"),
+        (func.max(sq.c.period_end) - func.min(sq.c.period_start)).label("period_range")
+        # literal(min).label("min"),
+        # literal(max).label("max"),
+    )
+
+    stmt2 = select(*common_columns).group_by(sq.c.parent_id).order_by(sq.c.parent_id)
+    stmt3 = select(*common_columns).group_by(sq.c.index).order_by(sq.c.index.desc())
+
+    stmt = stmt2
 
     stmt_counter = select(func.count("*").label("count")).select_from(stmt.cte())
-    entries_counter = (
+    stmt_totals = (
         select(
             func.count("*").label("count"),
             func.count(distinct(Interval.id)).label("count_interval"),
-            func.count(case((Interval.end - Interval.start >= tick, 1))).label(
-                "gt_tick"
-            ),
+            func.sum(Interval.end - Interval.start).label("intervals_total_time"),
+            func.sum(Entry.time).label("entries_total_time"),
+            literal(min).label("min"),
+            literal(max).label("max"),
+            literal(max - min).label("period_range"),
         )
         .select_from(Entry)
         .join(Interval)
     )
-    entries_counter_result = db.execute(entries_counter).first()
+    sq2 = stmt.subquery()
+    stmt_totals_from_sq = select(
+        func.count("*").label("count"),
+        func.sum(sq2.c.intervals_total_time_pure).label("intervals_total_time_pure"),
+        func.sum(sq2.c.time_pure).label("total_time_pure"),
+        func.sum(sq2.c.occurance_pure).label("total_occurance_pure"),
+    ).select_from(sq2)
+
     count = db.execute(stmt_counter).first().count
-    rows = db.execute(stmt.limit(50)).all()
+    rows = db.execute(stmt.limit(100)).all()
     return {
+        "totals": db.execute(stmt_totals).first(),
+        "totals_from_sq": db.execute(stmt_totals_from_sq).first(),
         "meta": {
             "count": count,
-            "entries_count": entries_counter_result.count,
-            "entries_gt_tick": entries_counter_result.gt_tick,
-            "intervals_count": entries_counter_result.count_interval,
             "len": len(rows),
         },
         "data": rows,

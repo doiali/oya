@@ -12,7 +12,7 @@ SQLALCHEMY_DATABASE_URL = (
     + config("db_name")
 )
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL, future=True, echo=True)
+engine = create_engine(SQLALCHEMY_DATABASE_URL, future=True)
 # engine = create_engine(
 #     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": True}
 # )
