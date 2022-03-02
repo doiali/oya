@@ -30,7 +30,6 @@ def get_intervals2(
     ).label("percent")
     t_time_temp = (percent_temp * Entry.time).label("t_time")
 
-
     Interval2 = aliased(Interval)
     Entry2 = aliased(Entry)
     t_start = case((Interval2.start < min, min), else_=Interval2.start)
@@ -38,11 +37,10 @@ def get_intervals2(
     period_start = baseIndex * tick + min
     period_end = case((period_start + tick > max, max), else_=period_start + tick)
     t_end = case((Interval2.end > period_end, period_end), else_=Interval2.end)
-    percent_1 = (
-        extract("EPOCH", (t_end - t_start))
-        / extract("EPOCH", Interval2.end - Interval2.start)
+    percent_1 = extract("EPOCH", (t_end - t_start)) / extract(
+        "EPOCH", Interval2.end - Interval2.start
     )
-    t_time_1 = (percent_1 * Entry2.time)
+    t_time_1 = percent_1 * Entry2.time
     cte1_a = (
         select(
             Interval2.id.label("interval_id"),
@@ -69,16 +67,15 @@ def get_intervals2(
         (cte1_a.c.period_start + tick * 2 > max, max),
         else_=cte1_a.c.period_start + tick * 2,
     )
-    t_start2 = (cte1_a.c.period_start + tick)
+    t_start2 = cte1_a.c.period_start + tick
     t_end2 = case(
         (cte1_a.c.interval_end > period_end2, period_end2),
         else_=cte1_a.c.interval_end,
     )
-    percent_2 = (
-        extract("EPOCH", (t_end2 - t_start2))
-        / extract("EPOCH", cte1_a.c.interval_end - cte1_a.c.interval_start)
+    percent_2 = extract("EPOCH", (t_end2 - t_start2)) / extract(
+        "EPOCH", cte1_a.c.interval_end - cte1_a.c.interval_start
     )
-    t_time_2 = (percent_2 * cte1_a.c.entry_time)
+    t_time_2 = percent_2 * cte1_a.c.entry_time
     cte1 = cte1_a.union_all(
         select(
             cte1_a.c.interval_id,
@@ -99,27 +96,30 @@ def get_intervals2(
         .where(cte1_a.c.period_start + tick < max)
     )
 
-
     stmt1 = (
-        select(
-            cte1.c.interval_id,
-            cte1.c.activity_id,
-            cte1.c.line,
-            cte1.c.index,
-            cte1.c.interval_start,
-            cte1.c.interval_end,
-            cte1.c.t_start,
-            cte1.c.t_end,
-            cte1.c.period_start,
-            cte1.c.period_end,
-            cte1.c.entry_time,
-            cte1.c.t_time,
-            cte1.c.percent,
-        )
+        select(*cte1.c)
         .select_from(cte1)
         .order_by(cte1.c.interval_id.desc(), cte1.c.activity_id, cte1.c.index.desc())
     )
 
+    Links = aliased(Association)
+    cte2_a = select(
+        Activity.id.label("activity_id"),
+        Activity.id.label("parent_id"),
+        literal(0).label("level"),
+    ).cte(recursive=True)
+    cte2_alias = cte2_a.alias()
+    cte2 = cte2_a.union_all(
+        select(
+            cte2_alias.c.activity_id,
+            Links.parent_id.label("parent_id"),
+            (cte2_alias.c.level + 1).label("level"),
+        )
+        .select_from(cte2_alias)
+        .join(Links, onclause=cte2_alias.c.parent_id == Links.child_id)
+    )
+
+    stms_all_activities = select(cte2).order_by(cte2.c.activity_id)
 
     cte_temp1 = (
         select(cte1.c.activity_id, func.count(distinct(cte1.c.index)).label("count"))
@@ -144,7 +144,7 @@ def get_intervals2(
         .order_by(Entry.activity_id)
     )
 
-    stmt = stmt1
+    stmt = stms_all_activities
 
     stmt_counter = select(func.count("*").label("count")).select_from(stmt.cte())
     entries_counter = (
