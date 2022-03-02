@@ -20,15 +20,6 @@ def get_intervals2(
     min = from_date if from_date is not None else meta.min
     max = to_date if to_date is not None else meta.max
 
-    t_end_temp = case((Interval.end > max, max), else_=Interval.end).label("t_end")
-    t_start_temp = case((Interval.start < min, min), else_=Interval.start).label(
-        "t_start"
-    )
-    percent_temp = (
-        extract("EPOCH", (t_end_temp - t_start_temp))
-        / extract("EPOCH", Interval.end - Interval.start)
-    ).label("percent")
-    t_time_temp = (percent_temp * Entry.time).label("t_time")
 
     Interval2 = aliased(Interval)
     Entry2 = aliased(Entry)
@@ -113,46 +104,14 @@ def get_intervals2(
         .join(Links, onclause=cte2_alias.c.parent_id == Links.child_id)
     )
 
-
     cte3 = (
-        select(cte2.c.parent_id, *cte1.c, cte2.c.level)
+        select(cte2.c.level, cte2.c.parent_id, *cte1.c)
         .select_from(cte2)
         .join(cte1, onclause=cte2.c.activity_id == cte1.c.activity_id)
     ).cte()
-    
-    stmt1 = (
-        select(*cte1.c)
-        .select_from(cte1)
-        .order_by(cte1.c.interval_id.desc(), cte1.c.activity_id, cte1.c.index.desc())
-    )
-    stmt2 = select(cte2).order_by(cte2.c.activity_id)
-    stmt3 = (
-        select(cte3)
-        .select_from(cte3)
-        .order_by(cte3.c.interval_id.desc(), cte3.c.activity_id, cte3.c.index.desc())
-    )
 
-    cte_temp1 = (
-        select(cte1.c.activity_id, func.count(distinct(cte1.c.index)).label("count"))
-        .select_from(cte1)
-        .group_by(cte1.c.activity_id)
-    ).cte()
-    stmt_temp1 = select("*").select_from(cte_temp1)
-    stmt_temp2 = (
-        select(
-            Entry.activity_id,
-            func.count(Entry.interval_id).label("occurance"),
-            func.sum(cte_temp1.c.count).label("days"),
-            func.sum(t_time_temp),
-        )
-        .select_from(Entry)
-        .join(Interval)
-        .join(cte_temp1, onclause=cte_temp1.c.activity_id == Entry.activity_id)
-        .where(Interval.user_id == 1)
-        .where(Interval.end >= min)
-        .where(Interval.start <= max)
-        .group_by(Entry.activity_id)
-        .order_by(Entry.activity_id)
+    stmt3 = select(cte3).order_by(
+        cte3.c.interval_id.desc(), cte3.c.activity_id, cte3.c.index.desc()
     )
 
     stmt = stmt3
