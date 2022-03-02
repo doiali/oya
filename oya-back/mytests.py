@@ -1,10 +1,11 @@
 from typing import List
 
+from sqlalchemy import Column, func, select, joinedload
 from sqlalchemy.orm import Session
-from sqlalchemy import Column, func, select
-from . import crud, schemas
-from .models import Interval, Activity, Association, Entry
-from .database import SessionLocal, engine
+from app.auth import User as userSchema
+from app import crud, schemas
+from app.models import Interval, Activity, Association, Entry
+from app.database import SessionLocal, engine
 import datetime
 from dateutil import parser
 import copy

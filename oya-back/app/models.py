@@ -155,8 +155,8 @@ class Interval(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    start: datetime.datetime = Column(DateTime(timezone=True), index=True)
-    end: datetime.datetime = Column(DateTime(timezone=True), index=True)
+    start = Column(DateTime(timezone=True), index=True)
+    end = Column(DateTime(timezone=True), index=True)
     note = Column(Text)
 
     entries = relationship("Entry", back_populates="interval", cascade="all")
