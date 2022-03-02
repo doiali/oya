@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session, aliased
 from sqlalchemy import distinct, extract, func, select, case, literal
 import datetime
-from .models import Interval, Activity, Entry
+from .models import Interval, Activity, Entry, Association
 
 
 def get_intervals2(
@@ -99,13 +99,8 @@ def get_intervals2(
         .where(cte1_a.c.period_start + tick < max)
     )
 
-    cte2 = (
-        select(cte1.c.activity_id, func.count(distinct(cte1.c.index)).label("count"))
-        .select_from(cte1)
-        .group_by(cte1.c.activity_id)
-    ).cte()
-    stmt2 = select("*").select_from(cte2)
-    stmt3 = (
+
+    stmt1 = (
         select(
             cte1.c.interval_id,
             cte1.c.activity_id,
@@ -125,16 +120,23 @@ def get_intervals2(
         .order_by(cte1.c.interval_id.desc(), cte1.c.activity_id, cte1.c.index.desc())
     )
 
-    stmt_main = (
+
+    cte_temp1 = (
+        select(cte1.c.activity_id, func.count(distinct(cte1.c.index)).label("count"))
+        .select_from(cte1)
+        .group_by(cte1.c.activity_id)
+    ).cte()
+    stmt_temp1 = select("*").select_from(cte_temp1)
+    stmt_temp2 = (
         select(
             Entry.activity_id,
             func.count(Entry.interval_id).label("occurance"),
-            func.sum(cte2.c.count).label("days"),
+            func.sum(cte_temp1.c.count).label("days"),
             func.sum(t_time_temp),
         )
         .select_from(Entry)
         .join(Interval)
-        .join(cte2, onclause=cte2.c.activity_id == Entry.activity_id)
+        .join(cte_temp1, onclause=cte_temp1.c.activity_id == Entry.activity_id)
         .where(Interval.user_id == 1)
         .where(Interval.end >= min)
         .where(Interval.start <= max)
@@ -142,7 +144,7 @@ def get_intervals2(
         .order_by(Entry.activity_id)
     )
 
-    stmt = stmt3
+    stmt = stmt1
 
     stmt_counter = select(func.count("*").label("count")).select_from(stmt.cte())
     entries_counter = (
