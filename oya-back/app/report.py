@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session, aliased
-from sqlalchemy import distinct, extract, func, select, case
+from sqlalchemy import distinct, extract, func, select, case, literal
 import datetime
 from .models import Interval, Activity, Entry
 
@@ -12,11 +12,11 @@ def get_intervals2(
     period: datetime.timedelta = None,
     tick: datetime.timedelta = datetime.timedelta(days=1),
 ):
-    stmt = select(
+    stmt_meta = select(
         func.min(Interval.start),
         func.max(Interval.end),
     ).where(Interval.user_id == 1)
-    meta = db.execute(stmt).first()
+    meta = db.execute(stmt_meta).first()
     min = from_date if from_date is not None else meta.min
     max = to_date if to_date is not None else meta.max
     t_end = case((Interval.end > max, max), else_=Interval.end).label("t_end")
@@ -27,60 +27,55 @@ def get_intervals2(
     ).label("percent")
     t_time = (percent * Entry.time).label("t_time")
 
-    # ctetick = select(
-    #     literal(min).label("s"),
-    #     case(
-    #         (and_(Interval.end >= min, Interval.start < min + tick), 1), else_=0
-    #     ).label("c"),
-    # ).cte(recursive=True)
-    # stmt2 = select(
-    #     (ctetick.c.s + tick).label("s"),
-    #     case(
-    #         (
-    #             and_(Interval.end >= ctetick.c.s, Interval.start < ctetick.c.s + tick),
-    #             1,
-    #         ),
-    #         else_=0,
-    #     ).label("c"),
-    # ).where(ctetick.c.s < max)
-    # sss = ctetick.union_all(stmt2)
-    # stmt3 = select(
-    #     Interval.id,
-    #     (sss.c.s).label('all_days'),
-    #     (sss.c.c).label('days')
-    # ).where(Interval.id == 1162).limit(1004)
-
     Interval2 = aliased(Interval)
     Entry2 = aliased(Entry)
-    ctetick = (
+    # t_end2 = case((Interval2.end > max, max), else_=Interval2.end)
+    # t_start2 = case((Interval2.start < min, min), else_=Interval2.start)
+    baseIndex = func.floor(
+        extract("EPOCH", Interval2.start - min) / extract("EPOCH", tick)
+    )
+    cte1_a = (
         select(
-            Entry2.activity_id.label("activity_id"),
             Interval2.id.label("interval_id"),
-            Interval2.end.label("end"),
-            func.floor(
-                extract("EPOCH", Interval2.start - min) / extract("EPOCH", tick)
-            ).label("index"),
+            Entry2.activity_id.label("activity_id"),
+            Interval2.end.label("interval_end"),
+            # t_start2.label("t_start"),
+            # t_end2.label("t_end"),
+            literal(1).label("line"),
+            baseIndex.label("index"),
         )
         .select_from(Entry2)
         .join(Interval2)
         .cte(recursive=True)
     )
-    sss = ctetick.union_all(
+    cte1 = cte1_a.union_all(
         select(
-            ctetick.c.activity_id,
-            ctetick.c.interval_id,
-            ctetick.c.end,
-            (ctetick.c.index + 1).label("index"),
-        ).where((ctetick.c.index + 1) * tick + min < ctetick.c.end)
+            cte1_a.c.interval_id,
+            cte1_a.c.activity_id,
+            cte1_a.c.interval_end,
+            (cte1_a.c.line + 1).label("line"),
+            (cte1_a.c.index + 1).label("index"),
+        ).where((cte1_a.c.index + 1) * tick + min < cte1_a.c.interval_end)
     )
-    cte3 = sss
+
     cte2 = (
-        select(sss.c.activity_id, func.count(distinct(sss.c.index)).label("count"))
-        .select_from(sss)
-        .group_by(sss.c.activity_id)
+        select(cte1.c.activity_id, func.count(distinct(cte1.c.index)).label("count"))
+        .select_from(cte1)
+        .group_by(cte1.c.activity_id)
     ).cte()
     stmt2 = select("*").select_from(cte2)
-    stmt = (
+    stmt3 = (
+        select(
+            cte1.c.interval_id,
+            cte1.c.activity_id,
+            cte1.c.line,
+            cte1.c.index,
+        )
+        .select_from(cte1)
+        .order_by(cte1.c.interval_id, cte1.c.activity_id, cte1.c.index)
+    )
+
+    stmt_main = (
         select(
             Entry.activity_id,
             func.count(Entry.interval_id).label("occurance"),
@@ -95,7 +90,32 @@ def get_intervals2(
         .where(Interval.start <= max)
         .group_by(Entry.activity_id)
         .order_by(Entry.activity_id)
-        .limit(1000)
     )
-    intervals = db.execute(stmt2).all()
-    return {"count": len(intervals), "data": intervals}
+
+    stmt = stmt3
+
+    stmt_counter = select(func.count("*").label("count")).select_from(stmt.cte())
+    entries_counter = (
+        select(
+            func.count("*").label("count"),
+            func.count(distinct(Interval.id)).label("count_interval"),
+            func.count(case((Interval.end - Interval.start >= tick, 1))).label(
+                "gt_tick"
+            ),
+        )
+        .select_from(Entry)
+        .join(Interval)
+    )
+    entries_counter_result = db.execute(entries_counter).first()
+    count = db.execute(stmt_counter).first().count
+    rows = db.execute(stmt.limit(1000)).all()
+    return {
+        "meta": {
+            "count": count,
+            "entries_count": entries_counter_result.count,
+            "entries_gt_tick": entries_counter_result.gt_tick,
+            "intervals_count": entries_counter_result.count_interval,
+            "len": len(rows),
+        },
+        "data": rows,
+    }
