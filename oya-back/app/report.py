@@ -96,12 +96,6 @@ def get_intervals2(
         .where(cte1_a.c.period_start + tick < max)
     )
 
-    stmt1 = (
-        select(*cte1.c)
-        .select_from(cte1)
-        .order_by(cte1.c.interval_id.desc(), cte1.c.activity_id, cte1.c.index.desc())
-    )
-
     Links = aliased(Association)
     cte2_a = select(
         Activity.id.label("activity_id"),
@@ -119,7 +113,24 @@ def get_intervals2(
         .join(Links, onclause=cte2_alias.c.parent_id == Links.child_id)
     )
 
-    stms_all_activities = select(cte2).order_by(cte2.c.activity_id)
+
+    cte3 = (
+        select(cte2.c.parent_id, *cte1.c, cte2.c.level)
+        .select_from(cte2)
+        .join(cte1, onclause=cte2.c.activity_id == cte1.c.activity_id)
+    ).cte()
+    
+    stmt1 = (
+        select(*cte1.c)
+        .select_from(cte1)
+        .order_by(cte1.c.interval_id.desc(), cte1.c.activity_id, cte1.c.index.desc())
+    )
+    stmt2 = select(cte2).order_by(cte2.c.activity_id)
+    stmt3 = (
+        select(cte3)
+        .select_from(cte3)
+        .order_by(cte3.c.interval_id.desc(), cte3.c.activity_id, cte3.c.index.desc())
+    )
 
     cte_temp1 = (
         select(cte1.c.activity_id, func.count(distinct(cte1.c.index)).label("count"))
@@ -144,7 +155,7 @@ def get_intervals2(
         .order_by(Entry.activity_id)
     )
 
-    stmt = stms_all_activities
+    stmt = stmt3
 
     stmt_counter = select(func.count("*").label("count")).select_from(stmt.cte())
     entries_counter = (
