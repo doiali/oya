@@ -8,13 +8,13 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from . import crud, models, schemas
+from . import report
 from .database import engine, get_db
 from .auth import get_current_user, router
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-app.include_router(router)
 
 origins = [
     "http://localhost:3000",
@@ -29,6 +29,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/report/")
+def get_intervals_2(
+    from_date: datetime.date | datetime.datetime = None,
+    to_date: datetime.date | datetime.datetime = None,
+    tick: datetime.timedelta = datetime.timedelta(days=1),
+    db: Session = Depends(get_db),
+):
+    res = report.get_intervals2(db=db, from_date=from_date, to_date=to_date, tick=tick)
+    return res
+
+
+app.include_router(router)
 
 
 @app.get("/activities/", tags=["Activities"], response_model=List[schemas.Activity])
@@ -85,9 +99,7 @@ def update_activity(
         raise HTTPException(status_code=400, detail=f"{e.orig}")
 
 
-@app.get(
-    "/intervals/", tags=["Intervals"], response_model=schemas.IntervalsResponse
-)
+@app.get("/intervals/", tags=["Intervals"], response_model=schemas.IntervalsResponse)
 def get_intervals_data(
     skip: int = 0,
     limit: int = 5000,
@@ -102,7 +114,7 @@ def get_intervals_data(
     meta = crud.get_intervals_meta(
         db=db, user=user, from_date=from_date, to_date=to_date
     )
-    return { "meta": meta, "data": intervals}
+    return {"meta": meta, "data": intervals}
 
 
 @app.post("/intervals/", tags=["Intervals"], response_model=schemas.Interval)
