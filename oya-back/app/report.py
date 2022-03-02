@@ -19,30 +19,35 @@ def get_intervals2(
     meta = db.execute(stmt_meta).first()
     min = from_date if from_date is not None else meta.min
     max = to_date if to_date is not None else meta.max
-    t_end = case((Interval.end > max, max), else_=Interval.end).label("t_end")
-    t_start = case((Interval.start < min, min), else_=Interval.start).label("t_start")
+    t_end_temp = case((Interval.end > max, max), else_=Interval.end).label("t_end")
+    t_start_temp = case((Interval.start < min, min), else_=Interval.start).label(
+        "t_start"
+    )
     percent = (
-        extract("EPOCH", (t_end - t_start))
+        extract("EPOCH", (t_end_temp - t_start_temp))
         / extract("EPOCH", Interval.end - Interval.start)
     ).label("percent")
     t_time = (percent * Entry.time).label("t_time")
 
     Interval2 = aliased(Interval)
     Entry2 = aliased(Entry)
-    # t_end2 = case((Interval2.end > max, max), else_=Interval2.end)
-    # t_start2 = case((Interval2.start < min, min), else_=Interval2.start)
-    baseIndex = func.floor(
-        extract("EPOCH", Interval2.start - min) / extract("EPOCH", tick)
-    )
+    t_start = case((Interval2.start < min, min), else_=Interval2.start)
+    baseIndex = func.floor(extract("EPOCH", t_start - min) / extract("EPOCH", tick))
+    period_start = baseIndex * tick + min
+    period_end = case((period_start + tick > max, max), else_=period_start + tick)
+    t_end = case((Interval2.end > period_end, period_end), else_=Interval2.end)
     cte1_a = (
         select(
             Interval2.id.label("interval_id"),
             Entry2.activity_id.label("activity_id"),
-            Interval2.end.label("interval_end"),
-            # t_start2.label("t_start"),
-            # t_end2.label("t_end"),
+            # t_start.label("t_start"),
+            # t_end.label("t_end"),
             literal(1).label("line"),
             baseIndex.label("index"),
+            period_start.label("period_start"),
+            period_end.label("period_end"),
+            Interval2.start.label("interval_start"),
+            Interval2.end.label("interval_end"),
         )
         .select_from(Entry2)
         .join(Interval2)
@@ -52,10 +57,20 @@ def get_intervals2(
         select(
             cte1_a.c.interval_id,
             cte1_a.c.activity_id,
-            cte1_a.c.interval_end,
+            # t_start.label("t_start"),
+            # t_end.label("t_end"),
             (cte1_a.c.line + 1).label("line"),
             (cte1_a.c.index + 1).label("index"),
-        ).where((cte1_a.c.index + 1) * tick + min < cte1_a.c.interval_end)
+            (cte1_a.c.period_start + tick).label("period_start"),
+            case(
+                (cte1_a.c.period_start + tick * 2 > max, max),
+                else_=cte1_a.c.period_start + tick * 2,
+            ).label("period_end"),
+            cte1_a.c.interval_start,
+            cte1_a.c.interval_end,
+        )
+        .where(cte1_a.c.period_start + tick < cte1_a.c.interval_end)
+        .where(cte1_a.c.period_start + tick < max)
     )
 
     cte2 = (
@@ -72,7 +87,7 @@ def get_intervals2(
             cte1.c.index,
         )
         .select_from(cte1)
-        .order_by(cte1.c.interval_id, cte1.c.activity_id, cte1.c.index)
+        .order_by(cte1.c.interval_id.desc(), cte1.c.activity_id, cte1.c.index.desc())
     )
 
     stmt_main = (
