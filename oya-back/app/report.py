@@ -59,6 +59,7 @@ def get_intervals2(
         .join(Interval2)
         .where(Interval2.end >= min)
         .where(Interval2.start <= max)
+        .where(Interval2.user_id == 1)
         .cte(recursive=True)
     )
     period_end2 = case(
@@ -99,7 +100,7 @@ def get_intervals2(
         Activity.id.label("activity_id"),
         Activity.id.label("parent_id"),
         literal(0).label("level"),
-    ).cte(recursive=True)
+    ).where(Activity.user_id == 1).cte(recursive=True)
     cte2_alias = cte2_a.alias()
     cte2 = cte2_a.union_all(
         select(
@@ -123,7 +124,7 @@ def get_intervals2(
 
     common_columns = (
         # sq.c.index,
-        # sq.c.parent_id.label("activity"),
+        sq.c.parent_id.label("activity"),
         func.sum(sq.c.t_time).label("time"),
         func.sum(
             case((sq.c.level == 0, sq.c.t_time), else_=datetime.timedelta(0))
@@ -170,6 +171,8 @@ def get_intervals2(
         )
         .select_from(Entry)
         .join(Interval)
+        .where(Interval.user_id == 1)
+        
     )
     sq2 = stmt.subquery()
     stmt_totals_from_sq = select(
