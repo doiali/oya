@@ -8,9 +8,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from . import crud, models, schemas
-from . import report
+# from . import report
+from .report import router as reportRouter
 from .database import engine, get_db
-from .auth import get_current_user, router
+from .auth import get_current_user, router as authRouter
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -31,18 +32,19 @@ app.add_middleware(
 )
 
 
-@app.get("/report/")
-def get_report(
-    from_date: datetime.date | datetime.datetime = None,
-    to_date: datetime.date | datetime.datetime = None,
-    tick: datetime.timedelta = datetime.timedelta(days=1),
-    db: Session = Depends(get_db),
-):
-    res = report.get_report(db=db, from_date=from_date, to_date=to_date, tick=tick)
-    return res
+# @app.get("/report/")
+# def get_report(
+#     from_date: datetime.date | datetime.datetime = None,
+#     to_date: datetime.date | datetime.datetime = None,
+#     tick: datetime.timedelta = datetime.timedelta(days=1),
+#     db: Session = Depends(get_db),
+# ):
+#     res = report.get_report(db=db, from_date=from_date, to_date=to_date, tick=tick)
+#     return res
 
 
-app.include_router(router)
+app.include_router(authRouter)
+app.include_router(reportRouter,prefix='/reports')
 
 
 @app.get("/activities/", tags=["Activities"], response_model=List[schemas.Activity])

@@ -11,14 +11,26 @@ from sqlalchemy import (
 )
 import datetime
 from .models import Interval, Activity, Entry, Association
+from fastapi import APIRouter, Depends
+from .database import get_db
 
+router = APIRouter()
 
 def get_report_cte(
     *,
-    min: datetime.datetime = None,
-    max: datetime.datetime = None,
+    db: Session,
+    from_date: datetime.datetime = None,
+    to_date: datetime.datetime = None,
     tick: datetime.timedelta = datetime.timedelta(days=1),
 ):
+    stmt_meta = select(
+        func.min(Interval.start),
+        func.max(Interval.end),
+    ).where(Interval.user_id == 1)
+    meta = db.execute(stmt_meta).first()
+    min = from_date if from_date is not None else meta.min
+    max = to_date if to_date is not None else meta.max
+
     Interval2 = aliased(Interval)
     Entry2 = aliased(Entry)
     t_start = case((Interval2.start < min, min), else_=Interval2.start)
@@ -152,14 +164,7 @@ def get_report(
     to_date: datetime.datetime = None,
     tick: datetime.timedelta = datetime.timedelta(days=1),
 ):
-    stmt_meta = select(
-        func.min(Interval.start),
-        func.max(Interval.end),
-    ).where(Interval.user_id == 1)
-    meta = db.execute(stmt_meta).first()
-    min = from_date if from_date is not None else meta.min
-    max = to_date if to_date is not None else meta.max
-    (sq, common_columns) = get_report_cte(min=min, max=max, tick=tick)
+    (sq, common_columns) = get_report_cte(db=db, from_date=from_date, to_date=to_date, tick=tick)
 
     stmt1 = select(*common_columns)
     stmt2 = (
@@ -178,31 +183,18 @@ def get_report(
         .order_by(sq.c.index.desc(), sq.c.parent_id)
     )
 
-    stmt = stmt4
+    stmt = stmt1
 
-    stmt_totals = (
-        select(
-            func.count("*").label("count_entries"),
-            func.count(distinct(Interval.id)).label("count_interval"),
-            func.sum(Interval.end - Interval.start).label("intervals_total_time"),
-            func.sum(Entry.time).label("entries_total_time"),
-        )
-        .select_from(Entry)
-        .join(Interval)
-        .where(Interval.user_id == 1)
-    )
-    sq2 = stmt.subquery()
-    stmt_totals_from_sq = select(
-        func.count("*").label("count"),
-        func.sum(sq2.c.intervals_total_time_pure).label("intervals_total_time_pure"),
-        func.sum(sq2.c.time_pure).label("total_time_pure"),
-        func.sum(sq2.c.occurance_pure).label("total_occurance_pure"),
-        func.sum(sq2.c.intervals_count).label("intervals_count"),
-    ).select_from(sq2)
-
-    rows = db.execute(stmt.limit(100)).all()
     return {
-        "totals": db.execute(stmt_totals).first(),
-        "totals_from_sq": db.execute(stmt_totals_from_sq).first(),
-        "data": rows,
+        "data": db.execute(stmt).all(),
     }
+
+@router.get("/totals/")
+def get_report(
+    from_date: datetime.date | datetime.datetime = None,
+    to_date: datetime.date | datetime.datetime = None,
+    tick: datetime.timedelta = datetime.timedelta(days=1),
+    db: Session = Depends(get_db),
+):
+    res = get_report(db=db, from_date=from_date, to_date=to_date, tick=tick)
+    return res
