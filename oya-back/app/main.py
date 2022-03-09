@@ -32,13 +32,13 @@ app.add_middleware(
 
 
 @app.get("/report/")
-def get_intervals_2(
+def get_report(
     from_date: datetime.date | datetime.datetime = None,
     to_date: datetime.date | datetime.datetime = None,
     tick: datetime.timedelta = datetime.timedelta(days=1),
     db: Session = Depends(get_db),
 ):
-    res = report.get_intervals2(db=db, from_date=from_date, to_date=to_date, tick=tick)
+    res = report.get_report(db=db, from_date=from_date, to_date=to_date, tick=tick)
     return res
 
 
