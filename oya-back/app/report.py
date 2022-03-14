@@ -13,12 +13,15 @@ import datetime
 from .models import Interval, Activity, Entry, Association
 from fastapi import APIRouter, Depends
 from .database import get_db
+from .auth import User as UserSchema, get_current_user
 
 router = APIRouter()
+
 
 def get_report_cte(
     *,
     db: Session,
+    user: UserSchema,
     from_date: datetime.datetime = None,
     to_date: datetime.datetime = None,
     tick: datetime.timedelta = datetime.timedelta(days=1),
@@ -26,7 +29,7 @@ def get_report_cte(
     stmt_meta = select(
         func.min(Interval.start),
         func.max(Interval.end),
-    ).where(Interval.user_id == 1)
+    ).where(Interval.user_id == user.id)
     meta = db.execute(stmt_meta).first()
     min = from_date if from_date is not None else meta.min
     max = to_date if to_date is not None else meta.max
@@ -62,7 +65,7 @@ def get_report_cte(
         .join(Interval2)
         .where(Interval2.end >= min)
         .where(Interval2.start <= max)
-        .where(Interval2.user_id == 1)
+        .where(Interval2.user_id == user.id)
         .cte(recursive=True)
     )
     period_end2 = case(
@@ -105,7 +108,7 @@ def get_report_cte(
             Activity.id.label("parent_id"),
             literal(0).label("level"),
         )
-        .where(Activity.user_id == 1)
+        .where(Activity.user_id == user.id)
         .cte(recursive=True)
     )
     cte2_alias = cte2_a.alias()
@@ -158,13 +161,16 @@ def get_report_cte(
 
 
 @router.get("/totals/", tags=["Reports"])
-def get_total_report(
+async def get_total_report(
     from_date: datetime.date | datetime.datetime = None,
     to_date: datetime.date | datetime.datetime = None,
     tick: datetime.timedelta = datetime.timedelta(days=1),
     db: Session = Depends(get_db),
+    user: UserSchema = Depends(get_current_user),
 ):
-    (sq, common_columns) = get_report_cte(db=db, from_date=from_date, to_date=to_date, tick=tick)
+    (sq, common_columns) = get_report_cte(
+        db=db, from_date=from_date, to_date=to_date, tick=tick, user=user
+    )
     stmt = select(*common_columns)
     return db.execute(stmt).first()
 
@@ -175,8 +181,11 @@ def get_periodic_total_report(
     to_date: datetime.date | datetime.datetime = None,
     tick: datetime.timedelta = datetime.timedelta(days=1),
     db: Session = Depends(get_db),
+    user: UserSchema = Depends(get_current_user),
 ):
-    (sq, common_columns) = get_report_cte(db=db, from_date=from_date, to_date=to_date, tick=tick)
+    (sq, common_columns) = get_report_cte(
+        db=db, from_date=from_date, to_date=to_date, tick=tick, user=user
+    )
     stmt = (
         select(sq.c.index, *common_columns)
         .group_by(sq.c.index)
@@ -191,8 +200,11 @@ def get_activities_report(
     to_date: datetime.date | datetime.datetime = None,
     tick: datetime.timedelta = datetime.timedelta(days=1),
     db: Session = Depends(get_db),
+    user: UserSchema = Depends(get_current_user),
 ):
-    (sq, common_columns) = get_report_cte(db=db, from_date=from_date, to_date=to_date, tick=tick)
+    (sq, common_columns) = get_report_cte(
+        db=db, from_date=from_date, to_date=to_date, tick=tick, user=user
+    )
     stmt = (
         select(sq.c.parent_id.label("activity"), *common_columns)
         .group_by(sq.c.parent_id)
@@ -207,8 +219,11 @@ def get_periodic_activities_report(
     to_date: datetime.date | datetime.datetime = None,
     tick: datetime.timedelta = datetime.timedelta(days=1),
     db: Session = Depends(get_db),
+    user: UserSchema = Depends(get_current_user),
 ):
-    (sq, common_columns) = get_report_cte(db=db, from_date=from_date, to_date=to_date, tick=tick)
+    (sq, common_columns) = get_report_cte(
+        db=db, from_date=from_date, to_date=to_date, tick=tick, user=user
+    )
     stmt = (
         select(sq.c.index, sq.c.parent_id.label("activity"), *common_columns)
         .group_by(sq.c.index, sq.c.parent_id)
@@ -224,11 +239,14 @@ def get_periodic_activities_report(
     to_date: datetime.date | datetime.datetime = None,
     tick: datetime.timedelta = datetime.timedelta(days=1),
     db: Session = Depends(get_db),
+    user: UserSchema = Depends(get_current_user),
 ):
-    (sq, common_columns) = get_report_cte(db=db, from_date=from_date, to_date=to_date, tick=tick)
+    (sq, common_columns) = get_report_cte(
+        db=db, from_date=from_date, to_date=to_date, tick=tick, user=user
+    )
     stmt = (
         select(sq.c.index, sq.c.parent_id.label("activity"), *common_columns)
-        .where(sq.c.parent_id==activitiy_id)
+        .where(sq.c.parent_id == activitiy_id)
         .group_by(sq.c.index, sq.c.parent_id)
         .order_by(sq.c.index.desc(), sq.c.parent_id)
     )
