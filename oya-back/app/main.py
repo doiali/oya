@@ -32,19 +32,7 @@ app.add_middleware(
 )
 
 
-# @app.get("/report/")
-# def get_report(
-#     from_date: datetime.date | datetime.datetime = None,
-#     to_date: datetime.date | datetime.datetime = None,
-#     tick: datetime.timedelta = datetime.timedelta(days=1),
-#     db: Session = Depends(get_db),
-# ):
-#     res = report.get_report(db=db, from_date=from_date, to_date=to_date, tick=tick)
-#     return res
-
-
 app.include_router(authRouter)
-app.include_router(reportRouter,prefix='/reports')
 
 
 @app.get("/activities/", tags=["Activities"], response_model=List[schemas.Activity])
@@ -152,8 +140,11 @@ def delete_interval(
         raise HTTPException(status_code=400, detail="interval not found")
 
 
-@app.get("/daily_report/", tags=["Reports"], response_model=schemas.DailyReport)
-def get_daily_report(
+app.include_router(reportRouter,prefix='/reports')
+
+
+@app.get("/reports/legacy-daily-report/", tags=["Reports"], response_model=schemas.DailyReport)
+def get_daily_report_legacy(
     date: str, db: Session = Depends(get_db), user=Depends(get_current_user)
 ):
     return crud.get_daily_report(db=db, date=parser.parse(date).date(), user=user)

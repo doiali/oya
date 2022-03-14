@@ -157,44 +157,79 @@ def get_report_cte(
     return (sq, common_columns)
 
 
-def get_report(
-    *,
-    db: Session,
-    from_date: datetime.datetime = None,
-    to_date: datetime.datetime = None,
-    tick: datetime.timedelta = datetime.timedelta(days=1),
-):
-    (sq, common_columns) = get_report_cte(db=db, from_date=from_date, to_date=to_date, tick=tick)
-
-    stmt1 = select(*common_columns)
-    stmt2 = (
-        select(sq.c.parent_id.label("activity"), *common_columns)
-        .group_by(sq.c.parent_id)
-        .order_by(sq.c.parent_id)
-    )
-    stmt3 = (
-        select(sq.c.index, *common_columns)
-        .group_by(sq.c.index)
-        .order_by(sq.c.index.desc())
-    )
-    stmt4 = (
-        select(sq.c.index, sq.c.parent_id.label("activity"), *common_columns)
-        .group_by(sq.c.index, sq.c.parent_id)
-        .order_by(sq.c.index.desc(), sq.c.parent_id)
-    )
-
-    stmt = stmt1
-
-    return {
-        "data": db.execute(stmt).all(),
-    }
-
-@router.get("/totals/")
-def get_report(
+@router.get("/totals/", tags=["Reports"])
+def get_total_report(
     from_date: datetime.date | datetime.datetime = None,
     to_date: datetime.date | datetime.datetime = None,
     tick: datetime.timedelta = datetime.timedelta(days=1),
     db: Session = Depends(get_db),
 ):
-    res = get_report(db=db, from_date=from_date, to_date=to_date, tick=tick)
-    return res
+    (sq, common_columns) = get_report_cte(db=db, from_date=from_date, to_date=to_date, tick=tick)
+    stmt = select(*common_columns)
+    return db.execute(stmt).first()
+
+
+@router.get("/totals-periodic/", tags=["Reports"])
+def get_periodic_total_report(
+    from_date: datetime.date | datetime.datetime = None,
+    to_date: datetime.date | datetime.datetime = None,
+    tick: datetime.timedelta = datetime.timedelta(days=1),
+    db: Session = Depends(get_db),
+):
+    (sq, common_columns) = get_report_cte(db=db, from_date=from_date, to_date=to_date, tick=tick)
+    stmt = (
+        select(sq.c.index, *common_columns)
+        .group_by(sq.c.index)
+        .order_by(sq.c.index.desc())
+    )
+    return db.execute(stmt).all()
+
+
+@router.get("/activities/", tags=["Reports"])
+def get_activities_report(
+    from_date: datetime.date | datetime.datetime = None,
+    to_date: datetime.date | datetime.datetime = None,
+    tick: datetime.timedelta = datetime.timedelta(days=1),
+    db: Session = Depends(get_db),
+):
+    (sq, common_columns) = get_report_cte(db=db, from_date=from_date, to_date=to_date, tick=tick)
+    stmt = (
+        select(sq.c.parent_id.label("activity"), *common_columns)
+        .group_by(sq.c.parent_id)
+        .order_by(sq.c.parent_id)
+    )
+    return db.execute(stmt).all()
+
+
+@router.get("/activities-periodic/", tags=["Reports"])
+def get_periodic_activities_report(
+    from_date: datetime.date | datetime.datetime = None,
+    to_date: datetime.date | datetime.datetime = None,
+    tick: datetime.timedelta = datetime.timedelta(days=1),
+    db: Session = Depends(get_db),
+):
+    (sq, common_columns) = get_report_cte(db=db, from_date=from_date, to_date=to_date, tick=tick)
+    stmt = (
+        select(sq.c.index, sq.c.parent_id.label("activity"), *common_columns)
+        .group_by(sq.c.index, sq.c.parent_id)
+        .order_by(sq.c.index.desc(), sq.c.parent_id)
+    )
+    return db.execute(stmt).all()
+
+
+@router.get("/activities-periodic/{activitiy_id}/", tags=["Reports"])
+def get_periodic_activities_report(
+    activitiy_id: int,
+    from_date: datetime.date | datetime.datetime = None,
+    to_date: datetime.date | datetime.datetime = None,
+    tick: datetime.timedelta = datetime.timedelta(days=1),
+    db: Session = Depends(get_db),
+):
+    (sq, common_columns) = get_report_cte(db=db, from_date=from_date, to_date=to_date, tick=tick)
+    stmt = (
+        select(sq.c.index, sq.c.parent_id.label("activity"), *common_columns)
+        .where(sq.c.parent_id==activitiy_id)
+        .group_by(sq.c.index, sq.c.parent_id)
+        .order_by(sq.c.index.desc(), sq.c.parent_id)
+    )
+    return db.execute(stmt).all()
