@@ -10,6 +10,8 @@ from sqlalchemy import (
     and_,
 )
 import datetime
+from typing import List
+from . import schemas
 from .models import Interval, Activity, Entry, Association
 from fastapi import APIRouter, Depends
 from .database import get_db
@@ -160,7 +162,7 @@ def get_report_cte(
     return (sq, common_columns)
 
 
-@router.get("/totals/", tags=["Reports"])
+@router.get("/totals/", tags=["Reports"], response_model=schemas.ReportBase)
 async def get_total_report(
     from_date: datetime.date | datetime.datetime = None,
     to_date: datetime.date | datetime.datetime = None,
@@ -175,7 +177,9 @@ async def get_total_report(
     return db.execute(stmt).first()
 
 
-@router.get("/totals-periodic/", tags=["Reports"])
+@router.get(
+    "/totals-periodic/", tags=["Reports"], response_model=List[schemas.ReportPeriodic]
+)
 def get_periodic_total_report(
     from_date: datetime.date | datetime.datetime = None,
     to_date: datetime.date | datetime.datetime = None,
@@ -194,7 +198,9 @@ def get_periodic_total_report(
     return db.execute(stmt).all()
 
 
-@router.get("/activities/", tags=["Reports"])
+@router.get(
+    "/activities/", tags=["Reports"], response_model=List[schemas.ReportActivities]
+)
 def get_activities_report(
     from_date: datetime.date | datetime.datetime = None,
     to_date: datetime.date | datetime.datetime = None,
@@ -206,14 +212,18 @@ def get_activities_report(
         db=db, from_date=from_date, to_date=to_date, tick=tick, user=user
     )
     stmt = (
-        select(sq.c.parent_id.label("activity"), *common_columns)
+        select(sq.c.parent_id.label("activity_id"), *common_columns)
         .group_by(sq.c.parent_id)
         .order_by(sq.c.parent_id)
     )
     return db.execute(stmt).all()
 
 
-@router.get("/activities-periodic/", tags=["Reports"])
+@router.get(
+    "/activities-periodic/",
+    tags=["Reports"],
+    response_model=List[schemas.ReportActivitiesPeriodic],
+)
 def get_periodic_activities_report(
     from_date: datetime.date | datetime.datetime = None,
     to_date: datetime.date | datetime.datetime = None,
@@ -225,14 +235,18 @@ def get_periodic_activities_report(
         db=db, from_date=from_date, to_date=to_date, tick=tick, user=user
     )
     stmt = (
-        select(sq.c.index, sq.c.parent_id.label("activity"), *common_columns)
+        select(sq.c.index, sq.c.parent_id.label("activity_id"), *common_columns)
         .group_by(sq.c.index, sq.c.parent_id)
         .order_by(sq.c.index.desc(), sq.c.parent_id)
     )
     return db.execute(stmt).all()
 
 
-@router.get("/activities-periodic/{activitiy_id}/", tags=["Reports"])
+@router.get(
+    "/activities-periodic/{activitiy_id}/",
+    tags=["Reports"],
+    response_model=List[schemas.ReportActivitiesPeriodic],
+)
 def get_periodic_activities_report(
     activitiy_id: int,
     from_date: datetime.date | datetime.datetime = None,
@@ -245,7 +259,7 @@ def get_periodic_activities_report(
         db=db, from_date=from_date, to_date=to_date, tick=tick, user=user
     )
     stmt = (
-        select(sq.c.index, sq.c.parent_id.label("activity"), *common_columns)
+        select(sq.c.index, sq.c.parent_id.label("activity_id"), *common_columns)
         .where(sq.c.parent_id == activitiy_id)
         .group_by(sq.c.index, sq.c.parent_id)
         .order_by(sq.c.index.desc(), sq.c.parent_id)
