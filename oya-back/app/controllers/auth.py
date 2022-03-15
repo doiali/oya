@@ -8,10 +8,11 @@ from passlib.context import CryptContext
 from .. import models
 from ..database import get_db
 from ..schemas import auth
+from decouple import config
 
 # to get a string like this run:
 # openssl rand -hex 32
-SECRET_KEY = "ec531cdaa34637c8e880a4e2adf632e90fa3b929fe514c01fab055902c882e06"
+SECRET_KEY = config("secret_key")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 30
 
