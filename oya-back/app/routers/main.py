@@ -1,6 +1,5 @@
 import datetime
 from typing import List
-from dateutil import parser
 
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
@@ -117,10 +116,3 @@ def delete_interval(
         controllers.main.delete_interval(db=db, interval_id=interval_id, user=user)
     except ReferenceError:
         raise HTTPException(status_code=400, detail="interval not found")
-
-
-@router.get("/reports/legacy-daily-report/", tags=["Reports"], response_model=schemas.report.DailyReport)
-def get_daily_report_legacy(
-    date: str, db: Session = Depends(get_db), user=Depends(get_current_user)
-):
-    return controllers.main.get_daily_report(db=db, date=parser.parse(date).date(), user=user)

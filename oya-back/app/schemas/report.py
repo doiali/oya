@@ -2,34 +2,6 @@ import datetime
 from typing import List, Optional, Dict
 
 from pydantic import BaseModel
-from .main import Entry
-
-class ReportSinge(BaseModel):
-    duration: int
-    occurance: int
-
-    class Config:
-        orm_mode = True
-
-
-class Period(BaseModel):
-    s: str
-    e: str
-    d: int
-    note: Optional[str]
-    entries: List[Entry]
-
-    class Config:
-        orm_mode = True
-
-
-class DailyReport(BaseModel):
-    date: str
-    periods: List[Period]
-    report: Dict[str, ReportSinge]
-
-    class Config:
-        orm_mode = True
 
 
 class ReportBase(BaseModel):

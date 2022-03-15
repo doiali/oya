@@ -147,63 +147,6 @@ def get_intervals_meta(
     return meta
 
 
-def get_daily_report(*, user: UserSchema, db: Session, date: datetime.date):
-    stmt = (
-        select(Interval)
-        .options(
-            joinedload(Interval.entries)
-            .joinedload(Entry.activity)
-            .joinedload(Activity.parents)
-        )
-        .where(Interval.user_id == user.id)
-        .where(
-            Interval.start.between(date, date + datetime.timedelta(days=1))
-            | Interval.end.between(date, date + datetime.timedelta(days=1))
-        )
-        .order_by(Interval.end.desc())
-    )
-    res = db.execute(stmt).unique().scalars()
-    periods = []
-    report = {}
-    for row in res:
-        obj = {
-            "s": str(row.start_datetime.time())[0:5]
-            if row.start_datetime.date() >= date
-            else "00:00",
-            "e": str(row.end_datetime.time())[0:5]
-            if row.end_datetime.date() < date + datetime.timedelta(days=1)
-            else "24:00",
-            "note": row.note,
-            "entries": row.entries,
-        }
-        obj["d"] = (
-            int(obj["e"][0:2]) * 60
-            + int(obj["e"][3:5])
-            - int(obj["s"][0:2]) * 60
-            - int(obj["s"][3:5])
-        )
-        delta = datetime.timedelta(minutes=obj["d"])
-        periods.append(obj)
-        for e in row.entries:
-            for a in [e.activity, *e.activity.allParents]:
-                if str(a.id) not in report:
-                    report[str(a.id)] = {
-                        "activity": a,
-                        "duration": obj["d"],
-                        "occurance": 1,
-                    }
-                else:
-                    report[str(a.id)]["duration"] += obj["d"]
-                    report[str(a.id)]["occurance"] += 1
-    return {
-        "date": str(date),
-        "report": report,
-        "periods": periods,
-    }
-    #     print(obj["s"], obj["e"], obj["entries"] , row)
-    # print(report)
-
-
 def create_interval(
     *, user: UserSchema, db: Session, interval: schemas.main.IntervalCreate
 ):

@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session, aliased
+from sqlalchemy.orm import Session
 from sqlalchemy import select
 import datetime
 from typing import List
