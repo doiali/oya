@@ -116,7 +116,7 @@ const getInitState = (meta: IntervalsMeta | undefined) => {
     start = new Date(meta.min);
   start.setHours(0, 0, 0, 0);
   let end = new Date();
-  if (meta?.max)
+  if (meta?.max && new Date(meta.max) > new Date())
     end = new Date(meta.max);
   end.setDate(end.getDate() + 1);
   end.setHours(0, 0, 0, 0);
