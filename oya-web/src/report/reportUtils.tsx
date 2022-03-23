@@ -85,7 +85,7 @@ export const getRange = (start: Date, end: Date) => {
     endDate.setDate(endDate.getDate() - 1);
   }
   endDate.setHours(0, 0, 0, 0);
-  const days = (endDate.getTime() - startDate.getTime()) / (60000 * 60 * 24) + 1;
+  const days = Math.round((endDate.getTime() - startDate.getTime()) / (60000 * 60 * 24) + 1);
   return { startTime, startDate, endTime, endDate, days };
 };
 
