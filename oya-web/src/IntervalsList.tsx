@@ -34,6 +34,7 @@ export default memo(function IntervalsList({ intervals, highLights }: IntervalsL
           .slice((page - 1) * rowsPerPage, page * rowsPerPage)
           .map((interval, i) => {
             const end = new Date(interval.end);
+            end.setTime(end.getTime() - 1);
             end.setHours(0, 0, 0, 0);
             const isNewDay = end < prevEnd;
             if (isNewDay) prevEnd = end;
@@ -41,7 +42,7 @@ export default memo(function IntervalsList({ intervals, highLights }: IntervalsL
               <React.Fragment key={interval.id}>
                 {isNewDay && (
                   <Divider orientation="horizontal" flexItem>
-                    <Chip color="secondary" dir="rtl" label={format(new Date(interval.end), 'eeee d MMMM y')} />
+                    <Chip color="secondary" dir="rtl" label={format(end, 'eeee d MMMM y')} />
                   </Divider>
                 )}
                 <IntervalItem
