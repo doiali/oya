@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useActivityContext } from '../ActivityPageLayout';
 import { localeUtils as u } from '../DateAdapter';
 import IntervalsList from '../IntervalsList';
+import Widget from '../Widget';
 import PieIcon from './PieIcon';
 
 const Indicator = styled(PieIcon)(() => ({
@@ -26,63 +27,70 @@ export default function ActivityCalender() {
   const weekArray = u.getWeekArray(selectedMonth);
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between">
-        <Button onClick={() => setSelectedMonth(u.getPreviousMonth(selectedMonth))}>
-          prev month
-        </Button>
-        <Typography>
-          {u.format(selectedMonth, 'monthAndYear')}
-        </Typography>
-        <Button onClick={() => setSelectedMonth(u.getNextMonth(selectedMonth))}>
-          next month
-        </Button>
-      </Box>
-      <Box display="flex">
-        {weekArray[0].map((d, i) => (
-          <Box
-            key={d.toISOString()}
-            m={1}
-            width={300}
-            height={80}
-            p={1}
-            textAlign="center"
-          >
-            <span className='desktop-only'>
-              {u.format(d, 'weekday')}
-            </span>
-            <span className='mobile-only'>
-              {u.getWeekdays()[i]}
-            </span>
+      <Widget
+        sx={{ mb: 3 }}
+        title={(
+          <Box display="flex" justifyContent="space-between">
+            <Button onClick={() => setSelectedMonth(u.getPreviousMonth(selectedMonth))}>
+              prev month
+            </Button>
+            <Typography>
+              {u.format(selectedMonth, 'monthAndYear')}
+            </Typography>
+            <Button onClick={() => setSelectedMonth(u.getNextMonth(selectedMonth))}>
+              next month
+            </Button>
           </Box>
-        ))}
-      </Box>
-      {weekArray.map((a) => {
-        return (
-          <Box key={a[0].toISOString()} display="flex">
-            {a.map(d => (
-              <Box
-                onClick={() => setDate(d)}
-                key={d.toISOString()}
-                sx={theme => ({
-                  opacity: u.isSameMonth(d, selectedMonth) ? 1 : 0.5,
-                  bgcolor: u.isSameDay(d, now) ? alpha(theme.palette.primary.main, 0.1) : undefined,
-                  p: 1,
-                  m: 1,
-                  width: 300,
-                  height: 60,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  position: 'relative',
-                })}
-              >
-                <Indicator time={getValue(d)} />
-                {u.format(d, 'dayOfMonth')}
-              </Box>
-            ))}
-          </Box>
-        );
-      })}
+        )}
+      >
+        <Box display="flex">
+          {weekArray[0].map((d, i) => (
+            <Box
+              key={d.toISOString()}
+              m={1}
+              width={300}
+              height={80}
+              p={1}
+              textAlign="center"
+            >
+              <span className='desktop-only'>
+                {u.format(d, 'weekday')}
+              </span>
+              <span className='mobile-only'>
+                {u.getWeekdays()[i]}
+              </span>
+            </Box>
+          ))}
+        </Box>
+        {weekArray.map((a) => {
+          return (
+            <Box key={a[0].toISOString()} display="flex">
+              {a.map(d => (
+                <Box
+                  onClick={() => setDate(d)}
+                  key={d.toISOString()}
+                  sx={theme => ({
+                    opacity: u.isSameMonth(d, selectedMonth) ? 1 : 0.5,
+                    bgcolor: u.isSameDay(d, now) ? alpha(theme.palette.primary.main, 0.1) : undefined,
+                    p: 1,
+                    m: 1,
+                    width: 300,
+                    height: 60,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'relative',
+                  })}
+                >
+                  <Indicator time={getValue(d)} />
+                  {u.format(d, 'dayOfMonth')}
+                </Box>
+              ))}
+            </Box>
+          );
+        })}
+      </Widget>
+
       <Box>
         {date && (
           <IntervalsList
