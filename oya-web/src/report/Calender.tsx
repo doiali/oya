@@ -118,8 +118,7 @@ export default function Calender() {
         {date && (
           <IntervalsList
             intervals={intervals.filter(i => (
-              utils.isWithinRange(new Date(i.start), [date, utils.addDays(date, 1)]) ||
-              utils.isWithinRange(new Date(i.end), [date, utils.addDays(date, 1)])
+              (new Date(i.start) <= utils.addDays(date, 1) && new Date(i.end) >= date)
             ))}
             highLights={activity ? [activity.id] : undefined}
           />
