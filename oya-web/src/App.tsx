@@ -11,20 +11,14 @@ import MainRouter from './MainRouter';
 import { LocalizationProvider } from '@mui/lab';
 import AuthProvider from './AuthProvider';
 import 'simplebar/dist/simplebar.min.css';
-
-class MyAdapter extends AdapterJalali {
-  constructor(args: any) {
-    super(args);
-    this.getWeekdays = () => ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
-  }
-}
+import { Adapter } from './DateAdapter';
 
 export default function App() {
   return (
     <React.StrictMode>
       <ThemeProvider>
         <BrowserRouter>
-          <LocalizationProvider dateAdapter={MyAdapter}>
+          <LocalizationProvider dateAdapter={Adapter}>
             <AuthProvider>
               <CssBaseline />
               <AlertServiceContainer />
