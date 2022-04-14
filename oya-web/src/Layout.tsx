@@ -111,7 +111,21 @@ export default function Layout() {
   };
 
   return (
-    <Box sx={{ display: 'flex', flex: '1 1 auto' }}>
+    <Box
+      sx={{
+        display: 'flex', flex: '1 1 auto',
+        '& .mobile-only': {
+          [theme.breakpoints.up('md')]: {
+            display: 'none',
+          },
+        },
+        '& .desktop-only': {
+          [theme.breakpoints.down('sm')]: {
+            display: 'none',
+          },
+        },
+      }}
+    >
       <AppBar position="fixed" open={open}>
         <Toolbar sx={{ height: toolbarHeight }}>
           <IconButton

@@ -11,6 +11,7 @@ import ActivityPageLayout from './ActivityPageLayout';
 import SunburstNivo from './report/SunburstNivo';
 // import Calender from './report/Calender';
 import LoginPage, { LoginPageLayout } from './LoginPage';
+import ActivityCalender from './report/ActivityCalender';
 
 export interface RouteInfo {
   path: string;
@@ -53,6 +54,7 @@ export const mainRoutes: RouteInfo[] = [
 export const activityPanelRoutes: RouteInfo[] = [
   { path: '', label: 'overview', element: <ActivityPanelHome /> },
   { path: 'times', label: 'time chart', element: <TimeRe /> },
+  { path: 'calender', label: 'calender', element: <ActivityCalender /> },
   // { path: 'calender', label: 'calender', element: <Calender /> },
   { path: '*', element: '404 not found', hideLink: true },
 ];
