@@ -19,6 +19,7 @@ import { mainRoutes } from './MainRouter';
 import ProtectedView from './ProtectedView';
 import { ListItem, ListItemIcon, ListItemText, useMediaQuery } from '@mui/material';
 import { useAuth } from './AuthProvider';
+import CalenderSelector from './CalenderSelector';
 
 const drawerWidth = 280;
 export const breakpoint = 'lg';
@@ -142,6 +143,7 @@ export default function Layout() {
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <ThemeModeSwitch />
+          <CalenderSelector />
         </Toolbar>
       </AppBar>
       <Drawer

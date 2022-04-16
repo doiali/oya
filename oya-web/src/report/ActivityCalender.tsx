@@ -1,7 +1,7 @@
 import { alpha, Box, Button, styled, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useActivityContext } from '../ActivityPageLayout';
-import { localeUtils as u } from '../DateAdapter';
+import { useDateContext } from '../DateProvider';
 import IntervalsList from '../IntervalsList';
 import Widget from '../Widget';
 import PieIcon from './PieIcon';
@@ -15,6 +15,7 @@ const Indicator = styled(PieIcon)(() => ({
 
 export default function ActivityCalender() {
   const { activity, report: { DDA, intervals } } = useActivityContext();
+  const { utils: u } = useDateContext();
   const getValue = (day: Date) => {
     if (!activity) return 0;
     const dm = DDA.find(dm => u.isSameDay(dm.date, day));
@@ -22,7 +23,7 @@ export default function ActivityCalender() {
     return report?.time ?? 0;
   };
   const [date, setDate] = useState<Date | null>(null);
-  const now = u.date();
+  const now = u.date() || new Date();
   const [selectedMonth, setSelectedMonth] = useState(u.startOfMonth(now));
   const weekArray = u.getWeekArray(selectedMonth);
   return (

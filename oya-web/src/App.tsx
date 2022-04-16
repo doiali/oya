@@ -8,23 +8,22 @@ import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from './theme';
 import { AlertServiceContainer } from './AlertService';
 import MainRouter from './MainRouter';
-import { LocalizationProvider } from '@mui/lab';
 import AuthProvider from './AuthProvider';
 import 'simplebar/dist/simplebar.min.css';
-import { Adapter } from './DateAdapter';
+import { DateProvider } from './DateProvider';
 
 export default function App() {
   return (
     <React.StrictMode>
       <ThemeProvider>
         <BrowserRouter>
-          <LocalizationProvider dateAdapter={Adapter}>
+          <DateProvider>
             <AuthProvider>
               <CssBaseline />
               <AlertServiceContainer />
               <MainRouter />
             </AuthProvider>
-          </LocalizationProvider>
+          </DateProvider>
         </BrowserRouter>
       </ThemeProvider>
     </React.StrictMode>
