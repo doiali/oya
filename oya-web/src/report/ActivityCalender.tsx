@@ -1,4 +1,4 @@
-import { alpha, Box, Button, styled, Typography } from '@mui/material';
+import { alpha, Box, Button, MenuItem, Select, styled, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useActivityContext } from '../ActivityPageLayout';
 import { useDateContext } from '../DateProvider';
@@ -13,6 +13,15 @@ const Indicator = styled(PieIcon)(() => ({
   transform: 'translate(-50%,-50%)',
 }));
 
+const scales = [
+  { label: '12h', value: 1 },
+  { label: '6h', value: 2 },
+  { label: '4h', value: 3 },
+  { label: '3h', value: 4 },
+  { label: '2h', value: 6 },
+  { label: '1h', value: 12 },
+] as const;
+
 export default function ActivityCalender() {
   const { activity, report: { DDA, intervals } } = useActivityContext();
   const { utils: u } = useDateContext();
@@ -25,25 +34,44 @@ export default function ActivityCalender() {
   const [date, setDate] = useState<Date | null>(null);
   const now = u.date() || new Date();
   const [selectedMonth, setSelectedMonth] = useState(u.startOfMonth(now));
+  const [scale, setScale] = useState<typeof scales[number]['value']>(6);
   const weekArray = u.getWeekArray(selectedMonth);
   return (
     <Box>
       <Widget
         sx={{ mb: 3 }}
         title={(
-          <Box display="flex" justifyContent="space-between">
-            <Button onClick={() => setSelectedMonth(u.getPreviousMonth(selectedMonth))}>
-              prev month
-            </Button>
-            <Typography>
-              {u.format(selectedMonth, 'monthAndYear')}
-            </Typography>
-            <Button onClick={() => setSelectedMonth(u.getNextMonth(selectedMonth))}>
-              next month
-            </Button>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <span>Activity Calender: {activity?.name}</span>
+            <Select
+              value={scale}
+              onChange={(e) => setScale(e.target.value as typeof scales[number]['value'])}
+              sx={{ minWidth: 80 }}
+            >
+              {scales.map(({ value, label }) => (
+                <MenuItem value={value} key={value}>{label}</MenuItem>
+              ))}
+            </Select>
           </Box>
         )}
       >
+        <Box display="flex" justifyContent="space-between">
+          <Button onClick={() => setSelectedMonth(u.getPreviousMonth(selectedMonth))}>
+            prev month
+          </Button>
+          <Typography>
+            {u.format(selectedMonth, 'monthAndYear')}
+          </Typography>
+          <Button onClick={() => setSelectedMonth(u.getNextMonth(selectedMonth))}>
+            next month
+          </Button>
+        </Box>
         <Box display="flex">
           {weekArray[0].map((d, i) => (
             <Box
@@ -83,7 +111,7 @@ export default function ActivityCalender() {
                     position: 'relative',
                   })}
                 >
-                  <Indicator time={getValue(d)} />
+                  <Indicator time={getValue(d) * scale} />
                   {u.format(d, 'dayOfMonth')}
                 </Box>
               ))}
