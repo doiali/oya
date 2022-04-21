@@ -1,4 +1,5 @@
 import { useTheme } from '@mui/material';
+import React from 'react';
 
 const polarToCartesian = (ox: number, oy: number, r: number, a: number) => {
   const x = r * Math.sin(a) + ox;
@@ -13,9 +14,10 @@ export type ClockIconProps = {
     a2: number,
     isLight?: boolean,
   }[];
+  text?: React.ReactNode;
 };
 
-export default function ClockIcon({ className = '', data }: ClockIconProps) {
+export default function ClockIcon({ className = '', data, text }: ClockIconProps) {
   const PI = Math.PI;
   const theme = useTheme();
   const l = 100;
@@ -77,6 +79,16 @@ export default function ClockIcon({ className = '', data }: ClockIconProps) {
     <svg className={className} width={250} viewBox='0 0 1600 1600'>
       {data.map(({ a1, a2, isLight }) => drawArcs(a1, a2, isLight))}
       {drawClock()}
+      <text
+        x={ox}
+        y={oy}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill={theme.palette.text.primary}
+        style={{ fontSize: 100 }}
+      >
+        {text}
+      </text>
     </svg>
   );
 }

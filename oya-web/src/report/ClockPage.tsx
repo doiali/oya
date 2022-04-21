@@ -39,7 +39,11 @@ export default function ClockPage() {
             data.push({ a1, a2: a2r });
           });
           return (
-            <ClockIcon data={data} key={day.toISOString()} />
+            <ClockIcon
+              data={data}
+              key={day.toISOString()}
+              text={u.format(day, 'weekday')}
+            />
           );
         })}
       </Widget>
