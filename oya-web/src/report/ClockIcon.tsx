@@ -1,4 +1,4 @@
-import { useTheme } from '@mui/material';
+import { alpha, useTheme } from '@mui/material';
 import React from 'react';
 
 const polarToCartesian = (ox: number, oy: number, r: number, a: number) => {
@@ -33,7 +33,7 @@ export default function ClockIcon({ className = '', data, text }: ClockIconProps
     const isLarge = a2 - a1 > Math.PI ? 1 : 0;
     return (
       <g
-        stroke={isLight ? theme.palette.success.light : theme.palette.success.dark}
+        stroke={isLight ? alpha(theme.palette.success.light, 0.2) : theme.palette.success.main}
         strokeWidth={l} fill="none"
         key={`a1${a1}-a2${a2}-${isOuter}-${isLight}`}
       >

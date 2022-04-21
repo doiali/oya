@@ -33,12 +33,13 @@ export default function ClockPage() {
               return activity?.allChildIds.includes(e.activity_id) ? a + e.time : a;
             }, 0);
             if (!time) return;
-            if (time * 60000 > l.delta) time = l.delta;
+            if (time > l.delta) time = l.delta;
             const a1 = l.start * Math.PI / 3600000 / 6;
             const a2 = l.end * Math.PI / 3600000 / 6;
             const a2r = (l.start + time * 60000) * Math.PI / 3600000 / 6;
-            if (time < l.delta)
+            if (time < l.delta) {
               data.push({ a1, a2, isLight: true });
+            }
             data.push({ a1, a2: a2r });
           });
           return (
