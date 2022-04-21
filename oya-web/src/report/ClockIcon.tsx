@@ -6,7 +6,16 @@ const polarToCartesian = (ox: number, oy: number, r: number, a: number) => {
   return [x, y] as const;
 };
 
-export default function ClockIcon({ className = '' }) {
+export type ClockIconProps = {
+  className?: string;
+  data: {
+    a1: number,
+    a2: number,
+    isLight?: boolean,
+  }[];
+};
+
+export default function ClockIcon({ className = '', data }: ClockIconProps) {
   const PI = Math.PI;
   const theme = useTheme();
   const l = 100;
@@ -24,6 +33,7 @@ export default function ClockIcon({ className = '' }) {
       <g
         stroke={isLight ? theme.palette.success.light : theme.palette.success.dark}
         strokeWidth={l} fill="none"
+        key={`a1${a1}-a2${a2}-${isOuter}-${isLight}`}
       >
         {
           (a1 === 0 || a1 === 2 * PI) && a2 - a1 >= 2 * PI
@@ -64,8 +74,8 @@ export default function ClockIcon({ className = '' }) {
     );
   };
   return (
-    <svg className={className} width={500} viewBox='0 0 1600 1600'>
-      {drawArcs(0.5 * PI, 5 * PI)}
+    <svg className={className} width={250} viewBox='0 0 1600 1600'>
+      {data.map(({ a1, a2, isLight }) => drawArcs(a1, a2, isLight))}
       {drawClock()}
     </svg>
   );
