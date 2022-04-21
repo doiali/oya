@@ -67,7 +67,8 @@ export default function ClockIcon({ className = '', data, text }: ClockIconProps
     if (a2_ <= a1) return null;
     if (a1 >= 4 * PI) return null;
     if (a2_ >= 4 * PI) a2_ = 4 * PI;
-    if (a2_ <= 2 * PI || a1 >= 2 * PI) return getArc(a1, a2_);
+    if (a2_ <= 2 * PI) return getArc(a1, a2_, false, isLight);
+    if (a1 >= 2 * PI) return getArc(a1, a2_, true, isLight);
     return (
       <>
         {getArc(a1, 2 * PI, false, isLight)}
