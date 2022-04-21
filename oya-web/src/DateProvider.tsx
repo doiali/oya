@@ -50,3 +50,6 @@ export const useDateContext = () => {
   const context = React.useContext(DateContext);
   return context;
 };
+
+const dateUtils = new AdapterBase();
+export { dateUtils };
