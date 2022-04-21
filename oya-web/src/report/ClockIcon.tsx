@@ -16,7 +16,6 @@ export default function ClockIcon({ className = '' }) {
   const r1 = R - l;
   const r2 = R + l;
   const getArc = (a1: number, a2: number, isOuter = false, isLight = false) => {
-    if (!a1 || !a2) return null;
     const r = isOuter ? (r2 + R) / 2 + 1 : (r1 + R) / 2 - 1;
     const [x1, y1] = polarToCartesian(ox, oy, r, a1);
     const [x2, y2] = polarToCartesian(ox, oy, r, a2);
@@ -26,7 +25,11 @@ export default function ClockIcon({ className = '' }) {
         stroke={isLight ? theme.palette.success.light : theme.palette.success.dark}
         strokeWidth={l} fill="none"
       >
-        <path d={`M ${x1} ${y1} A ${r} ${r} 0 ${isLarge} 1 ${x2} ${y2}`} />
+        {
+          (a1 === 0 || a1 === 2 * PI) && a2 - a1 >= 2 * PI
+            ? <circle r={r} cx={ox} cy={oy} />
+            : <path d={`M ${x1} ${y1} A ${r} ${r} 0 ${isLarge} 1 ${x2} ${y2}`} />
+        }
       </g>
     );
   };
@@ -47,10 +50,22 @@ export default function ClockIcon({ className = '' }) {
       ))}
     </g>
   );
+  const drawArcs = (a1: number, a2: number, isLight = false) => {
+    let a2_ = a2;
+    if (a2_ <= a1) return null;
+    if (a1 >= 4 * PI) return null;
+    if (a2_ >= 4 * PI) a2_ = 4 * PI;
+    if (a2_ <= 2 * PI || a1 >= 2 * PI) return getArc(a1, a2_);
+    return (
+      <>
+        {getArc(a1, 2 * PI, false, isLight)}
+        {getArc(2 * PI, a2_, true, isLight)}
+      </>
+    );
+  };
   return (
     <svg className={className} width={500} viewBox='0 0 1000 1000'>
-      {getArc(0.25 * PI, 0.5 * PI)}
-      {getArc(0.75 * PI, 1 * PI, true)}
+      {drawArcs(0.5 * PI, 5 * PI)}
       {drawClock()}
     </svg>
   );
