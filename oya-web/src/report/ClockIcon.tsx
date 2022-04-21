@@ -9,10 +9,10 @@ const polarToCartesian = (ox: number, oy: number, r: number, a: number) => {
 export default function ClockIcon({ className = '' }) {
   const PI = Math.PI;
   const theme = useTheme();
-  const l = 40;
-  const R = 300;
-  const ox = 500;
-  const oy = 500;
+  const l = 100;
+  const R = 600;
+  const ox = 800;
+  const oy = 800;
   const r1 = R - l;
   const r2 = R + l;
   const getArc = (a1: number, a2: number, isOuter = false, isLight = false) => {
@@ -34,16 +34,16 @@ export default function ClockIcon({ className = '' }) {
     );
   };
   const drawLine = (a: number, long = false) => {
-    const ri = long ? r1 - 20 : r1 - 10;
-    const ro = long ? r2 + 20 : r2 + 10;
+    const ri = long ? r1 - l / 2 : r1 - l / 3;
+    const ro = long ? r2 + l / 2 : r2 + l / 3;
     const [x1, y1] = polarToCartesian(ox, oy, ri, a);
     const [x2, y2] = polarToCartesian(ox, oy, ro, a);
     return (
-      <line {...{ x1, x2, y1, y2 }} key={a} stroke={theme.palette.text.primary} strokeWidth={1} />
+      <line {...{ x1, x2, y1, y2 }} key={a} stroke={theme.palette.text.primary} strokeWidth={3} />
     );
   };
   const drawClock = () => (
-    <g stroke={theme.palette.text.primary} strokeWidth={1} fill="none">
+    <g stroke={theme.palette.text.primary} strokeWidth={3} fill="none">
       <circle r={R} cx={ox} cy={oy} />
       {[...Array(12)].map((v, i) => (
         drawLine(i * Math.PI / 6, i % 3 === 0)
@@ -64,7 +64,7 @@ export default function ClockIcon({ className = '' }) {
     );
   };
   return (
-    <svg className={className} width={500} viewBox='0 0 1000 1000'>
+    <svg className={className} width={500} viewBox='0 0 1600 1600'>
       {drawArcs(0.5 * PI, 5 * PI)}
       {drawClock()}
     </svg>
