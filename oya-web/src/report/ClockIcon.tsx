@@ -14,10 +14,10 @@ export type ClockIconProps = {
     a2: number,
     isLight?: boolean,
   }[];
-  text?: React.ReactNode;
+  renderText?: ({ x, y }: { x: number, y: number; }) => React.ReactNode;
 };
 
-export default function ClockIcon({ className = '', data, text }: ClockIconProps) {
+export default function ClockIcon({ className = '', data, renderText }: ClockIconProps) {
   const PI = Math.PI;
   const theme = useTheme();
   const l = 100;
@@ -80,16 +80,15 @@ export default function ClockIcon({ className = '', data, text }: ClockIconProps
     <svg className={className} width={250} viewBox='0 0 1600 1600'>
       {data.map(({ a1, a2, isLight }) => drawArcs(a1, a2, isLight))}
       {drawClock()}
-      <text
+      <g
         x={ox}
-        y={oy}
         textAnchor="middle"
         dominantBaseline="central"
         fill={theme.palette.text.primary}
         style={{ fontSize: 100 }}
       >
-        {text}
-      </text>
+        {renderText?.({ x: ox, y: oy })}
+      </g>
     </svg>
   );
 }
