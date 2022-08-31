@@ -2,7 +2,7 @@ from typing import List
 
 from sqlalchemy import Column, func, select, joinedload
 from sqlalchemy.orm import Session
-from app.auth import User as userSchema
+from app.controllers.auth import User as userSchema
 from app import crud, schemas
 from app.models import Interval, Activity, Association, Entry
 from app.database import SessionLocal, engine

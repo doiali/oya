@@ -27,6 +27,11 @@ if you already have data in database and want to update to the latest version. y
 alembic upgrade head
 ```
 
+to create a super user, use:
+```
+py createsuperuser.py
+```
+
 now you can run the server using:
 ```
 uvicorn app.main:app --reload

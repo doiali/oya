@@ -1,6 +1,6 @@
 from app.models import User
 from app.database import SessionLocal
-from app.auth import get_password_hash
+from app.controllers.auth import get_password_hash
 from getpass import getpass
 
 with SessionLocal() as session:
