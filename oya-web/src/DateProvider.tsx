@@ -1,6 +1,6 @@
 import AdapterJalaliLib from '@date-io/date-fns-jalali';
 import { IUtils } from '@date-io/core/IUtils';
-import AdapterBase from '@date-io/date-fns';
+import AdapterGregorian from '@date-io/date-fns';
 import React from 'react';
 import { LocalizationProvider } from '@mui/lab';
 
@@ -11,14 +11,14 @@ class AdapterJalali extends AdapterJalaliLib {
   }
 }
 
-export const adapters = { jalali: AdapterJalali, standard: AdapterBase } as const;
+export const adapters = { Gregorian: AdapterGregorian, Jalali: AdapterJalali } as const;
 
 export type UtilsSetName = keyof typeof adapters;
 
 const initialValue = {
-  utilsSetKey: 'standard' as UtilsSetName,
-  Adapter: AdapterBase as new (...args: any) => IUtils<Date>,
-  utils: new AdapterBase() as IUtils<Date>,
+  utilsSetKey: 'Gregorian' as UtilsSetName,
+  Adapter: AdapterGregorian as new (...args: any) => IUtils<Date>,
+  utils: new AdapterGregorian() as IUtils<Date>,
   changeUtilsSet(utilsSetName: UtilsSetName) { window.localStorage.setItem('user-date', utilsSetName); },
 };
 
@@ -51,5 +51,5 @@ export const useDateContext = () => {
   return context;
 };
 
-const dateUtils = new AdapterBase();
+const dateUtils = new AdapterGregorian();
 export { dateUtils };

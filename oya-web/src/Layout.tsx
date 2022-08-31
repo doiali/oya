@@ -23,7 +23,7 @@ import CalenderSelector from './CalenderSelector';
 
 const drawerWidth = 280;
 export const breakpoint = 'lg';
-export const toolbarHeight = 64;
+export const toolbarHeight = 80;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
   open?: boolean;
