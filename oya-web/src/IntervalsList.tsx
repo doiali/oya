@@ -1,9 +1,9 @@
 import { Interval } from './apiService/types';
-import { format } from 'date-fns-jalali';
 import { Stack, Divider, Chip, Pagination, Box } from '@mui/material';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import IntervalItem from './IntervalItem';
 import Widget from './Widget';
+import { useDateContext } from './DateProvider';
 
 type IntervalsListProps = {
   intervals: Interval[],
@@ -13,6 +13,7 @@ type IntervalsListProps = {
 const rowsPerPage = 30;
 export default memo(function IntervalsList({ intervals, highLights }: IntervalsListProps) {
   const [page, setPage] = useState(1);
+  const { utils: u } = useDateContext();
   const rows = intervals.length;
   const totalPages = Math.ceil(rows / rowsPerPage) || 1;
   const ref = useRef<HTMLDivElement>(null);
@@ -42,7 +43,7 @@ export default memo(function IntervalsList({ intervals, highLights }: IntervalsL
               <React.Fragment key={interval.id}>
                 {isNewDay && (
                   <Divider orientation="horizontal" flexItem>
-                    <Chip color="secondary" dir="rtl" label={format(end, 'eeee d MMMM y')} />
+                    <Chip color="secondary" dir="rtl" label={u.formatByString(end, 'eeee d MMMM y')} />
                   </Divider>
                 )}
                 <IntervalItem

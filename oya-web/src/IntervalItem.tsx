@@ -1,5 +1,4 @@
 import { Interval } from './apiService/types';
-import { format } from 'date-fns-jalali';
 import { Stack, IconButton, Chip, Collapse, Typography, Box } from '@mui/material';
 import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { deleteInterval } from './apiService';
@@ -10,6 +9,7 @@ import { marked } from 'marked';
 import IntervalEditor from './IntervalEditor';
 import useActivities from './useActivities';
 import { getDeltaString } from './utils';
+import { useDateContext } from './DateProvider';
 
 export type IntervalItemProps = {
   interval: Interval;
@@ -20,6 +20,7 @@ export type IntervalItemProps = {
 export default memo(function IntervalItem(
   { interval, index, highLights }: IntervalItemProps,
 ) {
+  const { utils: u } = useDateContext();
   const { activityMap } = useActivities();
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -45,9 +46,9 @@ export default memo(function IntervalItem(
       <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <Stack direction="row" sx={{ alignItems: 'center', flexWrap: 'wrap' }} spacing={1}>
           <Typography color="secondary">{index}. {' '}</Typography>
-          <Chip dir="rtl" variant="outlined" label={format(start, 'MM/dd-HH:mm')} />
+          <Chip variant="outlined" label={u.formatByString(start, 'MM-dd HH:mm')} />
           <span>{' '}-{' '}</span>
-          <Chip dir="rtl" variant="outlined" label={format(end, 'MM/dd-HH:mm')} />
+          <Chip variant="outlined" label={u.formatByString(end, 'MM-dd HH:mm')} />
           <span>{' '}:{' '}</span>
           {interval.entries.map(({ activity_id }, i) => (
             <Chip
