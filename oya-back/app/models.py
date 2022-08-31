@@ -8,6 +8,7 @@ from sqlalchemy import (
     Interval as IntervalType,
     Text,
     desc,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import relationship, validates
 from dateutil import parser
@@ -48,10 +49,13 @@ class Association(Base):
 
 class Activity(Base):
     __tablename__ = "activities"
+    __table_arg__ = (
+        UniqueConstraint('user_id','name'),
+    )
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    name = Column(String, unique=True)
+    name = Column(String)
     is_suspended = Column(Boolean, default=False, nullable=False)
 
     user = relationship(User, back_populates="activities")
