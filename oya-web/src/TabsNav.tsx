@@ -5,12 +5,13 @@ import { RouteInfo } from './MainRouter';
 
 type TabsNavProps = {
   routes: RouteInfo[];
-  disabled?: boolean,
+  disabled?: boolean;
+  preserveSearch?: boolean;
 };
 
-export default function TabsNav({ routes, disabled }: TabsNavProps) {
+export default function TabsNav({ routes, disabled, preserveSearch }: TabsNavProps) {
   const { pathname: base } = useResolvedPath('');
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const value: false | string = !disabled && (
     routes.find(r => (
       r.path !== '*' && !r.hideLink &&
@@ -20,16 +21,25 @@ export default function TabsNav({ routes, disabled }: TabsNavProps) {
 
   return (
     <Tabs value={value}>
-      {routes.filter(r => r.path !== '*' && !r.hideLink).map(r => (
-        <Tab
-          disabled={disabled}
-          value={r.path}
-          key={r.path}
-          component={Link}
-          to={r.to ?? r.path}
-          label={r.label}
-        />
-      ))}
+      {routes.filter(r => r.path !== '*' && !r.hideLink).map(r => {
+        let to = r.to ?? r.path;
+        if (preserveSearch) {
+          if (to)
+            to = to + search;
+          else
+            to = base + search;
+        }
+        return (
+          <Tab
+            disabled={disabled}
+            value={r.path}
+            key={r.path}
+            component={Link}
+            to={to}
+            label={r.label}
+          />
+        );
+      })}
     </Tabs>
   );
 }

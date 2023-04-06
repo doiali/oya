@@ -24,6 +24,9 @@ export const rangeOptions = [
 export type RangeOption = typeof rangeOptions[number];
 export type RangeOptionKey = RangeOption['value'];
 
+const defaultRangeOptionKey: RangeOptionKey = 'allTime';
+const defaultRange = rangeOptions.find(o => o.value === defaultRangeOptionKey) as RangeOption;
+
 export type ReportContextState = {
   start: Date | null;
   end: Date | null;
@@ -65,7 +68,7 @@ const defaultValue: ReportContext = {
   state: {
     start: null,
     end: null,
-    period: { value: 'lastMonth', label: 'Last month', days: 30 },
+    period: defaultRange,
   },
   onChange: () => 0,
 };
@@ -89,7 +92,7 @@ const getRangeFromRangeOption = (period: RangeOption, meta?: IntervalsMeta) => {
 };
 
 const getInitState = (meta: IntervalsMeta | undefined): ReportContextState => {
-  const defaultOption: RangeOption = { value: 'lastMonth', label: 'Last month', days: 30 };
+  const defaultOption: RangeOption = defaultRange;
   const dates = getRangeFromRangeOption(defaultOption, meta);
   return { ...dates, period: defaultOption };
 };

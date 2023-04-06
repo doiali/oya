@@ -1,9 +1,8 @@
 from typing import List
 
-from sqlalchemy import Column, func, select, joinedload
+from sqlalchemy import Column, func, select
 from sqlalchemy.orm import Session
-from app.controllers.auth import User as userSchema
-from app import crud, schemas
+from app import schemas
 from app.models import Interval, Activity, Association, Entry
 from app.database import SessionLocal, engine
 import datetime
