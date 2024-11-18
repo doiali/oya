@@ -85,7 +85,6 @@ def update_activity(
             db_activity.name = activity.name
         if activity.is_suspended is not None:
             db_activity.is_suspended = activity.is_suspended
-        db.add(db_activity)
         db.commit()
         db.refresh(db_activity)
         return db_activity

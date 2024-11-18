@@ -54,7 +54,7 @@ class Activity(Base):
     )
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="RESTRICT"), nullable=False)
     name = Column(String)
     is_suspended = Column(Boolean, default=False, nullable=False)
 
@@ -142,7 +142,7 @@ class Activity(Base):
             raise e403
         return child
 
-    entries = relationship("Entry", back_populates="activity", cascade="all")
+    entries = relationship("Entry", back_populates="activity")
 
     def __repr__(self):
         return f"<activity {self.id} {self.name}>"
@@ -158,7 +158,7 @@ class Interval(Base):
     )
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="RESTRICT"), nullable=False)
     start = Column(DateTime(timezone=True), index=True)
     end = Column(DateTime(timezone=True), index=True)
     note = Column(Text)
@@ -173,8 +173,8 @@ class Interval(Base):
 class Entry(Base):
     __tablename__ = "entries"
 
-    interval_id = Column(Integer, ForeignKey("intervals.id"), primary_key=True)
-    activity_id = Column(Integer, ForeignKey("activities.id"), primary_key=True)
+    interval_id = Column(Integer, ForeignKey("intervals.id",), primary_key=True)
+    activity_id = Column(Integer, ForeignKey("activities.id", ondelete="RESTRICT"), primary_key=True)
     time = Column(IntervalType)
     note = Column(Text)
 
