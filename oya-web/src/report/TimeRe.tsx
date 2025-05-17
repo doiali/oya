@@ -2,15 +2,16 @@ import { Box } from '@mui/material';
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Bar, ComposedChart,
 } from 'recharts';
-import { format } from 'date-fns-jalali';
 import { useActivityContext } from '../ActivityPageLayout';
 import Widget from '../Widget';
+import { useDateContext } from '../DateProvider';
 
 export default function TimeRe() {
   const { activity, report: { tDDA } } = useActivityContext();
+  const { utils } = useDateContext()
   const data = tDDA.map(d => {
     return {
-      name: format(d.date, 'MM/dd'),
+      name: utils.formatByString(d.date, 'MM-dd'),
       value: activity
         ? Math.round(d.report[activity?.id ?? 0]?.time ?? 0)
         : Math.round(d.totalTime),
@@ -36,7 +37,7 @@ export default function TimeRe() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
+            <Tooltip labelStyle={{color: 'blue'}} />
             <Bar fill="#8884d8" dataKey="value" />
           </ComposedChart>
         </ResponsiveContainer>
