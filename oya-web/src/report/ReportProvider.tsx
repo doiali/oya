@@ -16,6 +16,7 @@ export const rangeOptions = [
   { value: 'today', label: 'Today', days: 1 },
   { value: 'lastWeek', label: 'Last week', days: 7 },
   { value: 'lastMonth', label: 'Last month', days: 30 },
+  { value: 'last6Months', label: 'Last 6 month', days: 180 },
   { value: 'lastYear', label: 'Last year', days: 365 },
   { value: 'allTime', label: 'All time' },
   { value: 'custom', label: 'Custom' },
@@ -24,7 +25,7 @@ export const rangeOptions = [
 export type RangeOption = typeof rangeOptions[number];
 export type RangeOptionKey = RangeOption['value'];
 
-const defaultRangeOptionKey: RangeOptionKey = 'allTime';
+const defaultRangeOptionKey: RangeOptionKey = 'last6Months';
 const defaultRange = rangeOptions.find(o => o.value === defaultRangeOptionKey) as RangeOption;
 
 export type ReportContextState = {
